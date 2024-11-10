@@ -1,0 +1,20 @@
+app-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.main-container {
+  overflow-x: none;
+  overflow-y: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.btn {
+  margin: 1vw;
+}

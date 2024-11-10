@@ -1,0 +1,21 @@
+<main style="height: 100vh;">
+    <div class="container-fluid h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-md-6 text-center">
+                <button class="btn btn-primary mb-4" (click)="navigateHome()">Volver</button>
+                <div class="d-flex justify-content-around mt-4">
+                    <div class="btn btn-primary btn-lg rectangular-button d-flex flex-column align-items-center" (click)="navigateToEspecialista()">
+                        <span>Soy un especialista</span>
+                        <img src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/sj-objio-8hHxO3iYuU0-unsplash.jpg"
+                            alt="Especialista" class="img-fluid">
+                    </div>
+                    <div class="btn btn-primary btn-lg rectangular-button d-flex flex-column align-items-center" (click)="navigateToPaciente()">
+                        <span>Soy un paciente</span>
+                        <img src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/accuray-ThpS0DVkPBs-unsplash.jpg"
+                            alt="Paciente" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

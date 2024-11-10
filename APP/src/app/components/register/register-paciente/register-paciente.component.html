@@ -1,0 +1,157 @@
+<div class="row g-5">
+    <div class="col-12">
+        <form [formGroup]="registerForm" class="needs-validation" (ngSubmit)="onSubmit()">
+            <div class="row g-3">
+                <div class="col-sm-6 input-container">
+                    <label for="firstName" class="form-label">Nombre</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="firstName" formControlName="firstName">
+                    </div>
+                    <small class="text-danger" *ngIf="firstName?.errors?.['required'] && firstName?.touched">
+                        El nombre es requerido
+                    </small>
+                    <small class="text-danger" *ngIf="firstName?.errors?.['minLength'] && firstName?.touched">
+                        El nombre debe tener al menos 3 caracteres
+                    </small>
+                </div>
+
+                <div class="col-sm-6 input-container">
+                    <label for="lastName" class="form-label">Apellido</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="lastName" formControlName="lastName">
+                    </div>
+                    <small class="text-danger" *ngIf="lastName?.errors?.['required'] && lastName?.touched">
+                        El apellido es requerido
+                    </small>
+                    <small class="text-danger" *ngIf="lastName?.errors?.['minLength'] && lastName?.touched">
+                        El apellido debe tener al menos 3 caracteres
+                    </small>
+                </div>
+
+                <div class="col-12 input-container">
+                    <label for="dni" class="form-label">DNI</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="dni" formControlName="dni">
+                    </div>
+                    <small class="text-danger" *ngIf="dni?.errors?.['required'] && dni?.touched">
+                        El DNI es requerido
+                    </small>
+                    <small class="text-danger" *ngIf="dni?.errors?.['pattern'] && dni?.touched">
+                        El DNI debe tener 8 dígitos
+                    </small>
+                </div>
+
+                <div class="col-12 input-container">
+                    <label for="email" class="form-label">Correo</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="email" class="form-control" id="email" formControlName="email">
+                    </div>
+                    <small class="text-danger" *ngIf="email?.errors?.['required'] && email?.touched">
+                        El correo es requerido
+                    </small>
+                    <small class="text-danger" *ngIf="email?.errors?.['email'] && email?.touched">
+                        Ingrese un correo válido
+                    </small>
+                </div>
+
+                <div class="col-md-5 input-container">
+                    <label for="socialInsurance" class="form-label">Obra social</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <select class="form-select" id="socialInsurance" formControlName="socialInsurance">
+                            <option value="">Elegí...</option>
+                            <option>OSDE</option>
+                            <option>IOMA</option>
+                            <option>Galeno</option>
+                            <option>Medife</option>
+                        </select>
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="socialInsurance?.errors?.['required'] && socialInsurance?.touched">
+                        La obra social es requerida
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="socialInsurance?.errors?.['minLength'] && socialInsurance?.touched">
+                        La obra social debe tener al menos 2 caracteres
+                    </small>
+                </div>
+
+                <div class="col-md-4 input-container">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="password" class="form-control" id="password" formControlName="password">
+                    </div>
+
+                    <small class="text-danger" *ngIf="password?.errors?.['minlength'] && password?.touched">
+                        La contraseña debe tener al menos 6 caracteres
+                    </small>
+                </div>
+
+                <div class="col-sm-6 input-container">
+                    <label for="age" class="form-label">Edad</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="number" class="form-control" id="age" formControlName="age">
+                    </div>
+                    <small class="text-danger" *ngIf="age?.errors?.['required'] && age?.touched">
+                        La edad es requerida
+                    </small>
+                    <small class="text-danger" *ngIf="age?.errors?.['min'] && age?.touched">
+                        Debe ser mayor de 18 años
+                    </small>
+                    <small class="text-danger" *ngIf="age?.errors?.['max'] && age?.touched">
+                        La edad no puede ser mayor a 100 años
+                    </small>
+                </div>
+
+                <div class="col-12 input-container">
+                    <label for="profileImages" class="form-label">Fotos de perfil</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="file" class="form-control" id="profileImages"
+                            (change)="onMultipleFilesSelected($event)" accept="image/jpeg,image/png" multiple>
+                    </div>
+                    <div class="text-danger"
+                        *ngIf="registerForm.get('profileImages')?.touched || registerForm.get('profileImages')?.dirty">
+                        <small *ngIf="registerForm.get('profileImages')?.hasError('required')">
+                            Debe seleccionar imágenes
+                        </small>
+                        <small *ngIf="registerForm.get('profileImages')?.hasError('exactlyTwoFiles')">
+                            Debe seleccionar exactamente 2 imágenes
+                        </small>
+                        <small *ngIf="registerForm.get('profileImages')?.hasError('fileTypes')">
+                            Todos los archivos deben ser imágenes (JPEG o PNG)
+                        </small>
+                        <small *ngIf="registerForm.get('profileImages')?.hasError('fileSizes')">
+                            Ningún archivo debe superar los 2MB
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="acceptTerms" formControlName="acceptTerms">
+                <label class="form-check-label" for="acceptTerms">
+                    Acepto compartir mis datos personales con los especialistas
+                </label>
+            </div>
+            <div *ngIf="acceptTerms?.touched && acceptTerms?.invalid" class="text-danger">
+                <small>Debes aceptar los términos para continuar.</small>
+            </div>
+
+            <hr class="my-4">
+
+            <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="!registerForm.valid">
+                Registrarme como Paciente
+            </button>
+
+        </form>
+    </div>
+</div>

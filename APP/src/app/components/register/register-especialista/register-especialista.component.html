@@ -1,0 +1,184 @@
+<div class="row g-5">
+    <div class="col-12">
+        <form [formGroup]="registerForm" class="needs-validation" (ngSubmit)="onSubmit()">
+            <div class="row g-3">
+
+                <div class="col-sm-6 input-container">
+                    <label for="firstName" class="form-label">Nombre</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="firstName" formControlName="firstName">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('firstName')?.errors?.['required'] && registerForm.get('firstName')?.touched">
+                        El nombre es requerido
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('firstName')?.errors?.['minlength'] && registerForm.get('firstName')?.touched">
+                        El nombre debe tener al menos 3 caracteres
+                    </small>
+                </div>
+
+                <div class="col-sm-6 input-container">
+                    <label for="lastName" class="form-label">Apellido</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="lastName" formControlName="lastName">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('lastName')?.errors?.['required'] && registerForm.get('lastName')?.touched">
+                        El apellido es requerido
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('lastName')?.errors?.['minlength'] && registerForm.get('lastName')?.touched">
+                        El apellido debe tener al menos 3 caracteres
+                    </small>
+                </div>
+
+                <div class="col-sm-6 input-container">
+                    <label for="age" class="form-label">Edad</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="number" class="form-control" id="age" formControlName="age">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('age')?.errors?.['required'] && registerForm.get('age')?.touched">
+                        La edad es requerida
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('age')?.errors?.['min'] && registerForm.get('age')?.touched">
+                        Debe ser mayor de 18 años
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('age')?.errors?.['max'] && registerForm.get('age')?.touched">
+                        La edad no puede ser mayor a 100 años
+                    </small>
+                </div>
+
+                <div class="col-sm-6 input-container">
+                    <label for="dni" class="form-label">DNI</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="dni" formControlName="dni">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('dni')?.errors?.['required'] && registerForm.get('dni')?.touched">
+                        El DNI es requerido
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('dni')?.errors?.['pattern'] && registerForm.get('dni')?.touched">
+                        El DNI debe tener 8 dígitos
+                    </small>
+                </div>
+
+                <div class="col-12 input-container">
+                    <label for="specialty" class="form-label">Especialidad</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <select class="form-select" id="specialty" formControlName="specialty"
+                            (change)="onSpecialtyChange()">
+                            <option value="">Elegí una especialidad...</option>
+                            <option>Cardiología</option>
+                            <option>Dermatología</option>
+                            <option>Pediatría</option>
+                            <option value="other">Otra</option>
+                        </select>
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('specialty')?.errors?.['required'] && registerForm.get('specialty')?.touched">
+                        La especialidad es requerida
+                    </small>
+                </div>
+
+                <div class="col-12 input-container" *ngIf="registerForm.get('specialty')?.value === 'other'">
+                    <label for="otherSpecialty" class="form-label">Otra Especialidad</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="text" class="form-control" id="otherSpecialty" formControlName="otherSpecialty">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('otherSpecialty')?.errors?.['required'] && registerForm.get('otherSpecialty')?.touched">
+                        Debe especificar la especialidad
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('otherSpecialty')?.errors?.['minlength'] && registerForm.get('otherSpecialty')?.touched">
+                        La especialidad debe tener al menos 2 caracteres
+                    </small>
+                </div>
+
+                <div class="col-12 input-container">
+                    <label for="email" class="form-label">Correo</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="email" class="form-control" id="email" formControlName="email">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('email')?.errors?.['required'] && registerForm.get('email')?.touched">
+                        El correo es requerido
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('email')?.errors?.['email'] && registerForm.get('email')?.touched">
+                        Ingrese un correo válido
+                    </small>
+                </div>
+
+                <div class="col-12 input-container">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="password" class="form-control" id="password" formControlName="password">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('password')?.errors?.['required'] && registerForm.get('password')?.touched">
+                        La contraseña es requerida
+                    </small>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('password')?.errors?.['minlength'] && registerForm.get('password')?.touched">
+                        La contraseña debe tener al menos 6 caracteres
+                    </small>
+                </div>
+
+
+
+                <div class="col-12 input-container">
+                    <label for="profileImage" class="form-label">Imagen de perfil</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary"></span>
+                        <input type="file" class="form-control" id="profileImage" (change)="onFileSelected($event)"
+                            accept="image/jpeg,image/png">
+                    </div>
+                    <small class="text-danger"
+                        *ngIf="registerForm.get('profileImage')?.errors?.['required'] && registerForm.get('profileImage')?.touched">
+                        La imagen de perfil es requerida
+                    </small>
+                    <small class="text-danger" *ngIf="registerForm.get('profileImage')?.errors?.['fileType']">
+                        Solo se permiten archivos JPEG o PNG
+                    </small>
+                    <small class="text-danger" *ngIf="registerForm.get('profileImage')?.errors?.['fileSize']">
+                        El tamaño del archivo no debe exceder 2MB
+                    </small>
+                </div>
+
+            </div>
+
+            <hr class="my-4">
+
+            <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="registerForm.invalid">
+                Registrarme como Especialista
+            </button>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    document.getElementById('specialty').addEventListener('change', function () {
+        var otherSpecialtyDiv = document.getElementById('otherSpecialtyDiv');
+        if (this.value === 'other') {
+            otherSpecialtyDiv.style.display = 'block';
+        } else {
+            otherSpecialtyDiv.style.display = 'none';
+        }
+    });
+</script>

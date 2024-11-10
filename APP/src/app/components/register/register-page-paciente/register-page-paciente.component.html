@@ -1,0 +1,20 @@
+<body class="bg-body-tertiary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <main>
+                    <div class="py-5 text-center">
+                        <h2>Hacete paciente de Clínica OnLine</h2>
+                    </div>
+
+                    <app-captcha (captchaValidated)="onCaptchaValidated($event)"></app-captcha>
+                    <div *ngIf="captchaValidated">
+                    </div>
+
+                    <app-register-paciente></app-register-paciente>
+
+                </main>
+            </div>
+        </div>
+    </div>
+</body>

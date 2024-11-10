@@ -1,0 +1,94 @@
+.container {
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+select, input {
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.spinner {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.approved {
+  color: green;
+}
+
+.pending {
+  color: orange;
+}
+
+.approve-btn, .disapprove-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.approve-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #45a049;
+}
+
+.disapprove-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.disapprove-btn:hover {
+  background-color: #da190b;
+}
+
+.approve-btn {
+  background-color: green;
+  color: white;
+}
+
+.disapprove-btn {
+  background-color: red;
+  color: white;
+}
+
+.centered-table th,
+.centered-table td {
+  text-align: center;
+}

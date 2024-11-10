@@ -1,0 +1,42 @@
+.container-fluid {
+    height: 100vh; /* Altura completa de la ventana */
+}
+
+.row {
+    height: 100%; /* Altura completa para el contenedor de la fila */
+}
+
+.rectangular-button {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    padding: 20px; 
+    border-radius: 10px; /* Bordes más redondeados */
+    width: 45%; /* Ancho del botón */
+    height: 70vh; /* Altura del botón al 70% */
+    text-align: center; /* Alinear texto al centro */
+    margin: 1vh;
+    background-color: rgba(13, 110, 253, 0.8); /* Color primario de Bootstrap con 80% de opacidad */
+    color: white; /* Color del texto blanco para mayor contraste */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+    transition: transform 0.3s; /* Efecto de transición */
+}
+
+.rectangular-button img {
+    margin-top: 4vh; 
+    width: 400px;
+    height: 400px; 
+}
+
+.rectangular-button:hover {
+    transform: scale(1.05); 
+}
+
+main {
+    background-image: url('https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/shutterstock_242389561-2560x852.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+

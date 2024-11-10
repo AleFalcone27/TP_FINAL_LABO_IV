@@ -1,0 +1,63 @@
+<div class="container">
+    <h2>Tabla de Usuarios</h2>
+    <app-spinner></app-spinner>
+  
+    <!-- Filtros -->
+    <select [(ngModel)]="selectedRole" (change)="onRoleChange()">
+        <option value="all">Todos los roles</option>
+        <option value="user">Pacientes</option>
+        <option value="doctor">Doctores</option>
+        <option value="admin">Administradores</option>
+    </select>
+
+    <!-- Barra de búsqueda -->
+    <input 
+      type="text" 
+      placeholder="Buscar..." 
+      (input)="onSearch($event)"
+      [(ngModel)]="searchTerm">
+  
+    <!-- Spinner de carga -->
+    <div *ngIf="isLoading" class="spinner">Cargando...</div>
+
+    <!-- Tabla de usuarios -->
+    <table class="centered-table" *ngIf="!isLoading && filteredUsers.length > 0">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th *ngIf="selectedRole === 'user'">DNI</th>
+            <th *ngIf="selectedRole === 'user'">Obra Social</th>
+            <th *ngIf="selectedRole === 'doctor'">Especialidad</th>
+            <th *ngIf="selectedRole === 'doctor'">Estado</th>
+            <th *ngIf="selectedRole === 'doctor'">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.role}}</td>
+            <td *ngIf="selectedRole === 'user'">{{getValue(user, 'dni')}}</td>
+            <td *ngIf="selectedRole === 'user'">{{getValue(user, 'socialInsurance')}}</td>
+            <td *ngIf="selectedRole === 'doctor'">{{getValue(user, 'specialty')}}</td>
+            <td *ngIf="selectedRole === 'doctor'">{{getValue(user, 'approved')}}</td>
+            <td *ngIf="selectedRole === 'doctor' && isDoctor(user)">
+              <button 
+                (click)="toggleDoctorStatus(user)"
+                [ngClass]="{'approve-btn': !user.approved, 'disapprove-btn': user.approved}">
+                {{ getStatusButtonText(user.approved) }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+    <div *ngIf="!isLoading && filteredUsers.length === 0" class="no-results">
+      No se encontraron usuarios que coincidan con los criterios de búsqueda.
+    </div>
+    <hr>
+</div>

@@ -1,0 +1,26 @@
+<app-spinner></app-spinner>
+<div class="main-container">
+    <app-sidebar></app-sidebar>
+    <div class="content-wrapper">
+        <app-users-table></app-users-table>
+        <div class="text-center">
+            <h2>Crear usuario</h2>
+            
+            <button (click)="setRole('specialist')" class="btn btn-primary">Especialista</button>
+            <button (click)="setRole('patient')" class="btn btn-success">Paciente</button>
+            <button (click)="setRole('admin')" class="btn btn-danger">Administrador</button>
+          </div>
+          
+          <div *ngIf="selectedRole === 'specialist'">
+            <app-register-especialista></app-register-especialista>
+          </div>
+          
+          <div *ngIf="selectedRole === 'patient'">
+            <app-register-paciente></app-register-paciente>
+          </div>
+          
+          <div *ngIf="selectedRole === 'admin'">
+            <app-register-admin></app-register-admin>
+          </div>
+    </div>
+</div>

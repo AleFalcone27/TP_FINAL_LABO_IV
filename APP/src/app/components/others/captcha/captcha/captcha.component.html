@@ -1,0 +1,11 @@
+<div class="captcha-container" *ngIf="isCaptchaVisible">
+    <p>Por favor, ingresa el texto que ves a continuación:</p>
+    <div class="captcha-display">{{ captchaString }}</div>
+    <input type="text" [(ngModel)]="userInput" placeholder="Ingresa el CAPTCHA" />
+    
+    <!-- Campo honeypot oculto -->
+    <input type="text" [(ngModel)]="honeypot" placeholder="No llenes este campo" style="display: none;" />
+    
+    <button (click)="validateCaptcha()">Validar</button>
+    <button (click)="refreshCaptcha()">Actualizar CAPTCHA</button>
+</div>
