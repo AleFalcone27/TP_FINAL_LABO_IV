@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [RegisterPacienteComponent,CaptchaComponent, CommonModule],
   templateUrl: './register-page-paciente.component.html',
-  styleUrl: './register-page-paciente.component.css'
+  styleUrl: './register-page-paciente.component.css' 
   
 })
 export class RegisterPagePacienteComponent {
