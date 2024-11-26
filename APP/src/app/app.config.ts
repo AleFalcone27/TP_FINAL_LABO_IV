@@ -1,9 +1,11 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideStorage, getStorage } from '@angular/fire/storage';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { environment } from '../environment'
+
 
 import { routes } from './app.routes';
 
@@ -12,5 +14,7 @@ export const appConfig: ApplicationConfig = {
   provideRouter(routes),
   provideFirebaseApp(() => initializeApp(environment)),
   provideAuth(() => getAuth()),
-  provideFirestore(() => getFirestore())]
+  provideFirestore(() => getFirestore()),
+  provideStorage(() => getStorage())
+]
 };

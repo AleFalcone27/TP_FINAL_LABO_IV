@@ -1,8 +1,8 @@
 export const environment = {
-    "apiKey": "AIzaSyDiUt9vUWWExY1B55e6lynDCR5Ky9g-4K0",
-    "authDomain": "tp-final-labo4.firebaseapp.com",
-    "projectId": "tp-final-labo4",
-    "storageBucket": "tp-final-labo4.firebasestorage.app",
-    "messagingSenderId": "441382386612",
-    "appId": "1:441382386612:web:ee70fdae5b944179a990e1"
-  };
+  apiKey: "AIzaSyCI34PDLjiXqyRJdBar9bNMFbfAvZEK2Ic",
+  authDomain: "pplabo2024.firebaseapp.com",
+  projectId: "pplabo2024",
+  storageBucket: "pplabo2024.appspot.com",
+  messagingSenderId: "459362697742",
+  appId: "1:459362697742:web:1a5b9ca00e50222792325f"
+};

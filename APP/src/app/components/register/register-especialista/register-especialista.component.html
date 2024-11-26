@@ -72,38 +72,32 @@
                 </div>
 
                 <div class="col-12 input-container">
-                    <label for="specialty" class="form-label">Especialidad</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-primary"></span>
-                        <select class="form-select" id="specialty" formControlName="specialty"
-                            (change)="onSpecialtyChange()">
-                            <option value="">Elegí una especialidad...</option>
-                            <option>Cardiología</option>
-                            <option>Dermatología</option>
-                            <option>Pediatría</option>
-                            <option value="other">Otra</option>
-                        </select>
-                    </div>
+                    <label for="specialties" class="form-label">Especialidades</label>
+                    <div *ngFor="let specialty of specialties" class="form-check">
+                        <input 
+                          type="checkbox" 
+                          class="form-check-input" 
+                          [value]="specialty" 
+                          [checked]="registerForm.get('specialties')?.value.includes(specialty)"
+                          (change)="onSpecialtyToggle($event, specialty.especialidad)">
+                        <label class="form-check-label">{{ specialty }}</label>
+                      </div>
+                      
                     <small class="text-danger"
-                        *ngIf="registerForm.get('specialty')?.errors?.['required'] && registerForm.get('specialty')?.touched">
-                        La especialidad es requerida
+                        *ngIf="registerForm.get('specialties')?.invalid && registerForm.get('specialties')?.touched">
+                        Debe seleccionar al menos una especialidad.
                     </small>
                 </div>
 
-                <div class="col-12 input-container" *ngIf="registerForm.get('specialty')?.value === 'other'">
-                    <label for="otherSpecialty" class="form-label">Otra Especialidad</label>
+                <div class="mt-3">
+                    <label for="newSpecialty" class="form-label">Agregar nueva especialidad</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-primary"></span>
-                        <input type="text" class="form-control" id="otherSpecialty" formControlName="otherSpecialty">
+                        <input #newSpecialtyInput type="text" class="form-control" placeholder="Nueva especialidad">
+                        <button type="button" class="btn btn-primary"
+                            (click)="createSpecialty(newSpecialtyInput.value); newSpecialtyInput.value = '';">
+                            Agregar
+                        </button>
                     </div>
-                    <small class="text-danger"
-                        *ngIf="registerForm.get('otherSpecialty')?.errors?.['required'] && registerForm.get('otherSpecialty')?.touched">
-                        Debe especificar la especialidad
-                    </small>
-                    <small class="text-danger"
-                        *ngIf="registerForm.get('otherSpecialty')?.errors?.['minlength'] && registerForm.get('otherSpecialty')?.touched">
-                        La especialidad debe tener al menos 2 caracteres
-                    </small>
                 </div>
 
                 <div class="col-12 input-container">
@@ -169,16 +163,3 @@
         </form>
     </div>
 </div>
-
-
-
-<script>
-    document.getElementById('specialty').addEventListener('change', function () {
-        var otherSpecialtyDiv = document.getElementById('otherSpecialtyDiv');
-        if (this.value === 'other') {
-            otherSpecialtyDiv.style.display = 'block';
-        } else {
-            otherSpecialtyDiv.style.display = 'none';
-        }
-    });
-</script>

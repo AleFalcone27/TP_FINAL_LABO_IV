@@ -26,6 +26,7 @@ export const routes: Routes = [
 
 
     // Rutas Paciente
+
     { path: 'paciente', component:PacienteDashboardComponent },
     { path: 'paciente/misTurnos', component:MyAppointmentsComponent },
     { path: 'paciente/reservarTurno', component:MakeAppointmentComponent }

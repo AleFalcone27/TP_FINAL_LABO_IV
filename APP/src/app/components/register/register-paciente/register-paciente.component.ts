@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { addDoc, collection, Firestore, query } from '@angular/fire/firestore'
+import { getStorage, ref, uploadBytes, getDownloadURL, Storage } from '@angular/fire/storage';
+import { SpinnerComponent } from '../../spinner/spinner.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2'
@@ -9,15 +11,17 @@ import Swal from 'sweetalert2'
 @Component({
   selector: 'app-register-paciente',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent],
   templateUrl: './register-paciente.component.html',
   styleUrl: './register-paciente.component.css'
 })
 export class RegisterPacienteComponent {
 
+  isLoading = false;
+  loadingMessage = '';
   registerForm: FormGroup;
 
-  constructor(private router: Router, private firestore: Firestore) {
+  constructor(private router: Router, private firestore: Firestore, private storage: Storage) {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', [Validators.required, Validators.minLength(4)]),
       lastName: new FormControl('', [Validators.required, Validators.minLength(4)]),
@@ -36,26 +40,25 @@ export class RegisterPacienteComponent {
     });
   }
 
-  get firstName() {return this.registerForm.get('firstName')}
+  get firstName() { return this.registerForm.get('firstName') }
 
-  get lastName() {return this.registerForm.get('lastName')}
+  get lastName() { return this.registerForm.get('lastName') }
 
-  get age() {return this.registerForm.get('age')}
+  get age() { return this.registerForm.get('age') }
 
-  get dni() {return this.registerForm.get('dni')}
+  get dni() { return this.registerForm.get('dni') }
 
-  get socialInsurance() {return this.registerForm.get('socialInsurance')}
+  get socialInsurance() { return this.registerForm.get('socialInsurance') }
 
-  get email() {return this.registerForm.get('email')}
+  get email() { return this.registerForm.get('email') }
 
-  get password() {return this.registerForm.get('password')}
+  get password() { return this.registerForm.get('password') }
 
-  get profileImage1() {return this.registerForm.get('profileImage1')}
+  get profileImage1() { return this.registerForm.get('profileImage1') }
 
-  get profileImage() {return this.registerForm.get('profileImage2')}
+  get profileImage() { return this.registerForm.get('profileImage2') }
 
-  get acceptTerms() {return this.registerForm.get('acceptTerms')}
-
+  get acceptTerms() { return this.registerForm.get('acceptTerms') }
 
   getInvalidFields(): string[] {
     const invalidFields: string[] = [];
@@ -70,85 +73,103 @@ export class RegisterPacienteComponent {
     return invalidFields;
   }
 
-  onSubmit() {
-    const auth = getAuth();
-    const email = this.email?.value;
-    const password = this.password?.value;
+  async onSubmit() {
 
-    console.log(this.registerForm.valid)
-    console.log(this.registerForm)
-    this.getInvalidFields()
-  
+    this.isLoading = true;
+    this.loadingMessage = 'Registrando paciente';
+
+    const auth = getAuth();
+    const storage = getStorage(); 
+    const email = this.registerForm.get('email')?.value;
+    const password = this.registerForm.get('password')?.value;
+
     if (this.registerForm.valid) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-  
-          // Crear objeto con los datos del paciente
-          const pacienteData = {
-            uid: user.uid,
-            firstName: this.firstName?.value,
-            lastName: this.lastName?.value,
-            age: this.age?.value,
-            dni: this.dni?.value,
-            socialInsurance: this.socialInsurance?.value,
-            email: this.email?.value,
-            role: 'paciente'
-          };
-  
-          // Agregar el paciente a la colección 'pacientes' en Firestore
-          const pacientesRef = collection(this.firestore, 'pacientes');
-          addDoc(pacientesRef, pacienteData)
-            .then(() => {
-              // Enviar correo de verificación
-              sendEmailVerification(user).then(() => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+
+                const files = this.registerForm.get('profileImages')?.value; 
+                const profileImageUrls = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const storageRef = ref(storage, `users/${user.uid}/profile_image_${i + 1}.jpg`);
+                    await uploadBytes(storageRef, file);
+                    const profileImageUrl = await getDownloadURL(storageRef);
+                    profileImageUrls.push(profileImageUrl);
+                }
+
+                await sendEmailVerification(user);
+
+                const pacienteData = {
+                    uid: user.uid,
+                    firstName: this.registerForm.get('firstName')?.value,
+                    lastName: this.registerForm.get('lastName')?.value,
+                    age: this.registerForm.get('age')?.value,
+                    dni: this.registerForm.get('dni')?.value,
+                    socialInsurance: this.registerForm.get('socialInsurance')?.value,
+                    email: this.registerForm.get('email')?.value,
+                    approved: false,
+                    role: 'paciente',
+                    profileImage1: profileImageUrls[0], 
+                    profileImage2: profileImageUrls[1]  
+                };
+
+                const pacientesRef = collection(this.firestore, 'pacientes');
+                await addDoc(pacientesRef, pacienteData);
+
+                this.isLoading = false;
+
                 Swal.fire({
-                  title: 'Bienvenido/a',
-                  text: 'Revisa tu casilla para confirmar tu correo. Tus datos han sido registrados correctamente.',
-                  icon: 'success',
-                  confirmButtonText: 'Ok'
+                    title: 'Registro exitoso',
+                    text: 'Por favor, verifica tu correo electrónico y espera la aprobación del administrador',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
                 });
+
                 this.router.navigate(['/home']);
-              });
             })
             .catch((error) => {
-              console.error("Error al agregar el paciente a Firestore: ", error);
-              Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al registrar tus datos. Por favor, intenta nuevamente.',
-                icon: 'error',
-                confirmButtonText: 'Ok'
-              });
+                this.isLoading = false;
+                let errorMessage = '';
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMessage = 'El formato de correo electrónico es inválido';
+                        break;
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'El correo electrónico ya está en uso';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'La operación no está permitida';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'La contraseña es demasiado débil';
+                        break;
+                    default:
+                        errorMessage = 'Error desconocido';
+                }
+                Swal.fire({
+                    title: 'Error',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                });
             });
-        })
-        .catch((error) => {
-          let errorMessage = '';
-          switch (error.code) {
-            case 'auth/invalid-email':
-              errorMessage = 'El formato de correo electrónico es inválido';
-              break;
-            case 'auth/email-already-in-use':
-              errorMessage = 'El correo electrónico ya está en uso';
-              break;
-            case 'auth/operation-not-allowed':
-              errorMessage = 'La operación no está permitida';
-              break;
-            case 'auth/weak-password':
-              errorMessage = 'La contraseña es demasiado débil';
-              break;
-            default:
-              console.log(error.code)
-              errorMessage = 'Error desconocido';
-          }
-          Swal.fire({
-            title: 'Algo salió mal...',
-            text: errorMessage,
-            icon: 'error',
-            confirmButtonText: 'Ok'
-          });
-        });
     }
+}
+
+
+  async uploadFiles(uid: string, files: File[]): Promise<string[]> {
+    const uploadPromises = files.map((file, index) => {
+      const filePath = `users/${uid}/profile_image_${index + 1}.${file.name.split('.').pop()}`;
+      const fileRef = ref(this.storage, filePath);
+
+      return uploadBytes(fileRef, file).then(() => filePath);
+    });
+
+    return Promise.all(uploadPromises);
   }
+
 
   onMultipleFilesSelected(event: any) {
     const files = Array.from(event.target.files) as File[];
@@ -165,7 +186,7 @@ export class RegisterPacienteComponent {
       return (!files || files.length !== 2) ? { exactlyTwoFiles: true } : null;
     };
   }
-  
+
   multipleFilesTypeValidator(allowedTypes: string[]) {
     return (control: AbstractControl): ValidationErrors | null => {
       const files = control.value as File[];
@@ -176,7 +197,7 @@ export class RegisterPacienteComponent {
       return null;
     };
   }
-  
+
   multipleFilesSizeValidator(maxSize: number) {
     return (control: AbstractControl): ValidationErrors | null => {
       const files = control.value as File[];

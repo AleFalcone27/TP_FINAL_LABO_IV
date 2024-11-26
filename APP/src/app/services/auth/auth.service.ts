@@ -64,6 +64,36 @@ export class AuthService implements OnInit{
     return localStorage.getItem('userRole'); 
   }
 
+public async getSpecialties(): Promise<{ especialidad: string; image: string }[]> {
+  try {
+    const specialtiesRef = collection(this.firestore, 'especialidades');
+    const querySnapshot = await getDocs(specialtiesRef);
+    return querySnapshot.docs.map(doc => ({
+      especialidad: doc.data()['especialidad'],
+      image: doc.data()['image'],
+    }));
+  } catch (error) {
+    console.error('Error fetching specialties:', error);
+    return [];
+  }
+}
+
+async getDoctorsBySpecialty(specialty: string): Promise<any[]> {
+  try {
+    const especialistasRef = collection(this.firestore, 'especialistas');
+    const q = query(especialistasRef, where('specialties', 'array-contains', specialty));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error fetching doctors:', error);
+    return [];
+  }
+}
+
   public logOut() {
     signOut(this.auth).then(() => {
       localStorage.removeItem('userDocument');

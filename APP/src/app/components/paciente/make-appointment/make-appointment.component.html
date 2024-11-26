@@ -1,1 +1,30 @@
-<app-sidebar></app-sidebar>
+<div class="main-container d-flex" style="height: 100vh;">
+    <app-sidebar></app-sidebar>
+    <div class="content-wrapper d-flex flex-column align-items-center p-4">
+        <h2 class="text-center mb-4">Selecciona una Especialidad</h2>
+        <div class="specialty-buttons d-flex flex-wrap justify-content-center">
+            <div *ngFor="let specialty of specialties" class="specialty-item m-2">
+                <button
+                    class="btn specialty-button"
+                    (click)="selectSpecialty(specialty.especialidad)"
+                    [style.backgroundImage]="'url(' + specialty.image + ')'"
+                >
+                </button>
+                <p class="specialty-name mt-2 text-center">{{ specialty.especialidad }}</p>
+            </div>
+        </div>
+        <div class="doctors-list mt-4 w-100">
+            <h3 class="text-center">Doctores disponibles</h3>
+            <div *ngIf="doctors.length > 0; else noDoctors" class="doctor-cards d-flex flex-wrap justify-content-center">
+                <div *ngFor="let doctor of doctors" class="card doctor-card m-2 p-3 text-center">
+                    <h5>{{ doctor.firstName }} {{ doctor.lastName }}</h5>
+                    <p>DNI: {{ doctor.dni }}</p>
+                    <p>Email: {{ doctor.email }}</p>
+                </div>
+            </div>
+            <ng-template #noDoctors>
+                <p class="text-center mt-4">No hay doctores disponibles para esta especialidad.</p>
+            </ng-template>
+        </div>
+    </div>
+</div>

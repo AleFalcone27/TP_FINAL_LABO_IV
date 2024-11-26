@@ -42,8 +42,8 @@ export class LoginComponent {
       try {
         const userCredential = await this.signIn(auth);
         const user = userCredential.user;
-  
         const userDoc = await this.findUserInCollections(user.uid);
+        console.log(userDoc)
         await this.checkEmailVerification(user, userDoc!.role);
         await this.handleUserRole(userDoc);
         
@@ -66,6 +66,7 @@ export class LoginComponent {
   }
   
   private async checkEmailVerification(user: any, role: string) {
+    console.log(user)
     if (role !== 'admin' && !user.emailVerified) {
       console.log('Por favor, verifica tu email antes de iniciar sesión');
       console.log(user);
@@ -106,7 +107,7 @@ export class LoginComponent {
         this.router.navigate(['/especialista']);
         break;
       case 'paciente':
-        this.router.navigate(['/paciente']);
+        this.router.navigate(['/paciente/dashboard']);
         break;
       default:
         this.router.navigate(['/home']);
