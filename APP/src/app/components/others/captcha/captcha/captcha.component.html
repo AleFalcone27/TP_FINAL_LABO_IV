@@ -1,11 +1,18 @@
-<div class="captcha-container" *ngIf="isCaptchaVisible">
-    <p>Por favor, ingresa el texto que ves a continuación:</p>
-    <div class="captcha-display">{{ captchaString }}</div>
-    <input type="text" [(ngModel)]="userInput" placeholder="Ingresa el CAPTCHA" />
-    
-    <!-- Campo honeypot oculto -->
-    <input type="text" [(ngModel)]="honeypot" placeholder="No llenes este campo" style="display: none;" />
-    
-    <button (click)="validateCaptcha()">Validar</button>
-    <button (click)="refreshCaptcha()">Actualizar CAPTCHA</button>
-</div>
+<div class="row g-5">
+    <div class="col-12">
+      <div class="input-container">
+        <div class="text-center mb-3 mt-3"> 
+          <img [src]="captchaImageUrl" alt="Captcha" class="img-fluid" />
+        </div>
+        <input type="text" [(ngModel)]="userInput" class="form-control" placeholder="Ingresa el captcha" />
+        <small class="text-danger" *ngIf="userInput && userInput !== validString">
+          El captcha ingresado es incorrecto.
+        </small>
+      </div>
+  
+      <div class="text-center mt-3"> 
+        <button (click)="validateCaptcha()" class="btn btn-primary me-2">Validar Captcha</button>
+        <button (click)="refreshCaptcha()" class="btn btn-secondary">Refrescar Captcha</button>
+      </div>
+    </div>
+  </div>

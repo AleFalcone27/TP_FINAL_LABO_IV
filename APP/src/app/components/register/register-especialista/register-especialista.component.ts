@@ -7,11 +7,12 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/stor
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { SpecialtyNamePipe } from '../../../pipes/specialty-name.pipe';
 
 @Component({
   selector: 'app-register-especialista',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,SpecialtyNamePipe],
   templateUrl: './register-especialista.component.html',
   styleUrl: './register-especialista.component.css'
 })

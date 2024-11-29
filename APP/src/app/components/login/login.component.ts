@@ -6,11 +6,12 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { Firestore, collection, query, where, getDocs } from '@angular/fire/firestore';
 import Swal from 'sweetalert2';
 import { SpinnerComponent } from '../spinner/spinner.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, SidebarComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css' 
 })
@@ -107,7 +108,7 @@ export class LoginComponent {
         this.router.navigate(['/especialista']);
         break;
       case 'paciente':
-        this.router.navigate(['/paciente/dashboard']);
+        this.router.navigate(['/paciente']);
         break;
       default:
         this.router.navigate(['/home']);

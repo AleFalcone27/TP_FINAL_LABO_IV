@@ -1,55 +1,62 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [CommonModule],
-  providers: [AuthService],
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css'] 
+  styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
   userRole: string = '';
+  isLoggedIn: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.checkUserRole();
-    console.log('a');
-    
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   async checkUserRole() {
-    this.userRole = this.authService.getRole() || ''; 
+    this.userRole = this.authService.getRole() || '';
   }
 
+  navigateToLogin() {
+    this.router.navigate(['login']);
+  }
 
-  navigateToMyAppointments(){
+  navigateToRegister() {
+    this.router.navigate(['register']);
+  }
+
+  navigateToMyAppointments() {
     this.router.navigate(['paciente/misTurnos']);
   }
 
-  navigateToMakeAnAppointment(){
+  navigateToMakeAnAppointment() {
     this.router.navigate(['paciente/reservarTurno']);
   }
 
-
-  navigateToUsers(){
+  navigateToUsers() {
     this.router.navigate(['admin']);
   }
 
-  navigateToMyVisits(){
+  navigateToMyVisits() {
     this.router.navigate(['especialista/misTurnos']);
   }
 
-
-
-  LogOut(){
+  logOut() {
     this.authService.logOut();
     this.router.navigate(['login']);
   }
 
+  navigateToProfile(){
+    let role = this.authService.getRole() 
+    this.router.navigate([`${role}/perfil`]);
+  }
 
 }

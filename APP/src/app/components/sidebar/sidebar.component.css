@@ -5,3 +5,10 @@ li {
 a { 
     cursor: pointer;
 }
+
+.sidebar {
+  position: sticky;
+  top: 0; 
+  height: 100vh; 
+  overflow-y: auto; 
+}

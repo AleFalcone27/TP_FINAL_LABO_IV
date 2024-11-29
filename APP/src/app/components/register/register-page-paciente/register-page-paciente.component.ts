@@ -2,17 +2,16 @@ import { Component } from '@angular/core';
 import { RegisterPacienteComponent } from '../register-paciente/register-paciente.component';
 import { CaptchaComponent } from '../../others/captcha/captcha/captcha.component';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from '../../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-register-page-paciente',
   standalone: true,
-  imports: [RegisterPacienteComponent,CaptchaComponent, CommonModule],
+  imports: [RegisterPacienteComponent, CaptchaComponent, CommonModule, SidebarComponent],
   templateUrl: './register-page-paciente.component.html',
-  styleUrl: './register-page-paciente.component.css' 
-  
+  styleUrls: ['./register-page-paciente.component.css'] 
 })
 export class RegisterPagePacienteComponent {
-
   captchaValidated = false;
 
   onCaptchaValidated(isValid: boolean) {

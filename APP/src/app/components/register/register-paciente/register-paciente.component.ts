@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { addDoc, collection, Firestore, query } from '@angular/fire/firestore'
@@ -16,7 +16,7 @@ import Swal from 'sweetalert2'
   styleUrl: './register-paciente.component.css'
 })
 export class RegisterPacienteComponent {
-
+  @Input() isCaptchaValidated: boolean = false;
   isLoading = false;
   loadingMessage = '';
   registerForm: FormGroup;
@@ -36,7 +36,7 @@ export class RegisterPacienteComponent {
         this.multipleFilesTypeValidator(['image/jpeg', 'image/png']),
         this.multipleFilesSizeValidator(2)
       ]),
-      acceptTerms: new FormControl(false, Validators.requiredTrue)
+      acceptTerms: new FormControl(false, Validators.requiredTrue),
     });
   }
 
@@ -75,8 +75,19 @@ export class RegisterPacienteComponent {
 
   async onSubmit() {
 
-    this.isLoading = true;
-    this.loadingMessage = 'Registrando paciente';
+    console.log(this.isCaptchaValidated)
+    if (!this.isCaptchaValidated) {
+      Swal.fire({
+          title: 'Error',
+          text: 'Por favor, valida el captcha antes de continuar.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+      });
+      return;
+  }
+
+  this.isLoading = true;
+  this.loadingMessage = 'Registrando paciente';
 
     const auth = getAuth();
     const storage = getStorage(); 

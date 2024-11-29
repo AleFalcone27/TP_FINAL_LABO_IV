@@ -1,0 +1,35 @@
+<body>
+    <div class="main-container d-flex" style="height: 100vh;">
+      <app-sidebar></app-sidebar>
+      <div class="content-wrapper d-flex flex-column ">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <h2 class="text-center text-dark mt-5">¡Bienvenido/a, {{ userData?.nombre || 'Usuario' }}!</h2>
+                    <div class="card my-5">
+                        <form class="card-body cardbody-color p-lg-5">
+                            <div class="text-center">
+                                 <img [src]="userData?.image" width="200px" alt="profile" *ngIf="userData?.image">
+                            </div>
+
+                            <div class="form-text text-center mb-5 text-dark"></div>
+
+                            <div class="mb-3">
+                                <b>Nombre: </b>{{ userData?.nombre }}
+                            </div>
+                            <div class="mb-3">
+                                <b>Email: </b>{{ userData?.email }}
+                            </div>
+                            <div class="mb-3">
+                                <b>Ubicación: </b>{{ userData?.ubicacion }}
+                            </div>
+
+                            <div class="form-text text-center mb-5 text-dark"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</body>

@@ -1,19 +1,22 @@
 <body class="bg-body-tertiary">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <main>
-                    <div class="py-5 text-center">
-                        <h2>Hacete paciente de Clínica OnLine</h2>
-                    </div>
+    <div class="main-container d-flex" style="height: 100vh;">
+        <app-sidebar></app-sidebar>
 
-                    <app-captcha (captchaValidated)="onCaptchaValidated($event)"></app-captcha>
-                    <div *ngIf="captchaValidated">
-                    </div>
+        <div class="content-wrapper d-flex flex-column flex-grow-1" style="overflow-y: auto;">
+            <div class="row justify-content-center flex-grow-1">
+                <div class="col-md-8">
+                    <main>
+                        <div class="py-5 text-center">
+                            <h2>Hacete paciente de Clínica OnLine</h2>
+                        </div>
+                        <div *ngIf="captchaValidated">
+                        </div>
 
-                    <app-register-paciente></app-register-paciente>
+                        <app-register-paciente [isCaptchaValidated]="captchaValidated"></app-register-paciente>
+                        <app-captcha (captchaValidated)="onCaptchaValidated($event)"></app-captcha>
 
-                </main>
+                    </main>
+                </div>
             </div>
         </div>
     </div>

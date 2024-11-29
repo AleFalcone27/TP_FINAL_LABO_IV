@@ -20,8 +20,8 @@
 }
 
 .btn-outline-primary {
-    flex: 1; /* Asegúrate de que los botones ocupen el mismo espacio */
-    margin: 0 5px; /* Espaciado entre los botones */
+    flex: 1;
+    margin: 0 5px; 
 }
 
 .btn-primary:hover {
@@ -48,6 +48,15 @@
     opacity: 1;
     transform: translateY(0);
 }
+
+body {
+    background-image: url('https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/shutterstock_242389561-2560x852.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+
 
 @media (max-width: 768px) {
     .card-body {

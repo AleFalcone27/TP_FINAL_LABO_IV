@@ -1,0 +1,9 @@
+.main-container {
+    display: flex;
+    height: 100vh;
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+}

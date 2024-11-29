@@ -80,7 +80,8 @@
                           [value]="specialty" 
                           [checked]="registerForm.get('specialties')?.value.includes(specialty)"
                           (change)="onSpecialtyToggle($event, specialty.especialidad)">
-                        <label class="form-check-label">{{ specialty }}</label>
+                          <label class="form-check-label">{{ specialty | specialtyName }}</label>
+
                       </div>
                       
                     <small class="text-danger"

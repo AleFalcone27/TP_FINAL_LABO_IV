@@ -8,6 +8,8 @@ import { RegisterComponent } from './components/register/register/register.compo
 import { PacienteDashboardComponent } from './components/paciente/paciente-dashboard/paciente-dashboard.component';
 import { MyAppointmentsComponent } from './components/paciente/my-appointments/my-appointments.component';
 import { MakeAppointmentComponent } from './components/paciente/make-appointment/make-appointment.component';
+import { PerfilPacienteComponent } from './components/paciente/perfil-paciente/perfil-paciente.component';
+
 
 
 
@@ -28,6 +30,7 @@ export const routes: Routes = [
     // Rutas Paciente
 
     { path: 'paciente', component:PacienteDashboardComponent },
+    { path: 'paciente/perfil', component:PerfilPacienteComponent },
     { path: 'paciente/misTurnos', component:MyAppointmentsComponent },
     { path: 'paciente/reservarTurno', component:MakeAppointmentComponent }
 

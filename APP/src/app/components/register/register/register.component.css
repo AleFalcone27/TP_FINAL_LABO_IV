@@ -1,9 +1,9 @@
 .container-fluid {
-    height: 100vh; /* Altura completa de la ventana */
+    height: 100vh; 
 }
 
 .row {
-    height: 100%; /* Altura completa para el contenedor de la fila */
+    height: 100%; 
 }
 
 .rectangular-button {
@@ -12,15 +12,15 @@
     align-items: center;
     justify-content: center;
     padding: 20px; 
-    border-radius: 10px; /* Bordes más redondeados */
-    width: 45%; /* Ancho del botón */
-    height: 70vh; /* Altura del botón al 70% */
-    text-align: center; /* Alinear texto al centro */
+    border-radius: 10px; 
+    width: 45%; 
+    height: 70vh; 
+    text-align: center;
     margin: 1vh;
-    background-color: rgba(13, 110, 253, 0.8); /* Color primario de Bootstrap con 80% de opacidad */
-    color: white; /* Color del texto blanco para mayor contraste */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
-    transition: transform 0.3s; /* Efecto de transición */
+    background-color: rgba(13, 110, 253, 0.8); 
+    color: white; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.3s;
 }
 
 .rectangular-button img {
@@ -33,7 +33,7 @@
     transform: scale(1.05); 
 }
 
-main {
+body {
     background-image: url('https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/shutterstock_242389561-2560x852.jpg');
     background-repeat: no-repeat;
     background-size: cover;

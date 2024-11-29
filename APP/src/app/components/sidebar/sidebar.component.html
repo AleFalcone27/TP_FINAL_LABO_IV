@@ -1,58 +1,50 @@
-<!-- Fix svg issue -->
-<main>
-  <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px; height: 100vh;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-      <img src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/favicon%20(1).png" 
-      alt="Logo" 
-      width="32" 
-      height="32" 
-      class="me-2">
-      <span class="fs-4">Clinica Online</span>
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light sidebar" style="width: 280px; height: 100vh; position: sticky; top: 0;">
+  <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <img src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/favicon%20(1).png" 
+      alt="Logo" width="32" height="32" class="me-2">
+    <span class="fs-4">Clinica Online</span>
+  </a>
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+
+    <li  class="nav-item">
+      <a *ngIf="isLoggedIn" (click)="navigateToProfile()" class="nav-link">
+        Mi Perfil
+      </a>
+    </li>
+
+    <li *ngIf="userRole === 'admin'" class="nav-item">
+      <a (click)="navigateToUsers()" class="nav-link active" aria-current="page">
+        Administrar Usuarios
+      </a>
+    </li>
+    <li *ngIf="userRole === 'paciente'" class="nav-item">
+      <a (click)="navigateToMyAppointments()" class="nav-link">
+        Mis turnos
+      </a>
+    </li>
+    <li *ngIf="userRole === 'paciente'" class="nav-item">
+      <a (click)="navigateToMakeAnAppointment()" class="nav-link">
+        Reservar turno
+      </a>
+    </li>
+    <li *ngIf="userRole === 'especialista'" class="nav-item">
+      <a (click)="navigateToMyVisits()" class="nav-link active" aria-current="page">
+        Mis Turnos
+      </a>
+    </li>
+  </ul>
+  <hr>
+
+  <div>
+    <a *ngIf="!isLoggedIn" (click)="navigateToLogin()" class="nav-link">
+      Iniciar sesión
     </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-
-      <li>
-        <a href="#" class="nav-link">
-          Dashboard
-        </a>
-      </li>
-
-
-      <li *ngIf="this.userRole == 'admin'" class="nav-item">
-        <a (click)="navigateToUsers()" class="nav-link active" aria-current="page">
-          Administrar Usuarios
-        </a>
-      </li>
-
-      <li *ngIf="this.userRole == 'paciente'" class="nav-item">
-        <a (click)="navigateToMyAppointments()" class="nav-link" aria-current="page">
-          Mis turnos
-        </a>
-      </li>
-
-
-      <li *ngIf="this.userRole == 'paciente'" class="nav-item">
-        <a (click)="navigateToMakeAnAppointment()" class="nav-link" aria-current="page">
-          Reservar turno
-        </a>
-      </li>
-
-
-      <li *ngIf="this.userRole == 'especialista'" class="nav-item">
-        <a (click)="navigateToMyVisits()" class="nav-link active" aria-current="page">
-          Mis Turnos
-        </a>
-      </li>
-
-
-
-
-    </ul>
-    <hr>
-
-        <a (click)="LogOut()" class="nav-link active" aria-current="page">
-          Cerrar Sesion
-        </a>
-
+    <a *ngIf="!isLoggedIn" (click)="navigateToRegister()" class="nav-link">
+      Registrate
+    </a>
+    <a *ngIf="isLoggedIn" (click)="logOut()" class="nav-link active">
+      Cerrar sesión
+    </a>
   </div>
+</div>
