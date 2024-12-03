@@ -29,20 +29,20 @@ Este proyecto es una aplicación web que funciona como una clínica online, perm
 - **Estilo**: CSS y Bootstrap 
 
 ## Roles y funcionalidades
-**Admin **
+**Admin**
 - Habilitar especialistas
 - Solicitar turnos
 - Cancelar turno
 - Dar de alta todo tipo de usuarios
 
 
-**Paciente **
+**Paciente**
 - Solicitar y cancelar turnos
 - Calificar atencion
 - Completar encuesta de atencion
 
 
-**Especialista **
+**Especialista**
 - Aceptar, rechazar y cancelar turnos
 - Finalizar atencion
 - Cargar ficha medica 
@@ -52,11 +52,13 @@ Este proyecto es una aplicación web que funciona como una clínica online, perm
 ## Algunas pantallas
 
 ### Home
-- [Home](https://firebasestorage.googleapis.com/v0/b/pplabo2024.appspot.com/o/README%2Fhome.png?alt=media&token=5a2ccf52-867f-4cb3-9803-54c2143792ca)
+![Home](https://firebasestorage.googleapis.com/v0/b/pplabo2024.appspot.com/o/README%2Fhome.png?alt=media&token=5a2ccf52-867f-4cb3-9803-54c2143792ca)
 
 ### Login
+![Login](https://firebasestorage.googleapis.com/v0/b/pplabo2024.appspot.com/o/README%2Flogin.png?alt=media&token=7e3dfe83-9891-4646-8f14-90ebfcafb960)
 
 ### Mis turnos (especialista)
+![Mis turnos](https://firebasestorage.googleapis.com/v0/b/pplabo2024.appspot.com/o/README%2Fmisturnosespecialista.png?alt=media&token=3d55fe93-9163-4707-b117-f02abe1bb86c)
 
 ### Perfil (Paciente)
 
