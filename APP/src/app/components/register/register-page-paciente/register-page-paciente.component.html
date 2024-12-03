@@ -12,7 +12,7 @@
                         <div *ngIf="captchaValidated">
                         </div>
 
-                        <app-register-paciente [isCaptchaValidated]="captchaValidated"></app-register-paciente>
+                        <app-register-paciente @fade [isCaptchaValidated]="captchaValidated"></app-register-paciente>
                         <app-captcha (captchaValidated)="onCaptchaValidated($event)"></app-captcha>
 
                     </main>

@@ -1,11 +1,11 @@
 <app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
 
-<body>
+<body >
   <div class="main-container d-flex" style="height: 100vh;">
-    <app-sidebar></app-sidebar>
+    <app-sidebar @slideFromLeft ></app-sidebar>
     <div class="content-wrapper d-flex flex-column ">
 
-      <div class="container-fluid vh-100">
+      <div @slideFromBelow class="container-fluid vh-100">
         <div class="row h-100 justify-content-center align-items-center">
           <div class="col-12 col-sm-10 col-md-8 col-lg-6">
             <div class="card">
@@ -19,7 +19,7 @@
                     <button type="button" class="btn btn-outline-primary"
                       (click)="quickLogin('alejofalcone60@gmail.com', '123456')">
                       <img src="https://randomuser.me/api/portraits/men/90.jpg" alt="Imagen Especialista"
-                        style="width: 60px; height: 60px; margin-right: 5px;">
+                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
                     </button>
                   </div>
 
@@ -29,7 +29,7 @@
                     <button type="button" class="btn btn-outline-primary"
                       (click)="quickLogin('aleefalcone@gmail.com', '123456')">
                       <img src="https://randomuser.me/api/portraits/men/24.jpg" alt="Imagen Paciente"
-                        style="width: 60px; height: 60px; margin-right: 5px;">
+                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
                     </button>
                   </div>
 
@@ -38,7 +38,7 @@
                     <button type="button" class="btn btn-outline-primary"
                       (click)="quickLogin('vifarit466@merotx.com', '123456')">
                       <img src="https://randomuser.me/api/portraits/men/25.jpg" alt="Imagen Paciente"
-                        style="width: 60px; height: 60px; margin-right: 5px;">
+                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
                     </button>
                   </div>
 
@@ -47,7 +47,7 @@
                     <button type="button" class="btn btn-outline-primary"
                       (click)="quickLogin('wijeye6103@kazvi.com', '123456')">
                       <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Imagen Paciente"
-                        style="width: 60px; height: 60px; margin-right: 5px;">
+                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
                     </button>
                   </div>
 
@@ -57,7 +57,7 @@
                     <button type="button" class="btn btn-outline-primary"
                       (click)="quickLogin('dimoseb157@nozamas.com', '123456')">
                       <img src="https://randomuser.me/api/portraits/men/66.jpg" alt="Imagen Especialista"
-                        style="width: 60px; height: 60px; margin-right: 5px;">
+                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
                     </button>
                   </div>
 
@@ -66,14 +66,13 @@
                     <button type="button" class="btn btn-outline-primary"
                       (click)="quickLogin('gawiw76542@nozamas.com', '123456')">
                       <img src="https://randomuser.me/api/portraits/women/7.jpg" alt="Imagen Especialista"
-                        style="width: 60px; height: 60px; margin-right: 5px;">
+                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
                     </button>
                   </div>
 
                 </div>
 
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                  <!-- Email Field -->
                   <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" formControlName="email"
@@ -87,7 +86,6 @@
                     </div>
                   </div>
 
-                  <!-- Password Field -->
                   <div class="mb-3">
                     <label for="password" class="form-label">Contraseña</label>
                     <input type="password" class="form-control" id="password" formControlName="password"
@@ -101,14 +99,12 @@
                     </div>
                   </div>
 
-                  <!-- Submit Button -->
                   <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
                       Iniciar Sesión
                     </button>
                   </div>
 
-                  <!-- Optional: Register Link -->
                   <div class="text-center mt-3">
                     <small class="text-muted">
                       ¿No tienes una cuenta? <a href="/register" class="text-primary">Regístrate</a>

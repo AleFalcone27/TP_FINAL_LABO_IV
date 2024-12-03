@@ -7,6 +7,7 @@ import { User } from '../../../interfaces/user';
 import { Doctor } from '../../../interfaces/doctor';
 import { Admin } from '../../../interfaces/admin';
 import { SpinnerComponent } from '../../spinner/spinner.component';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-users-table',
@@ -114,6 +115,26 @@ export class UsersTableComponent implements OnInit {
 
   async onRoleChange() {
     await this.loadUsers();
+  }
+
+  downloadExcel(): void {
+
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    
+    const data = this.filteredUsers.map(user => ({
+      'UID': user.uid,
+      'Nombre': user.firstName,
+      'Apellido': user.lastName,
+      'Email': user.email,
+      'Rol': this.translateRole(user.role),
+      'Estado': this.isDoctor(user) ? (user.approved ? 'Aprobado' : 'Pendiente') : 'N/A'
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Usuarios');
+
+    XLSX.writeFile(workbook, 'usuariosClinicaOnline.xlsx');
   }
 
   onSearch(event: Event) {

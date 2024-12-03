@@ -3,13 +3,15 @@ import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { routeAnimations } from '../../../animations/animations';
 
 @Component({
   selector: 'app-perfil-paciente',
   standalone: true,
   imports: [SidebarComponent,CommonModule],
   templateUrl: './perfil-paciente.component.html',
-  styleUrl: './perfil-paciente.component.css'
+  styleUrl: './perfil-paciente.component.css',
+  animations: [routeAnimations]
 })
 
 export class PerfilPacienteComponent implements OnInit {

@@ -5,11 +5,10 @@
     <div class="content-wrapper d-flex flex-column align-items-center p-4 flex-grow-1">
         <h2 class="mb-3">Mis Turnos</h2>
 
-        <!-- Barra de búsqueda -->
         <input type="text" class="form-control mb-3 w-75 border-primary" placeholder="Buscar..."
             (input)="onSearch($event)" [(ngModel)]="searchTerm">
 
-        <div class="table-responsive w-75">
+        <div  @routeAnimations class="table-responsive w-75">
             <table class="table table-striped table-bordered table-hover mx-auto"
                 *ngIf="!isLoading && filteredAppointments.length > 0">
                 <thead class="thead-light">

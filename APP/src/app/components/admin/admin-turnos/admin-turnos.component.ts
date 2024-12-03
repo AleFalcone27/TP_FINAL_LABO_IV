@@ -9,7 +9,7 @@ import { Timestamp } from 'firebase/firestore';
 import { FormsModule } from '@angular/forms';
 import { FormatAppointmentStatusPipe } from '../../../pipes/format-appointment-status/format-appointment-status.pipe';
 import { AppointmentStatusColorDirective } from '../../../directives/appointment-status-color/appointment-status-color.directive';
-import { MedicalData } from '../../../interfaces/medicalData';
+import { slideFromBelowAnimation } from '../../../animations/animations';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +17,8 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [SidebarComponent, SpinnerComponent, CommonModule, FormsModule, FormatAppointmentStatusPipe, AppointmentStatusColorDirective],
   templateUrl: './admin-turnos.component.html',
-  styleUrl: './admin-turnos.component.css'
+  styleUrl: './admin-turnos.component.css',
+  animations: [slideFromBelowAnimation]
 })
 export class AdminTurnosComponent {
 

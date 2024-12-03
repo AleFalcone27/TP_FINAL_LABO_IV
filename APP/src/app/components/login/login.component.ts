@@ -7,13 +7,17 @@ import { Firestore, collection, query, where, getDocs } from '@angular/fire/fire
 import Swal from 'sweetalert2';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { slideFromBelowAnimation } from '../../animations/animations';
+import { ZoomInImagesDirective } from '../../directives/zoom-in-images/zoom-in-images.directive';
+import { slideFromLeftAnimation } from '../../animations/animations';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, SidebarComponent],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, SidebarComponent,ZoomInImagesDirective,],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css' 
+  styleUrl: './login.component.css', 
+  animations: [slideFromBelowAnimation,slideFromLeftAnimation]
 })
 export class LoginComponent {
   loginForm: FormGroup;

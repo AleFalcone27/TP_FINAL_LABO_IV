@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, Timestamp, query, where, getDocs, getDoc, doc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, Timestamp, query, where, getDocs, QueryDocumentSnapshot, doc, updateDoc } from '@angular/fire/firestore';
 import { Appointment } from '../../interfaces/appointment';
 import { MedicalData } from '../../interfaces/medicalData';
 import { Specialties } from '../../interfaces/appointment';
@@ -25,6 +25,40 @@ export class AppointmentsService {
       return [];
     }
   }
+
+  async getApponitmentbySpeciality(): Promise<{ especialidad: string; image?: string }[]> { 
+    try {
+      const specialtiesRef = collection(this.firestore, 'appointments');
+      const querySnapshot = await getDocs(specialtiesRef);
+      return querySnapshot.docs.map(doc => ({
+        especialidad: doc.data()['specialty'],
+      }));
+
+    } catch (error) {
+      console.error('Error fetching appointments by specialty:', error);
+      return [];
+    }
+  }
+
+  async getMedicalHistoryByUserID(userId: string): Promise<any[]> {
+    try {
+      const medicalHistoriesCol = collection(this.firestore, 'medicalHistories');
+      const q = query(medicalHistoriesCol, where('patientUID', '==', userId));
+      const querySnapshot = await getDocs(q);
+      
+      const medicalHistories = querySnapshot.docs.map(doc => ({
+        id: doc.id, 
+        ...doc.data() 
+      }));
+
+      return medicalHistories;
+
+    } catch (error) {
+      console.error('Error fetching medical history:', error);
+      return []; 
+    }
+  }
+
 
   async getDoctorsBySpecialty(specialty: string): Promise<any[]> {
     const especialistasRef = collection(this.firestore, 'especialistas');
@@ -217,11 +251,30 @@ export class AppointmentsService {
             throw new Error('Uno o más campos de datos médicos son indefinidos.');
         }
 
+        console.log({ date: appointment.date,
+          appointmentId: appointment.id,
+          patientLastName: appointment.patientLastName,
+          patientFirstName: appointment.patientFirstName,
+          doctorFirstName: appointment.doctorFirstName,
+          doctorLastName: appointment.doctorLastName,
+          patientUID: appointment.uidPatient,
+          weight: medicalData.weight, 
+          height: medicalData.height, 
+          pressure: medicalData.pressure, 
+          dynamicData: medicalData.dynamicData })
+
         const medicalHistoriesRef = collection(this.firestore, 'medicalHistories');
         await addDoc(medicalHistoriesRef, {
             date: appointment.date,
             appointmentId: appointment.id,
+            patientLastName: appointment.patientLastName,
+            patientFirstName: appointment.patientFirstName,
+            doctorFirstName: appointment.doctorFirstName,
+            doctorLastName: appointment.doctorLastName,
             patientUID: appointment.uidPatient,
+            secondVisitRecommendation: medicalData.secondVisitRecommendation,
+            patientBehavior: medicalData.behavior,
+            patientGeneralState: medicalData.generalState,
             weight: medicalData.weight, 
             height: medicalData.height, 
             pressure: medicalData.pressure, 

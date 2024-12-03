@@ -1,6 +1,6 @@
 <app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
 
-<div class="main-container d-flex" style="height: 100vh;">
+<div  class="main-container d-flex" style="height: 100vh;">
     <app-sidebar></app-sidebar>
     <div class="content-wrapper d-flex flex-column align-items-center p-4 flex-grow-1">
         <h2 class="mb-3">Turnos</h2>
@@ -37,7 +37,7 @@
                         <td class="text-center">{{ appointment.patientFirstName}}</td>
                         <td class="text-center">{{ appointment.patientLastName}}</td>
 
-                        <td class="text-center">{{ appointment.doctorSpecialties.join(', ') }}</td>
+                        <td class="text-center">{{ appointment.specialty }}</td>
                         <td class="text-center" [appAppointmentStatusColor]="appointment.status">
                             {{ appointment.status | formatAppointmentStatus }}
 

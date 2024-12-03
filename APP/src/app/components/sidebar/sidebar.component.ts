@@ -56,6 +56,14 @@ export class SidebarComponent implements OnInit {
     this.router.navigate(['admin/turnos']);
   }
 
+  navigateToPatientMedicalHistory(){
+    this.router.navigate(['paciente/historiaMedica']);
+  }
+
+  navigateToInformes(){
+    this.router.navigate(['admin/informes']);
+  }
+
   logOut() {
     this.checkUserRole();
     this.authService.logOut();

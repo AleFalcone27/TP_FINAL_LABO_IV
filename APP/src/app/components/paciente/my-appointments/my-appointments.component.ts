@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { FormatAppointmentStatusPipe } from '../../../pipes/format-appointment-status/format-appointment-status.pipe';
 import { AppointmentStatusColorDirective } from '../../../directives/appointment-status-color/appointment-status-color.directive';
 import Swal from 'sweetalert2';
+import { routeAnimations } from '../../../animations/animations';
 
 
 @Component({
@@ -17,7 +18,8 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [SidebarComponent,SpinnerComponent,CommonModule,FormsModule,FormatAppointmentStatusPipe,AppointmentStatusColorDirective],
   templateUrl: './my-appointments.component.html',
-  styleUrl: './my-appointments.component.css'
+  styleUrl: './my-appointments.component.css',
+  animations: [routeAnimations]
 })
 export class MyAppointmentsComponent {
 

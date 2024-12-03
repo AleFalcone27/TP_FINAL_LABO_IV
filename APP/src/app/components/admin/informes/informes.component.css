@@ -1,0 +1,11 @@
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.doughnut-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

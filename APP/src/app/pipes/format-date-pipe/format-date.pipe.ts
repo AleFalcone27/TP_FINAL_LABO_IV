@@ -19,7 +19,6 @@ export class FormatDatePipe implements PipeTransform {
     const year = date.getFullYear();
 
     return `${day} de ${monthName}, ${year}`;
-    //return `${day} de ${monthName}, ${year}`;
   }
 
 }

@@ -13,6 +13,8 @@ import { PerfilEspecialistaComponent } from './components/especialista/perfil-es
 import { MisTurnosEspecialistaComponent } from './components/especialista/mis-turnos-especialista/mis-turnos-especialista.component';
 import { AdminTurnosComponent } from './components/admin/admin-turnos/admin-turnos.component';
 import { PerfilAdminComponent } from './components/admin/perfil-admin/perfil-admin.component';
+import { InformesComponent } from './components/admin/informes/informes.component';
+import { PacienteHistoriaMedicaComponent } from './components/paciente/paciente-historia-medica/paciente-historia-medica.component';
 
 
 
@@ -37,6 +39,8 @@ export const routes: Routes = [
     { path: 'admin', component:AdminDashboardComponent },
     { path: 'admin/perfil', component:PerfilAdminComponent },
     { path: 'admin/turnos', component:AdminTurnosComponent },
+    { path: 'admin/informes', component:InformesComponent
+    },
    
 
     // Rutas Especialista
@@ -49,7 +53,8 @@ export const routes: Routes = [
     { path: 'paciente', component:PacienteDashboardComponent },
     { path: 'paciente/perfil', component:PerfilPacienteComponent },
     { path: 'paciente/misTurnos', component:MyAppointmentsComponent },
-    { path: 'paciente/reservarTurno', component:MakeAppointmentComponent }
+    { path: 'paciente/reservarTurno', component:MakeAppointmentComponent },
+    { path: 'paciente/historiaMedica', component:PacienteHistoriaMedicaComponent }
 
 
 ];

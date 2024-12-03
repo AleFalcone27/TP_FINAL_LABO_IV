@@ -11,13 +11,15 @@ import { FormatAppointmentStatusPipe } from '../../../pipes/format-appointment-s
 import { AppointmentStatusColorDirective } from '../../../directives/appointment-status-color/appointment-status-color.directive';
 import { MedicalData } from '../../../interfaces/medicalData';
 import Swal from 'sweetalert2';
+import { routeAnimations } from '../../../animations/animations';
 
 @Component({
   selector: 'app-mis-turnos-especialista',
   standalone: true,
   imports: [SidebarComponent, SpinnerComponent, CommonModule, FormsModule, FormatAppointmentStatusPipe, AppointmentStatusColorDirective],
   templateUrl: './mis-turnos-especialista.component.html',
-  styleUrl: './mis-turnos-especialista.component.css'
+  styleUrl: './mis-turnos-especialista.component.css',
+  animations: [routeAnimations]
 })
 export class MisTurnosEspecialistaComponent {
 

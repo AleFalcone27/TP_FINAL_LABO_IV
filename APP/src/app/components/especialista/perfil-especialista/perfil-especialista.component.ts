@@ -6,13 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { SpinnerComponent } from '../../spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
+import { routeAnimations } from '../../../animations/animations';
 
 @Component({
   selector: 'app-perfil-especialista',
   standalone: true,
   imports: [SidebarComponent, CommonModule, FormsModule, SpinnerComponent],
   templateUrl: './perfil-especialista.component.html',
-  styleUrls: ['./perfil-especialista.component.css']
+  styleUrls: ['./perfil-especialista.component.css'],
+  animations: [routeAnimations]
 })
 export class PerfilEspecialistaComponent implements OnInit {
 
