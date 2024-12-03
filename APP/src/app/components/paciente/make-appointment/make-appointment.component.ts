@@ -9,6 +9,9 @@ import { FormatDatePipe } from '../../../pipes/format-date-pipe/format-date.pipe
 import { Timestamp } from '@angular/fire/firestore';
 import { FormatHourPipe } from '../../../pipes/format-hour/format-hour.pipe';
 import Swal from 'sweetalert2';
+import { Specialties } from '../../../interfaces/appointment';
+import { SpecialtyDetails } from '../../../interfaces/appointment';
+import { Schedule } from '../../../interfaces/appointment';
 
 @Component({
   selector: 'app-make-appointment',
@@ -23,6 +26,7 @@ export class MakeAppointmentComponent implements OnInit {
   doctors: any[] = [];
   availableSlots: Date[] = [];
   selectedDoctor: any;
+  selectedSpecialty!: string;
   groupedSlots: { date: string; slots: Date[] }[] = [];
   isOpen: { [key: string]: boolean } = {};
   reservedSlots: Date[] = [];
@@ -57,7 +61,7 @@ export class MakeAppointmentComponent implements OnInit {
     try {
       this.loadingMessage = 'Cargando especialistas...';
       this.isLoading = true;
-      console.log('Especialidad seleccionada:', specialty);
+      this.selectedSpecialty = specialty;
       this.doctors = await this.appointmentsService.getDoctorsBySpecialty(specialty);
       console.log('Doctores encontrados:', this.doctors);
     } catch (error) {
@@ -71,14 +75,16 @@ export class MakeAppointmentComponent implements OnInit {
     const reservedSlots: Date[] = [];
     const appointmentsCollection = collection(this.firestore, 'appointments');
 
-    const querySnapshot = await getDocs(query(appointmentsCollection, where('uidDoctor', '==', doctorId), where('date', '>=', Timestamp.fromDate(startDate)), where('date', '<=', Timestamp.fromDate(endDate))));
+    const querySnapshot = await getDocs(query(appointmentsCollection, where('uidDoctor', '==', doctorId),where('date', '>=', Timestamp.fromDate(startDate)), where('date', '<=', Timestamp.fromDate(endDate))));
 
     querySnapshot.forEach(doc => {
       const data = doc.data();
       reservedSlots.push(data['date'].toDate());
     });
 
+    console.log(reservedSlots)
     return reservedSlots;
+
   }
 
   async selectDoctor(doctor: any): Promise<void> {
@@ -88,31 +94,37 @@ export class MakeAppointmentComponent implements OnInit {
 
   async loadAvailableSlots(doctorId: string): Promise<void> {
     try {
-      this.loadingMessage = 'Obteniendo turnos disponibles...';
-      this.isLoading = true;
+        this.loadingMessage = 'Obteniendo turnos disponibles...';
+        this.isLoading = true;
 
-      const { AppointmentDuration, Schedule } = await this.appointmentsService.getDoctorDetails(doctorId);
+        // Aquí está la corrección: desestructuramos el objeto correctamente
+        const { Specialties } = await this.appointmentsService.getDoctorDetails(doctorId);
+;
+        console.log(Specialties[this.selectedSpecialty]);
 
-      const today = new Date();
-      const endDate = new Date();
-      endDate.setDate(today.getDate() + 15);
 
-      const reservedSlots = await this.loadReservedSlots(doctorId, today, endDate);
+        const today = new Date();
+        const endDate = new Date();
+        endDate.setDate(today.getDate() + 15);
 
-      this.availableSlots = this.calculateAvailableSlots(today, endDate, AppointmentDuration, Schedule);
+        const reservedSlots = await this.loadReservedSlots(doctorId, today, endDate);
 
-      this.availableSlots = this.availableSlots.filter(slot => !reservedSlots.some(reservedSlot => reservedSlot.getTime() === slot.getTime()));
+        this.availableSlots = this.calculateAvailableSlots(today, endDate, Specialties[this.selectedSpecialty]['AppointmentDuration'], Specialties[this.selectedSpecialty]['Schedule']);
 
-      this.groupedSlots = this.groupSlotsByDate(this.availableSlots);
+        this.availableSlots = this.availableSlots.filter(slot => 
+            !reservedSlots.some(reservedSlot => reservedSlot.getTime() === slot.getTime())
+        );
 
-      console.log('Turnos disponibles:', this.availableSlots);
+        this.groupedSlots = this.groupSlotsByDate(this.availableSlots);
+
+        console.log('Turnos disponibles:', this.availableSlots);
     } catch (error) {
-      console.error('Error al cargar los turnos disponibles:', error);
+        console.error('Error al cargar los turnos disponibles:', error);
     } finally {
-      this.loadingMessage = 'Cargando...';
-      this.isLoading = false;
+        this.loadingMessage = 'Cargando...';
+        this.isLoading = false;
     }
-  }
+}
 
   private groupSlotsByDate(slots: Date[]): { date: string; slots: Date[] }[] {
     const grouped: { [key: string]: Date[] } = {};
@@ -132,7 +144,7 @@ export class MakeAppointmentComponent implements OnInit {
     return this.reservedSlots ? this.reservedSlots.some(reservedSlot => reservedSlot.getTime() === slot.getTime()) : false;
   }
 
-  calculateAvailableSlots(startDate: Date, endDate: Date, appointmentDuration: number, schedule: any): Date[] {
+  calculateAvailableSlots(startDate: Date, endDate: Date, appointmentDuration: string, schedule: any): Date[] {
     const availableSlots: Date[] = [];
     const daysOfWeek = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 
@@ -197,10 +209,10 @@ export class MakeAppointmentComponent implements OnInit {
         conformeRating: ''
       },
       stars: '',
+      specialty: this.selectedSpecialty,
       uidDoctor: this.selectedDoctor.uid,
       doctorFirstName: this.selectedDoctor.firstName,
       doctorLastName: this.selectedDoctor.lastName,
-      doctorSpecialties: this.selectedDoctor.specialties,
       patientFirstName: user['firstName'],
       patientLastName: user['lastName'],
       uidPatient: user['uid'],

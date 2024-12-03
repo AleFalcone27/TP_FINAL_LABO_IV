@@ -18,5 +18,6 @@ export class PerfilAdminComponent implements OnInit{
   ngOnInit(): void {
     this.authService.getUser()
     this.userData = this.authService.getUserData();
+    console.log(this.userData)
   }
 }

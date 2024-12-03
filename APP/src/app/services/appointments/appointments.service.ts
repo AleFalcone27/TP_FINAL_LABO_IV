@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, Timestamp, query, where, getDocs, getDoc, doc, updateDoc } from '@angular/fire/firestore';
 import { Appointment } from '../../interfaces/appointment';
 import { MedicalData } from '../../interfaces/medicalData';
+import { Specialties } from '../../interfaces/appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -36,22 +37,21 @@ export class AppointmentsService {
     }));
   }
 
-  async getDoctorDetails(doctorId: string): Promise<{ AppointmentDuration: number; Schedule: { start: string; end: string } }> {
+  async getDoctorDetails(doctorId: string): Promise<{ Specialties: Specialties }> {
     const doctorsCollection = collection(this.firestore, 'especialistas');
 
     const q = query(doctorsCollection, where('uid', '==', doctorId));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      throw new Error('Doctor not found');
+        throw new Error('Doctor not found');
     }
     const doctorData = querySnapshot.docs[0].data();
 
-    return {
-      AppointmentDuration: doctorData['AppointmentDuration'],
-      Schedule: doctorData['Schedule']
-    };
-  }
+    const specialties: Specialties = doctorData['Specialties'] || {};
+
+    return { Specialties: specialties };
+}
 
   async cancelAppointment(appointmentId: string, comment: string): Promise<void> {
     const appointmentRef = doc(this.firestore, `appointments/${appointmentId}`);
@@ -79,24 +79,24 @@ export class AppointmentsService {
 
 
         return {
-          id: doc['id'],
+          id: doc.id, // Cambiado a doc.id para obtener el ID del documento
           doctorReview: data['doctorReview'] || "",
           cancellationComment: data['cancellationComment'] || "",
           patientSurvey: {
-            knowledgeRating: data['PatientSurvey']?.knowledgeRating || 0,
-            conformeRating: data['PatientSurvey']?.conformeRating || ""
+              knowledgeRating: data['patientSurvey']?.knowledgeRating || 0,
+              conformeRating: data['patientSurvey']?.conformeRating || ""
           },
+          specialty: data['specialty'], // Asignando specialties directamente
           stars: data['stars'] || "0",
-          patientFirstName: data['patientFirstName'],
-          patientLastName: data['patientLastName'],
-          date: data['date'] as Timestamp,
-          doctorSpecialties: data['doctorSpecialties'] || [],
+          date: data['date'] as Timestamp, // Asegúrate de que esto sea un Timestamp
+          patientFirstName: data['patientFirstName'] || "",
+          patientLastName: data['patientLastName'] || "",
           doctorFirstName: data['doctorFirstName'] || "",
           doctorLastName: data['doctorLastName'] || "",
           status: data['status'] || 0,
           uidPatient: data['uidPatient'] || "",
           uidDoctor: data['uidDoctor'] || ""
-        } as Appointment;
+      } as Appointment;
       });
     } catch (error) {
       console.error('Error al obtener citas:', error);
@@ -106,38 +106,41 @@ export class AppointmentsService {
 
   async getAppointmentsByDoctorId(userId: string): Promise<Appointment[]> {
     try {
-      const collectionRef = collection(this.firestore, 'appointments');
-      const q = query(collectionRef, where('uidDoctor', '==', userId));
-      const querySnapshot = await getDocs(q);
+        const collectionRef = collection(this.firestore, 'appointments');
+        const q = query(collectionRef, where('uidDoctor', '==', userId));
+        const querySnapshot = await getDocs(q);
 
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data();
+        return querySnapshot.docs.map(doc => {
+            const data = doc.data();
 
-        return {
-          id: doc['id'],
-          doctorReview: data['doctorReview'] || "",
-          cancellationComment: data['cancellationComment'] || "",
-          patientSurvey: {
-            knowledgeRating: data['PatientSurvey']?.knowledgeRating || 0,
-            conformeRating: data['PatientSurvey']?.conformeRating || ""
-          },
-          stars: data['stars'] || "0",
-          date: data['date'] as Timestamp,
-          doctorSpecialties: data['doctorSpecialties'] || [],
-          patientFirstName: data['patientFirstName'],
-          patientLastName: data['patientLastName'],
-          doctorFirstName: data['doctorFirstName'] || "",
-          doctorLastName: data['doctorLastName'] || "",
-          status: data['status'] || 0,
-          uidPatient: data['uidPatient'] || "",
-          uidDoctor: data['uidDoctor'] || ""
-        } as Appointment;
-      });
+            // Asumiendo que specialties es un objeto que sigue la estructura definida
+            const specialties: Specialties = data['Specialties'] || {};
+
+            return {
+                id: doc.id, // Cambiado a doc.id para obtener el ID del documento
+                doctorReview: data['doctorReview'] || "",
+                cancellationComment: data['cancellationComment'] || "",
+                patientSurvey: {
+                    knowledgeRating: data['patientSurvey']?.knowledgeRating || 0,
+                    conformeRating: data['patientSurvey']?.conformeRating || ""
+                },
+                specialty: data['specialty'], // Asignando specialties directamente
+                stars: data['stars'] || "0",
+                date: data['date'] as Timestamp, // Asegúrate de que esto sea un Timestamp
+                patientFirstName: data['patientFirstName'] || "",
+                patientLastName: data['patientLastName'] || "",
+                doctorFirstName: data['doctorFirstName'] || "",
+                doctorLastName: data['doctorLastName'] || "",
+                status: data['status'] || 0,
+                uidPatient: data['uidPatient'] || "",
+                uidDoctor: data['uidDoctor'] || ""
+            } as Appointment;
+        });
     } catch (error) {
-      console.error('Error al obtener citas:', error);
-      return [];
+        console.error('Error al obtener citas:', error);
+        return [];
     }
-  }
+}
 
   async rateDoctor(appointmentId: string, rating: number): Promise<void> {
     const appointmentRef = doc(this.firestore, `appointments/${appointmentId}`);

@@ -81,7 +81,10 @@ export class AuthService {
     return !!this.auth.currentUser;
   }
 
-  async updateAppointmentDuration(appointmentDuration: string, schedule: any): Promise<void> {
+  async updateAppointmentDurations(schedulesToUpdate: { specialty: string; appointmentDuration: string; schedule: any }[]): Promise<void> {
+
+
+    console.log(schedulesToUpdate)
 
     const user = this.getUserData();
     const collectionRef = collection(this.firestore, 'especialistas');
@@ -91,13 +94,25 @@ export class AuthService {
     if (querySnapshot.empty) {
       throw new Error('No document to update.');
     }
+
     const docRef = querySnapshot.docs[0].ref;
 
+    // Prepare the data to update
+    const updatedSchedules: UpdatedSchedules = {}; // Specify the type here
+
+    schedulesToUpdate.forEach(({ specialty, appointmentDuration, schedule }) => {
+      updatedSchedules[specialty] = {
+        AppointmentDuration: appointmentDuration,
+        Schedule: schedule
+      };
+    });
+
+    // Update the document with the new schedules
     await updateDoc(docRef, {
-      AppointmentDuration: appointmentDuration,
-      Schedule: schedule
+      Specialties: updatedSchedules
     });
   }
+
 
 
   async getDoctorSchedule(): Promise<any> {
@@ -130,4 +145,14 @@ export class AuthService {
     return this.userData ? this.userData.id : undefined;
   }
 
+}
+
+
+interface ScheduleUpdate {
+  AppointmentDuration: string;
+  Schedule: any;
+}
+
+interface UpdatedSchedules {
+  [specialty: string]: ScheduleUpdate; // Allows dynamic keys of type string
 }

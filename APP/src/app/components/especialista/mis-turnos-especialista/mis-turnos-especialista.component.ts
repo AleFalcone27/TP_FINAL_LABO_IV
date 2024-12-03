@@ -53,12 +53,13 @@ export class MisTurnosEspecialistaComponent {
     if (this.searchTerm) {
       const searchLower = this.searchTerm.toLowerCase();
       filtered = filtered.filter(appointment => {
-        const specialtiesLower = appointment.doctorSpecialties.map(specialty => specialty.toLowerCase());
-        return specialtiesLower.includes(searchLower) ||
-          appointment.doctorFirstName.toLowerCase().includes(searchLower) ||
-          appointment.doctorLastName.toLowerCase().includes(searchLower);
+          return appointment.patientFirstName.toLowerCase().includes(searchLower) ||
+                 appointment.patientLastName.toLowerCase().includes(searchLower) ||
+                 appointment.specialty.toLowerCase().includes(searchLower) ||
+                 this.getTime(appointment.date).includes(searchLower)  ||
+                 this.formatDate(appointment.date).includes(searchLower)
       });
-    }
+  }
 
     this.filteredAppointments = filtered;
   }
@@ -71,6 +72,13 @@ export class MisTurnosEspecialistaComponent {
   formatDate(date: Timestamp): string {
     const dateObj = date.toDate();
     return dateObj.toLocaleDateString();
+  }
+
+  getTime(date: Timestamp): string {
+    const dateObj = date.toDate();
+    const hours = dateObj.getHours().toString().padStart(2, '0');
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   async cancelAppointment(appointment: Appointment) {
@@ -145,8 +153,8 @@ export class MisTurnosEspecialistaComponent {
 
   async endAppointment(appointment: Appointment) {
     const { value: formValues } = await Swal.fire({
-        title: 'Finalizar Cita',
-        html: `
+      title: 'Finalizar Cita',
+      html: `
             <textarea id="feedback" placeholder="Escribe tus comentarios aquí..." style="width: 100%; height: 100px;"></textarea>
             <br><br>
             <label for="altura">Altura (cm):</label>
@@ -188,59 +196,59 @@ export class MisTurnosEspecialistaComponent {
             <label for="dynamicValue3">Valor 3:</label>
             <input id="dynamicValue3" type="number" placeholder="Ej. 5 " style="width: 100%;" />
         `,
-        showCancelButton: true,
-        confirmButtonText: 'Finalizar Cita',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-            const feedback = (document.getElementById('feedback') as HTMLTextAreaElement).value;
-            const altura = parseInt((document.getElementById('altura') as HTMLInputElement).value);
-            const peso = parseInt((document.getElementById('peso') as HTMLInputElement).value);
-            const temperatura = parseFloat((document.getElementById('temperatura') as HTMLInputElement).value);
-            const presion = (document.getElementById('presion') as HTMLInputElement).value; // Presión se mantiene como string
-            const comportamiento = parseInt((document.getElementById('comportamiento') as HTMLInputElement).value);
-            const estadoGeneral = parseInt((document.getElementById('estadoGeneral') as HTMLInputElement).value);
-            const segundaVisita = (document.getElementById('segundaVisita') as HTMLSelectElement).value;
+      showCancelButton: true,
+      confirmButtonText: 'Finalizar Cita',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const feedback = (document.getElementById('feedback') as HTMLTextAreaElement).value;
+        const altura = parseInt((document.getElementById('altura') as HTMLInputElement).value);
+        const peso = parseInt((document.getElementById('peso') as HTMLInputElement).value);
+        const temperatura = parseFloat((document.getElementById('temperatura') as HTMLInputElement).value);
+        const presion = (document.getElementById('presion') as HTMLInputElement).value; // Presión se mantiene como string
+        const comportamiento = parseInt((document.getElementById('comportamiento') as HTMLInputElement).value);
+        const estadoGeneral = parseInt((document.getElementById('estadoGeneral') as HTMLInputElement).value);
+        const segundaVisita = (document.getElementById('segundaVisita') as HTMLSelectElement).value;
 
-            // Obtener datos dinámicos
-            const dynamicData = [];
-            for (let i = 1; i <= 3; i++) {
-                const key = (document.getElementById(`dynamicKey${i}`) as HTMLInputElement).value;
-                const value = parseInt((document.getElementById(`dynamicValue${i}`) as HTMLInputElement).value);
-                if (key && !isNaN(value)) {
-                    dynamicData.push({ key, value });
-                }
-            }
-            if (!feedback || isNaN(altura) || isNaN(peso) || isNaN(temperatura) || !presion || isNaN(estadoGeneral)) {
-                Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
-            }
-            return { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, segundaVisita, dynamicData };
+        // Obtener datos dinámicos
+        const dynamicData = [];
+        for (let i = 1; i <= 3; i++) {
+          const key = (document.getElementById(`dynamicKey${i}`) as HTMLInputElement).value;
+          const value = parseInt((document.getElementById(`dynamicValue${i}`) as HTMLInputElement).value);
+          if (key && !isNaN(value)) {
+            dynamicData.push({ key, value });
+          }
         }
+        if (!feedback || isNaN(altura) || isNaN(peso) || isNaN(temperatura) || !presion || isNaN(estadoGeneral)) {
+          Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
+        }
+        return { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, segundaVisita, dynamicData };
+      }
     });
 
     if (formValues) {
-        const { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, segundaVisita, dynamicData } = formValues;
+      const { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, segundaVisita, dynamicData } = formValues;
 
-        console.log(formValues);
+      console.log(formValues);
 
-        try {
-            await this.appointmentService.endAppointment(appointment, feedback, {
-                height: altura,
-                weight: peso,
-                temperature: temperatura,
-                pressure: presion,
-                behavior: comportamiento,
-                generalState: estadoGeneral,
-                secondVisitRecommendation: segundaVisita,
-                dynamicData
-            } as MedicalData);
-            Swal.fire('Cita Finalizada', 'La historia médica ya está disponible.', 'success');
-        } catch (error) {
-            Swal.fire('Error', 'No se pudo finalizar la cita. Inténtelo de nuevo.', 'error');
-            console.error('Error finalizando la cita:', error);
-        }
+      try {
+        await this.appointmentService.endAppointment(appointment, feedback, {
+          height: altura,
+          weight: peso,
+          temperature: temperatura,
+          pressure: presion,
+          behavior: comportamiento,
+          generalState: estadoGeneral,
+          secondVisitRecommendation: segundaVisita,
+          dynamicData
+        } as MedicalData);
+        Swal.fire('Cita Finalizada', 'La historia médica ya está disponible.', 'success');
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo finalizar la cita. Inténtelo de nuevo.', 'error');
+        console.error('Error finalizando la cita:', error);
+      }
     }
     this.loadAppointments();
-}
+  }
 
 
 

@@ -18,6 +18,8 @@ export class PerfilEspecialistaComponent implements OnInit {
 
   userData: any;
   appointmentDuration: string = '';
+  appointmentDurations: string[] = [];
+  schedules: any[] = [];
   isLoading = false;
   loadingMessage = '';
 
@@ -37,90 +39,82 @@ export class PerfilEspecialistaComponent implements OnInit {
   constructor(private authService: AuthService, private appointmentsService: AppointmentsService) { }
 
   async ngOnInit(): Promise<void> {
-    this.authService.getUser();
+    this.authService.getUser ();
     this.userData = this.authService.getUserData();
-    console.log(this.userData);
 
-    if (this.userData && this.userData.AppointmentDuration) {
-      this.appointmentDuration = this.userData.AppointmentDuration;
+    if (this.userData && this.userData.Specialties) {
+        this.userData.specialties.forEach((specialty: string, index: number) => {
+
+            console.log(this.userData);
+
+            const appointmentDuration = this.userData.Specialties[specialty]?.AppointmentDuration || '';
+
+            this.appointmentDurations[index] = appointmentDuration; 
+            this.schedules[index] = {
+                lunes: { start: '', end: '' },
+                martes: { start: '', end: '' },
+                miercoles: { start: '', end: '' },
+                jueves: { start: '', end: '' },
+                viernes: { start: '', end: '' },
+                sabado: { start: '', end: '' }
+            };
+        });
+
+        const data = await this.authService.getDoctorSchedule();
+        if (data) {
+            this.userData.specialties.forEach((specialty: string, index: number) => {
+                const specialtySchedule = data['Specialties'][specialty];
+
+                this.schedules[index] = {
+                    lunes: { start: specialtySchedule['Schedule']['lunes']['start'] || '', end: specialtySchedule['Schedule']['lunes']['end'] || '' },
+                    martes: { start: specialtySchedule['Schedule']['martes']['start'] || '', end: specialtySchedule['Schedule']['martes']['end'] || '' },
+                    miercoles: { start: specialtySchedule['Schedule']['miercoles']['start'] || '', end: specialtySchedule['Schedule']['miercoles']['end'] || '' },
+                    jueves: { start: specialtySchedule['Schedule']['jueves']['start'] || '', end: specialtySchedule['Schedule']['jueves']['end'] || '' },
+                    viernes: { start: specialtySchedule['Schedule']['viernes']['start'] || '', end: specialtySchedule['Schedule']['viernes']['end'] || '' },
+                    sabado: { start: specialtySchedule['Schedule']['sabado']['start'] || '', end: specialtySchedule['Schedule']['sabado']['end'] || '' }
+                };
+            });
+        }
     }
-
-    const data = await this.authService.getDoctorSchedule();
-
-    if (data) {
-      this.lunesStart = data['Schedule']['lunes']['start'];
-      this.lunesEnd = data['Schedule']['lunes']['end'];
-      this.martesStart = data['Schedule']['martes']['start'];
-      this.martesEnd = data['Schedule']['martes']['end'];
-      this.miercolesStart = data['Schedule']['miercoles']['start'];
-      this.miercolesEnd = data['Schedule']['miercoles']['end'];
-      this.juevesStart = data['Schedule']['jueves']['start'];
-      this.juevesEnd = data['Schedule']['jueves']['end'];
-      this.viernesStart = data['Schedule']['viernes']['start'];
-      this.viernesEnd = data['Schedule']['viernes']['end'];
-      this.sabadoStart = data['Schedule']['sabado']['start'];
-      this.sabadoEnd = data['Schedule']['sabado']['end'];
-    }
-  }
+}
 
   async updateAppointmentDuration(): Promise<void> {
     this.isLoading = true;
     this.loadingMessage = 'Actualizando...';
 
-    if (this.appointmentDuration) {
-      const schedule = {
-        lunes: {
-          start: this.lunesStart,
-          end: this.lunesEnd
-        },
-        martes: {
-          start: this.martesStart,
-          end: this.martesEnd
-        },
-        miércoles: {
-          start: this.miercolesStart,
-          end: this.miercolesEnd
-        },
-        jueves: {
-          start: this.juevesStart,
-          end: this.juevesEnd
-        },
-        viernes: {
-          start: this.viernesStart,
-          end: this.viernesEnd
-        },
-        sábado: {
-          start: this.sabadoStart,
-          end: this.sabadoEnd
-        },
-      };
+    const schedulesToUpdate = this.schedules.map((schedule, index) => ({
+      specialty: this.userData.specialties[index],
+      appointmentDuration: this.appointmentDurations[index],
+      schedule
+    }));
 
 
-      const validationResult = this.validateSchedule(schedule);
-      if (!validationResult.isValid) {
-        this.isLoading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: validationResult.message,
-          confirmButtonText: 'Aceptar'
-        });
-        return;
-      }
 
-      await this.authService.updateAppointmentDuration(this.appointmentDuration, schedule);
+    const validationResults = schedulesToUpdate.map(({ schedule }) => this.validateSchedule(schedule));
+    const invalidResult = validationResults.find(result => !result.isValid);
+
+    if (invalidResult) {
       this.isLoading = false;
-
       Swal.fire({
-        icon: 'success',
-        title: 'Éxito',
-        text: 'Datos actualizados',
+        icon: 'error',
+        title: 'Error',
+        text: invalidResult.message,
         confirmButtonText: 'Aceptar'
       });
-    } else {
-      this.isLoading = false;
-      console.warn('Por favor, ingresa una duración válida.');
+      return;
     }
+
+    console.log(schedulesToUpdate);
+
+    await this.authService.updateAppointmentDurations(schedulesToUpdate);
+    this.isLoading = false;
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Éxito',
+      text: 'Datos actualizados',
+      confirmButtonText: 'Aceptar'
+    });
   }
 
   private validateSchedule(schedule: any): { isValid: boolean, message?: string } {
@@ -134,7 +128,7 @@ export class PerfilEspecialistaComponent implements OnInit {
         continue;
       }
 
-      if (day === 'sábado') {
+      if (day === 'sabado') {
         if (!this.isTimeInRange(start, saturdayRange) || !this.isTimeInRange(end, saturdayRange)) {
           return { isValid: false, message: `Los horarios del sábado deben estar entre ${saturdayRange.start} y ${saturdayRange.end}.` };
         }

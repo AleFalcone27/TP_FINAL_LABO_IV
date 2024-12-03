@@ -55,10 +55,11 @@ export class MyAppointmentsComponent {
     if (this.searchTerm) {
         const searchLower = this.searchTerm.toLowerCase();
         filtered = filtered.filter(appointment => {
-            const specialtiesLower = appointment.doctorSpecialties.map(specialty => specialty.toLowerCase());
-            return specialtiesLower.includes(searchLower) ||
-                   appointment.doctorFirstName.toLowerCase().includes(searchLower) ||
-                   appointment.doctorLastName.toLowerCase().includes(searchLower);
+            return appointment.doctorFirstName.toLowerCase().includes(searchLower) ||
+                   appointment.doctorLastName.toLowerCase().includes(searchLower) ||
+                   appointment.specialty.toLowerCase().includes(searchLower) ||
+                   this.getTime(appointment.date).includes(searchLower)  ||
+                   this.formatDate(appointment.date).includes(searchLower)
         });
     }
 
@@ -173,7 +174,6 @@ async cancelAppointment(appointment: Appointment) {
       const { knowledge, conforme } = formValues;
   
       try {
-        // Aquí puedes llamar a un método en tu servicio para guardar los resultados de la encuesta
         await this.appointmentService.fillSurvey(appointment.id, Number(knowledge), conforme);
         Swal.fire('Gracias!', 'Tu encuesta ha sido enviada.', 'success');
         this.loadAppointments(); 
@@ -183,12 +183,18 @@ async cancelAppointment(appointment: Appointment) {
       }
     }
   
-    // Actualizar el valor de la barra deslizante en tiempo real
     const knowledgeInput = document.getElementById('knowledge') as HTMLInputElement;
     const knowledgeValue = document.getElementById('knowledgeValue') as HTMLSpanElement;
     knowledgeInput.oninput = () => {
       knowledgeValue.innerText = knowledgeInput.value;
     };
+  }
+
+  getTime(date: Timestamp): string {
+    const dateObj = date.toDate();
+    const hours = dateObj.getHours().toString().padStart(2, '0');
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
 }

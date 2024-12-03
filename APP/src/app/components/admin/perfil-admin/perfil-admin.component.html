@@ -10,7 +10,7 @@
                         <form class="card-body cardbody-color p-lg-5">
 
                             <div class="text-center">
-                                <img [src]="userData?.profileImages[0]" class="rounded-circle" width="200px" alt="profile">
+                                <img [src]="userData?.profileImage" class="rounded-circle" width="200px" alt="profile">
                             </div>
 
                             <div class="form-text text-center mb-5 text-dark"></div>
@@ -27,9 +27,6 @@
                                 <b>Email: </b>{{ userData?.email }}
                             </div>
 
-                            <div class="mb-3">
-                                <b>Obra Social: </b>{{ userData?.socialInsurance }}
-                            </div>
 
                             <div class="form-text text-center mb-5 text-dark"></div>
                         </form>

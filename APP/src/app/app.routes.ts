@@ -41,7 +41,7 @@ export const routes: Routes = [
 
     // Rutas Especialista
     { path: 'especialista/misTurnos', component:MisTurnosEspecialistaComponent },
-    { path: 'especialista/perfil', component:PerfilAdminComponent },
+    { path: 'especialista/perfil', component:PerfilEspecialistaComponent },
 
 
 

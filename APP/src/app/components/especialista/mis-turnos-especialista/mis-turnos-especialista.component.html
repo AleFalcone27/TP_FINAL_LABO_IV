@@ -15,7 +15,8 @@
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center">Fecha</th>
-                        <th class="text-center">Especialista</th>
+                        <th class="text-center">Horario</th>
+                        <th class="text-center">Paciente</th>
                         <th class="text-center">Especialidad</th>
                         <th class="text-center">Estado</th>
                         <th class="text-center">Acciones</th>
@@ -24,8 +25,9 @@
                 <tbody>
                     <tr *ngFor="let appointment of filteredAppointments">
                         <td class="text-center">{{ formatDate(appointment.date) }}</td>
+                        <td class="text-center">{{ getTime(appointment.date) }}</td>
                         <td class="text-center">{{  appointment.patientFirstName }}, {{  appointment.patientLastName}}</td>
-                        <td class="text-center">{{ appointment.doctorSpecialties.join(', ') }}</td>
+                        <td class="text-center">{{ appointment.specialty }}</td>
                         <td class="text-center" [appAppointmentStatusColor]="appointment.status">
                             {{ appointment.status | formatAppointmentStatus }}
 
