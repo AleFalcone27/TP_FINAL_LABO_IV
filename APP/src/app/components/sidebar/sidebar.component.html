@@ -14,10 +14,16 @@
     </li>
 
     <li *ngIf="userRole === 'admin'" class="nav-item">
-      <a (click)="navigateToUsers()" class="nav-link active" aria-current="page">
+      <a (click)="navigateToUsers()" class="nav-link" aria-current="page">
         Administrar Usuarios
       </a>
     </li>
+    <li *ngIf="userRole === 'admin'" class="nav-item">
+      <a (click)="navigateToTurnos()" class="nav-link" aria-current="page">
+        Turnos
+      </a>
+    </li>
+
     <li *ngIf="userRole === 'paciente'" class="nav-item">
       <a (click)="navigateToMyAppointments()" class="nav-link">
         Mis turnos
@@ -29,7 +35,7 @@
       </a>
     </li>
     <li *ngIf="userRole === 'especialista'" class="nav-item">
-      <a (click)="navigateToMyVisits()" class="nav-link active" aria-current="page">
+      <a (click)="navigateToMyVisits()" class="nav-link" aria-current="page">
         Mis Turnos
       </a>
     </li>

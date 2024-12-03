@@ -24,7 +24,7 @@
                 <tbody>
                     <tr *ngFor="let appointment of filteredAppointments">
                         <td class="text-center">{{ formatDate(appointment.date) }}</td>
-                        <td class="text-center">{{ appointment.doctorFirstName }}, {{ appointment.doctorLastName }}</td>
+                        <td class="text-center">{{  appointment.patientFirstName }}, {{  appointment.patientLastName}}</td>
                         <td class="text-center">{{ appointment.doctorSpecialties.join(', ') }}</td>
                         <td class="text-center" [appAppointmentStatusColor]="appointment.status">
                             {{ appointment.status | formatAppointmentStatus }}
@@ -39,26 +39,26 @@
                                 <button class="btn btn-info me-2" (click)="showReview(appointment.doctorReview)">
                                     Ver reseña
                                 </button>
-
-                                <button class="btn btn-info me-2" (click)="rateDoctor(appointment)">
-                                    Calificar Atencion
-                                </button>
-
-                                <button class="btn btn-info me-2" (click)="fillSurvey(appointment)">
-                                    Completar encuesta
-                                </button>
+                        
                             </div>
-
+                        
                             <div *ngIf="appointment.status === 0" class="button-container">
-                                <button class="btn btn-danger" (click)="cancelAppointment(appointment)">
+                                <button class="btn btn-danger me-2" (click)="cancelAppointment(appointment)">
                                     Cancelar
                                 </button>
-                                <button class="btn btn-danger" (click)="cancelAppointment(appointment)">
+                                <button class="btn btn-danger me-2" (click)="cancelAppointment(appointment)">
                                     Rechazar
                                 </button>
+                                <button class="btn btn-success" (click)="acceptAppointment(appointment)">
+                                    Aceptar
+                                </button>
                             </div>
-
-
+                        
+                            <div *ngIf="appointment.status === 1" class="button-container">
+                                <button class="btn btn-warning" (click)="endAppointment(appointment)">
+                                    Finalizar
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

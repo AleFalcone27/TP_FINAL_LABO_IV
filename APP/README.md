@@ -1,27 +1,68 @@
-# APP
+# Clínica Online - Proyecto Final de LABO 4
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.1.
+Este proyecto es una aplicación web que funciona como una clínica online, permitiendo a los usuarios gestionar citas médicas, acceder a historiales médicos y realizar consultas a distancia. El sistema está diseñado para tres tipos de usuarios: Administradores, Pacientes y Especialistas.
 
-## Development server
+- [Clínica Online - Proyecto Final de LABO 4](#clínica-online---proyecto-final-de-labo-4)
+  - [Características](#características)
+  - [Tecnologías Utilizadas](#tecnologías-utilizadas)
+  - [Roles y funcionalidades](#roles-y-funcionalidades)
+  - [Algunas pantallas](#algunas-pantallas)
+    - [Home](#home)
+    - [Login](#login)
+    - [Mis turnos (especialista)](#mis-turnos-especialista)
+    - [Perfil (Paciente)](#perfil-paciente)
+    - [Usuarios (Admin)](#usuarios-admin)
+    - [Turnos (Admin)](#turnos-admin)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Características
+- **Gestión de Citas**: Los pacientes pueden programar, cancelar y finalizar citas con especialistas.
+- **Historial Médico**: Los especialistas pueden acceder y actualizar el historial médico de los pacientes.
+- **Comentarios y Reseñas**: Los pacientes pueden dejar comentarios y reseñas sobre sus consultas.
+- **Interfaz de Usuario Intuitiva**: Diseñada para ser fácil de usar tanto para pacientes como para especialistas y administradores.
 
-## Build
+## Tecnologías Utilizadas
+- **Frontend**: Angular
+- **Backend**: Firebase Firestore
+- **Autenticación**: Firebase Authentication
+- **Estilo**: CSS y Bootstrap 
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Roles y funcionalidades
+**Admin **
+- Habilitar especialistas
+- Solicitar turnos
+- Cancelar turno
+- Dar de alta todo tipo de usuarios
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+**Paciente **
+- Solicitar y cancelar turnos
+- Calificar atencion
+- Completar encuesta de atencion
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+**Especialista **
+- Aceptar, rechazar y cancelar turnos
+- Finalizar atencion
+- Cargar ficha medica 
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Algunas pantallas
+
+### Home
+- [Home](https://firebasestorage.googleapis.com/v0/b/pplabo2024.appspot.com/o/README%2Fhome.png?alt=media&token=5a2ccf52-867f-4cb3-9803-54c2143792ca)
+
+### Login
+
+### Mis turnos (especialista)
+
+### Perfil (Paciente)
+
+### Usuarios (Admin)
+
+### Turnos (Admin)
+
+
+

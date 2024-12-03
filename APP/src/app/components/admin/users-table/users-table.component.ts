@@ -60,8 +60,6 @@ export class UsersTableComponent implements OnInit {
   }
 
   applyFilters() {
-    // console.log('Applying filters, selected role:', this.selectedRole);
-    // console.log('Original users:', this.users);
 
     let filtered = [...this.users];
 

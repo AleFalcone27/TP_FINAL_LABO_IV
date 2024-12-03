@@ -7,7 +7,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/stor
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { SpecialtyNamePipe } from '../../../pipes/specialty-name.pipe';
+import { SpecialtyNamePipe } from '../../../pipes/specialty-name-pipe/specialty-name.pipe';
+import { AppointmentsService } from '../../../services/appointments/appointments.service';
 
 @Component({
   selector: 'app-register-especialista',
@@ -20,7 +21,7 @@ export class RegisterEspecialistaComponent implements OnInit {
   registerForm: FormGroup;
   specialties: { especialidad: string; image: string }[] = [];
 
-  constructor(private router: Router, private firestore: Firestore, private authService: AuthService) {
+  constructor(private router: Router, private firestore: Firestore, private authService: AuthService, private appointmentsService:AppointmentsService) {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
       lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -54,7 +55,7 @@ export class RegisterEspecialistaComponent implements OnInit {
 
   async loadSpecialties() {
     try {
-      this.specialties = await this.authService.getSpecialties();
+      this.specialties = await this.appointmentsService.getSpecialties();
     } catch (error) {
       console.error('Error loading specialties:', error);
     }

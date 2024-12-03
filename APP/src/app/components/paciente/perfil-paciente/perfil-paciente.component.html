@@ -5,23 +5,30 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
-                    <h2 class="text-center text-dark mt-5">¡Bienvenido/a, {{ userData?.nombre || 'Usuario' }}!</h2>
+                    <h2 class="text-center text-dark mt-5">¡Hola, {{ userData?.firstName || 'Usuario' }}!</h2>
                     <div class="card my-5">
                         <form class="card-body cardbody-color p-lg-5">
+
                             <div class="text-center">
-                                 <img [src]="userData?.image" width="200px" alt="profile" *ngIf="userData?.image">
+                                <img [src]="userData?.profileImages[0]" class="rounded-circle" width="200px" alt="profile">
                             </div>
 
                             <div class="form-text text-center mb-5 text-dark"></div>
 
                             <div class="mb-3">
-                                <b>Nombre: </b>{{ userData?.nombre }}
+                                <b>Nombre: </b>{{ userData?.firstName }}
                             </div>
+
+                            <div class="mb-3">
+                                <b>Aplleido: </b>{{ userData?.lastName }}
+                            </div>
+
                             <div class="mb-3">
                                 <b>Email: </b>{{ userData?.email }}
                             </div>
+
                             <div class="mb-3">
-                                <b>Ubicación: </b>{{ userData?.ubicacion }}
+                                <b>Obra Social: </b>{{ userData?.socialInsurance }}
                             </div>
 
                             <div class="form-text text-center mb-5 text-dark"></div>

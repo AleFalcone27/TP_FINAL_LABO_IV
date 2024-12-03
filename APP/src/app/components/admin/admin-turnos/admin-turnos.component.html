@@ -3,9 +3,8 @@
 <div class="main-container d-flex" style="height: 100vh;">
     <app-sidebar></app-sidebar>
     <div class="content-wrapper d-flex flex-column align-items-center p-4 flex-grow-1">
-        <h2 class="mb-3">Mis Turnos</h2>
+        <h2 class="mb-3">Turnos</h2>
 
-        <!-- Barra de búsqueda -->
         <input type="text" class="form-control mb-3 w-75 border-primary" placeholder="Buscar..."
             (input)="onSearch($event)" [(ngModel)]="searchTerm">
 
@@ -15,16 +14,29 @@
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center">Fecha</th>
-                        <th class="text-center">Especialista</th>
-                        <th class="text-center">Especialidad</th>
+                        <th class="text-center">Nombre Espcialista</th>
+                        <th class="text-center">Apellido Espcialista</th>
+
+                        <th class="text-center">Nombre Paciente</th>
+                        <th class="text-center">Apellido Paciente</th>
+
+                        <th class="text-center">Especialidades</th>
                         <th class="text-center">Estado</th>
+
                         <th class="text-center">Acciones</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let appointment of filteredAppointments">
                         <td class="text-center">{{ formatDate(appointment.date) }}</td>
-                        <td class="text-center">{{ appointment.doctorFirstName }}, {{ appointment.doctorLastName }}</td>
+
+                        <td class="text-center">{{ appointment.doctorFirstName }}</td>
+                        <td class="text-center">{{ appointment.doctorLastName}}</td>
+
+                        <td class="text-center">{{ appointment.patientFirstName}}</td>
+                        <td class="text-center">{{ appointment.patientLastName}}</td>
+
                         <td class="text-center">{{ appointment.doctorSpecialties.join(', ') }}</td>
                         <td class="text-center" [appAppointmentStatusColor]="appointment.status">
                             {{ appointment.status | formatAppointmentStatus }}
@@ -35,27 +47,12 @@
                         </td>
 
                         <td class="text-center">
-                            <div *ngIf="appointment.status === 3 && appointment.doctorReview">
-                                <button class="btn btn-info me-2" (click)="showReview(appointment.doctorReview)">
-                                    Ver reseña
-                                </button>
 
-                                <button class="btn btn-info me-2" (click)="rateDoctor(appointment)">
-                                    Calificar Atencion
-                                </button>
-
-                                <button class="btn btn-info me-2" (click)="fillSurvey(appointment)">
-                                    Completar encuesta
-                                </button>
-                            </div>
-
-                            <div *ngIf="appointment.status === 0" class="button-container">
-                                <button class="btn btn-danger" (click)="cancelAppointment(appointment)">
+                            <div *ngIf="appointment.status !=1 && appointment.status !=3 && appointment.status !=4" class="button-container">
+                                <button class="btn btn-danger me-2" (click)="cancelAppointment(appointment)">
                                     Cancelar
                                 </button>
-                                <button class="btn btn-danger" (click)="cancelAppointment(appointment)">
-                                    Rechazar
-                                </button>
+
                             </div>
 
 

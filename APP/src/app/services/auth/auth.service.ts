@@ -1,45 +1,45 @@
-import { Auth } from '@angular/fire/auth';
-import { getAuth, signOut } from "firebase/auth";
-import { Injectable, OnInit } from '@angular/core';
+import { Auth, User } from '@angular/fire/auth';
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Firestore, collection, addDoc, Timestamp, query, where, getDocs, orderBy } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, query, where, getDocs, updateDoc, doc, getDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService implements OnInit {
+export class AuthService {
 
-  user!: object | null;
-  auth!: Auth;
+  private user: User | null = null;
+  private userData: any;
+  private auth;
 
   private authStateSubject = new BehaviorSubject<boolean>(false);
   public authState$ = this.authStateSubject.asObservable();
 
   constructor(private firestore: Firestore) {
     this.auth = getAuth();
-    this.auth = getAuth();
     this.updateAuthState();
+    this.getUser();
+  }
+
+  get currentUser(): User | null {
+    return this.user;
   }
 
   private updateAuthState() {
     this.authStateSubject.next(this.isLoggedIn());
   }
 
-  ngOnInit(): void {
-    this.getUser()
-  }
-
   public async logIn(email: string, password: string) {
     this.updateAuthState();
   }
 
-
-  public getCurrentUSerFirtsName() {
+  public getCurrentUserFirstName() {
     return this.auth.currentUser?.email?.split('@')[0];
   }
 
   public getUserData(): any {
-    return JSON.parse(localStorage.getItem('userDocument') || '{}');
+    return JSON.parse(localStorage.getItem('userData') || '{}');
   }
 
   public getCurrentUserEmail() {
@@ -64,6 +64,7 @@ export class AuthService implements OnInit {
           const doc = querySnapshot.docs[0];
           const userData = doc.data();
           localStorage.setItem('userDocument', JSON.stringify(userData));
+          this.userData = userData;
           return;
         }
       }
@@ -76,46 +77,57 @@ export class AuthService implements OnInit {
     return localStorage.getItem('userRole');
   }
 
-  public async getSpecialties(): Promise<{ especialidad: string; image: string }[]> {
-    try {
-      const specialtiesRef = collection(this.firestore, 'especialidades');
-      const querySnapshot = await getDocs(specialtiesRef);
-      return querySnapshot.docs.map(doc => ({
-        especialidad: doc.data()['especialidad'],
-        image: doc.data()['image'],
-      }));
-    } catch (error) {
-      console.error('Error fetching specialties:', error);
-      return [];
-    }
-  }
-
   public isLoggedIn(): boolean {
     return !!this.auth.currentUser;
   }
 
-  async getDoctorsBySpecialty(specialty: string): Promise<any[]> {
-    try {
-      const especialistasRef = collection(this.firestore, 'especialistas');
-      const q = query(especialistasRef, where('specialties', 'array-contains', specialty));
-      const querySnapshot = await getDocs(q);
+  async updateAppointmentDuration(appointmentDuration: string, schedule: any): Promise<void> {
 
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
-      return [];
+    const user = this.getUserData();
+    const collectionRef = collection(this.firestore, 'especialistas');
+    const q = query(collectionRef, where('uid', '==', user['uid']));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      throw new Error('No document to update.');
     }
+    const docRef = querySnapshot.docs[0].ref;
+
+    await updateDoc(docRef, {
+      AppointmentDuration: appointmentDuration,
+      Schedule: schedule
+    });
+  }
+
+
+  async getDoctorSchedule(): Promise<any> {
+    const user = await this.getUserData();
+    const collectionRef = collection(this.firestore, 'especialistas');
+    const q = query(collectionRef, where('uid', '==', user['uid']));
+    const querySnapshot = await getDocs(q);
+
+    const docRef = querySnapshot.docs[0];
+    const docSnapshot = docRef.data();
+    return docSnapshot
   }
 
   public logOut() {
+    localStorage.removeItem('userDocument');
+    localStorage.removeItem('current-user');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('isAdmin');
+
     signOut(this.auth).then(() => {
-      localStorage.removeItem('userDocument');
-      localStorage.removeItem('userRole');
       this.updateAuthState();
+      console.log('User  signed out');
+    }).catch((error) => {
+      console.error('Sign out error:', error);
     });
+  }
+
+  getUserId(): string | undefined {
+    return this.userData ? this.userData.id : undefined;
   }
 
 }

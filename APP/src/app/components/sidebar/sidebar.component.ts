@@ -14,7 +14,10 @@ export class SidebarComponent implements OnInit {
   userRole: string = '';
   isLoggedIn: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+
+    
+  }
 
   ngOnInit() {
     this.checkUserRole();
@@ -49,9 +52,15 @@ export class SidebarComponent implements OnInit {
     this.router.navigate(['especialista/misTurnos']);
   }
 
+  navigateToTurnos(){
+    this.router.navigate(['admin/turnos']);
+  }
+
   logOut() {
+    this.checkUserRole();
     this.authService.logOut();
-    this.router.navigate(['login']);
+    this.router.navigate(['home']);
+    console.log(this.userRole)
   }
 
   navigateToProfile(){

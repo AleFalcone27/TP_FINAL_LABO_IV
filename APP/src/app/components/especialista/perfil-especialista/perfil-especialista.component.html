@@ -1,1 +1,110 @@
-<p>perfil-especialista works!</p>
+<app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
+<body>
+    <div class="main-container d-flex" style="height: 100vh;">
+        <app-sidebar class="sticky-sidebar"></app-sidebar>
+        <div class="content-wrapper d-flex flex-column">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <h2 class="text-center text-dark mt-5">¡Hola, {{ userData?.firstName || 'Usuario' }}!</h2>
+                        <div class="card my-5">
+                            <form class="card-body cardbody-color p-lg-5">
+                                <div class="text-center">
+                                    <img [src]="userData?.profileImage" class="rounded-circle" width="200px" alt="profile">
+                                </div>
+
+                                <div class="form-text text-center mb-5 text-dark"></div>
+
+                                <div class="mb-3">
+                                    <b>Nombre: </b>{{ userData?.firstName }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <b>Apellido: </b>{{ userData?.lastName }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <b>Email: </b>{{ userData?.email }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <b>Especialidades: </b>{{ userData?.specialties }}
+                                </div>
+
+                                <div class="form-text text-center mb-5 text-dark"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3">
+                            <div class="mb-3">
+                                <label for="appointmentDuration" class="form-label">Duración de los turnos:</label>
+                                <input type="time" id="appointmentDuration" class="form-control" [(ngModel)]="appointmentDuration" name="appointmentDuration" style="font-size: 1.2rem; width: 100%; padding: 0.5rem;">
+                            </div>
+                
+                            <!-- Grid for Days of the Week -->
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <h5>Lunes</h5>
+                                    <label for="lunesStart" class="form-label"></label>
+                                    <input type="time" id="lunesStart" class="form-control" [(ngModel)]="lunesStart" name="lunesStart" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                    <label for="lunesEnd" class="form-label"></label>
+                                    <input type="time" id="lunesEnd" class="form-control" [(ngModel)]="lunesEnd" name="lunesEnd" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                </div>
+                
+                                <div class="col-md-2">
+                                    <h5>Martes</h5>
+                                    <label for="martesStart" class="form-label"></label>
+                                    <input type="time" id="martesStart" class="form-control" [(ngModel)]="martesStart" name="martesStart" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                    <label for="martesEnd" class="form-label"></label>
+                                    <input type="time" id="martesEnd" class="form-control" [(ngModel)]="martesEnd" name="martesEnd" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                </div>
+                
+                                <div class="col-md-2">
+                                    <h5>Miércoles</h5>
+                                    <label for="miercolesStart " class="form-label"></label>
+                                    <input type="time" id="miercolesStart" class="form-control" [(ngModel)]="miercolesStart" name="miercolesStart" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                    <label for="miercolesEnd" class="form-label"></label>
+                                    <input type="time" id="miercolesEnd" class="form-control" [(ngModel)]="miercolesEnd" name="miercolesEnd" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                </div>
+                
+                                <div class="col-md-2">
+                                    <h5>Jueves</h5>
+                                    <label for="juevesStart" class="form-label"></label>
+                                    <input type="time" id="juevesStart" class="form-control" [(ngModel)]="juevesStart" name="juevesStart" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                    <label for="juevesEnd" class="form-label"></label>
+                                    <input type="time" id="juevesEnd" class="form-control" [(ngModel)]="juevesEnd" name="juevesEnd" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                </div>
+                
+                                <div class="col-md-2">
+                                    <h5>Viernes</h5>
+                                    <label for="viernesStart" class="form-label"></label>
+                                    <input type="time" id="viernesStart" class="form-control" [(ngModel)]="viernesStart" name="viernesStart" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                    <label for="viernesEnd" class="form-label"></label>
+                                    <input type="time" id="viernesEnd" class="form-control" [(ngModel)]="viernesEnd" name="viernesEnd" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                </div>
+                
+                                <div class="col-md-2">
+                                    <h5>Sábado</h5>
+                                    <label for="sabadoStart" class="form-label"></label>
+                                    <input type="time" id="sabadoStart" class="form-control" [(ngModel)]="sabadoStart" name="sabadoStart" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                    <label for="sabadoEnd" class="form-label"></label>
+                                    <input type="time" id="sabadoEnd" class="form-control" [(ngModel)]="sabadoEnd" name="sabadoEnd" style="font-size: 1.2rem; width: 100%; padding: 0.1rem;">
+                                </div>
+                            </div>
+                
+                            <div class="d-flex justify-content-center mt-3">
+                                <button type="button" class="btn btn-primary mx-2" (click)="updateAppointmentDuration()">Actualizar</button>
+                                <button type="button" class="btn btn-secondary mx-2" (click)="resetFields()">Restablecer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>

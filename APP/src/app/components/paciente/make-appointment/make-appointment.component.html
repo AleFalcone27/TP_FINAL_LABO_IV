@@ -1,3 +1,5 @@
+<app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
+
 <div class="main-container d-flex" style="height: 100vh;">
     <app-sidebar></app-sidebar>
     <div class="content-wrapper d-flex flex-column align-items-center p-4">
@@ -13,18 +15,41 @@
                 <p class="specialty-name mt-2 text-center">{{ specialty.especialidad }}</p>
             </div>
         </div>
-        <div class="doctors-list mt-4 w-100">
-            <h3 class="text-center">Doctores disponibles</h3>
-            <div *ngIf="doctors.length > 0; else noDoctors" class="doctor-cards d-flex flex-wrap justify-content-center">
-                <div *ngFor="let doctor of doctors" class="card doctor-card m-2 p-3 text-center">
-                    <h5>{{ doctor.firstName }} {{ doctor.lastName }}</h5>
-                    <p>DNI: {{ doctor.dni }}</p>
-                    <p>Email: {{ doctor.email }}</p>
+        <div *ngIf="doctors.length > 0; else noDoctors" class="doctor-buttons d-flex flex-wrap justify-content-center">
+            <div *ngFor="let doctor of doctors" class="doctor-button-item m-2">
+                <button class="btn btn-primary doctor-button" (click)="selectDoctor(doctor)">
+                    <div class="doctor-info">
+                        <div class="doctor-name">{{ doctor.firstName }} {{ doctor.lastName }}</div>
+                        <img [src]="doctor.profileImage" alt="{{ doctor.firstName }} {{ doctor.lastName }}" class="doctor-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+        <ng-template #noDoctors>
+            <p>No hay doctores disponibles.</p>
+        </ng-template>
+        <div *ngIf="groupedSlots.length > 0" class="available-slots mt-4 w-100">
+            <h3 class="text-center">Turnos disponibles</h3>
+            <div class="row">
+                <div *ngFor="let group of groupedSlots" class="col-12 mb-4">
+                    <h4 class="text-center" (click)="toggleSlots(group.date)">
+                        {{ group.date | formatDate }} <span [ngClass]="{'arrow-up': isOpen[group.date], 'arrow-down': !isOpen[group.date]}"></span>
+                    </h4>
+                    <div *ngIf="isOpen[group.date]">
+                        <div class="row">
+                            <div *ngFor="let slot of group.slots" class="col-3 mb-2"> 
+                                <button 
+                                    class="btn slot-button w-100" 
+                                    [ngClass]="{'reserved-slot': isSlotReserved(slot)}" 
+                                    [disabled]="isSlotReserved(slot)" 
+                                    (click)="!isSlotReserved(slot) && bookAppointment(slot)">
+                                    {{ slot | formatHour }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <ng-template #noDoctors>
-                <p class="text-center mt-4">No hay doctores disponibles para esta especialidad.</p>
-            </ng-template>
         </div>
     </div>
 </div>

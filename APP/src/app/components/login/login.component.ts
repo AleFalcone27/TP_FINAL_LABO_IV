@@ -102,13 +102,13 @@ export class LoginComponent {
   private redirectUser (role: string) {
     switch (role) {
       case 'admin':
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/admin/turnos']);
         break;
       case 'especialista':
-        this.router.navigate(['/especialista']);
+        this.router.navigate(['/especialista/misTurnos']);
         break;
       case 'paciente':
-        this.router.navigate(['/paciente']);
+        this.router.navigate(['/paciente/misTurnos']);
         break;
       default:
         this.router.navigate(['/home']);
