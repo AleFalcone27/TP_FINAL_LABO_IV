@@ -33,7 +33,7 @@ Este proyecto es una aplicación web que funciona como una clínica online, perm
 
 ## Roles y funcionalidades 🔧
 
-**Admin** 💻 
+**Admin** 
 - Habilitar especialistas
 - Solicitar turnos
 - Cancelar turno
