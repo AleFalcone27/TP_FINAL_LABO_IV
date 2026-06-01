@@ -1,14 +1,52 @@
-li { 
+li {
     cursor: pointer;
 }
 
-a { 
+a {
     cursor: pointer;
 }
 
 .sidebar {
-  position: sticky;
-  top: 0; 
-  height: 100vh; 
-  overflow-y: auto; 
+    background-color: #0f172a !important;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    width: 260px !important;
+}
+
+.sidebar .fs-4 {
+    color: #f1f5f9;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.sidebar hr {
+    border-color: rgba(255,255,255,0.1);
+}
+
+.sidebar .nav-link {
+    color: #94a3b8;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s ease, color 0.2s ease;
+    margin-bottom: 2px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #1e293b;
+    color: #f1f5f9;
+}
+
+.sidebar .nav-link.active {
+    background-color: rgba(37,99,235,0.2);
+    color: #60a5fa;
+}
+
+.sidebar .link-dark {
+    color: #f1f5f9 !important;
+    text-decoration: none;
 }

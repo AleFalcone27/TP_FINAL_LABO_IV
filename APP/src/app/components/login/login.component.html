@@ -12,64 +12,42 @@
               <div class="card-body">
                 <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
 
-                <div class="mb-4 d-flex justify-content-around">
+                <div class="quick-login-wrapper">
+                  <button type="button" class="quick-login-btn"
+                    (click)="quickLogin('alejofalcone60@gmail.com', '123456')">
+                    <img src="https://randomuser.me/api/portraits/men/90.jpg" alt="Admin" appZoomInImages>
+                    <small>Admin</small>
+                  </button>
 
-                  <div class="text-center">
-                    <small class="text-muted d-block">Admin</small>
-                    <button type="button" class="btn btn-outline-primary"
-                      (click)="quickLogin('alejofalcone60@gmail.com', '123456')">
-                      <img src="https://randomuser.me/api/portraits/men/90.jpg" alt="Imagen Especialista"
-                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
-                    </button>
-                  </div>
+                  <button type="button" class="quick-login-btn"
+                    (click)="quickLogin('aleefalcone@gmail.com', '123456')">
+                    <img src="https://randomuser.me/api/portraits/men/24.jpg" alt="Paciente 1" appZoomInImages>
+                    <small>Paciente 1</small>
+                  </button>
 
+                  <button type="button" class="quick-login-btn"
+                    (click)="quickLogin('vifarit466@merotx.com', '123456')">
+                    <img src="https://randomuser.me/api/portraits/men/25.jpg" alt="Paciente 2" appZoomInImages>
+                    <small>Paciente 2</small>
+                  </button>
 
-                  <div class="text-center">
-                    <small class="text-muted d-block">Paciente 1</small>
-                    <button type="button" class="btn btn-outline-primary"
-                      (click)="quickLogin('aleefalcone@gmail.com', '123456')">
-                      <img src="https://randomuser.me/api/portraits/men/24.jpg" alt="Imagen Paciente"
-                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
-                    </button>
-                  </div>
+                  <button type="button" class="quick-login-btn"
+                    (click)="quickLogin('wijeye6103@kazvi.com', '123456')">
+                    <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Paciente 3" appZoomInImages>
+                    <small>Paciente 3</small>
+                  </button>
 
-                  <div class="text-center">
-                    <small class="text-muted d-block">Paciente 2</small>
-                    <button type="button" class="btn btn-outline-primary"
-                      (click)="quickLogin('vifarit466@merotx.com', '123456')">
-                      <img src="https://randomuser.me/api/portraits/men/25.jpg" alt="Imagen Paciente"
-                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
-                    </button>
-                  </div>
+                  <button type="button" class="quick-login-btn"
+                    (click)="quickLogin('dimoseb157@nozamas.com', '123456')">
+                    <img src="https://randomuser.me/api/portraits/men/66.jpg" alt="Especialista 1" appZoomInImages>
+                    <small>Especialista 1</small>
+                  </button>
 
-                  <div class="text-center">
-                    <small class="text-muted d-block">Paciente 3</small>
-                    <button type="button" class="btn btn-outline-primary"
-                      (click)="quickLogin('wijeye6103@kazvi.com', '123456')">
-                      <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Imagen Paciente"
-                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
-                    </button>
-                  </div>
-
-
-                  <div class="text-center">
-                    <small class="text-muted d-block">Especialista 1</small>
-                    <button type="button" class="btn btn-outline-primary"
-                      (click)="quickLogin('dimoseb157@nozamas.com', '123456')">
-                      <img src="https://randomuser.me/api/portraits/men/66.jpg" alt="Imagen Especialista"
-                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
-                    </button>
-                  </div>
-
-                  <div class="text-center">
-                    <small class="text-muted d-block">Especialista 2</small>
-                    <button type="button" class="btn btn-outline-primary"
-                      (click)="quickLogin('gawiw76542@nozamas.com', '123456')">
-                      <img src="https://randomuser.me/api/portraits/women/7.jpg" alt="Imagen Especialista"
-                        style="width: 60px; height: 60px; margin-right: 5px;" appZoomInImages>
-                    </button>
-                  </div>
-
+                  <button type="button" class="quick-login-btn"
+                    (click)="quickLogin('gawiw76542@nozamas.com', '123456')">
+                    <img src="https://randomuser.me/api/portraits/women/7.jpg" alt="Especialista 2" appZoomInImages>
+                    <small>Especialista 2</small>
+                  </button>
                 </div>
 
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">

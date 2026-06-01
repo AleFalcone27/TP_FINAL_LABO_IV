@@ -1,18 +1,18 @@
 <div class="row g-5">
     <div class="col-12">
       <div class="input-container">
-        <div class="text-center mb-3 mt-3"> 
-          <img [src]="captchaImageUrl" alt="Captcha" class="img-fluid" />
+        <div class="mb-3 mt-3">
+          <img [src]="captchaImageUrl" alt="Captcha" class="captcha-image" />
         </div>
         <input type="text" [(ngModel)]="userInput" class="form-control" placeholder="Ingresa el captcha" />
         <small class="text-danger" *ngIf="userInput && userInput !== validString">
           El captcha ingresado es incorrecto.
         </small>
       </div>
-  
-      <div class="text-center mt-3"> 
-        <button (click)="validateCaptcha()" class="btn btn-primary me-2">Validar Captcha</button>
-        <button (click)="refreshCaptcha()" class="btn btn-secondary">Refrescar Captcha</button>
+
+      <div class="captcha-actions">
+        <button (click)="validateCaptcha()" class="btn btn-primary">Validar</button>
+        <button (click)="refreshCaptcha()" class="btn btn-secondary">Refrescar</button>
       </div>
     </div>
   </div>

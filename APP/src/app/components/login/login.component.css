@@ -1,65 +1,55 @@
-.card {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border: none;
+/* Quick login avatars */
+.quick-login-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 16px;
+    background: #f8fafc;
     border-radius: 10px;
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
 }
 
-.card-body {
-    padding: 2rem;
+.quick-login-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 10px;
+    transition: background 0.2s ease;
 }
 
-.form-control:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+.quick-login-btn:hover {
+    background: #eff6ff;
 }
 
-.btn-primary {
-    padding: 10px;
+.quick-login-btn img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2.5px solid #e2e8f0;
+    object-fit: cover;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.quick-login-btn:hover img {
+    border-color: #2563eb;
+    transform: scale(1.06);
+}
+
+.quick-login-btn small {
+    font-size: 0.7rem;
+    color: #64748b;
     font-weight: 500;
-    transition: all 0.3s ease;
 }
 
-.btn-outline-primary {
-    flex: 1;
-    margin: 0 5px; 
-}
-
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.btn-primary:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-}
-
-.invalid-feedback {
-    font-size: 0.875em;
-}
-
-.invalid-feedback {
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-}
-
-.is-invalid ~ .invalid-feedback {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-body {
-    background-image: url('https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/shutterstock_242389561-2560x852.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-
-
-
-@media (max-width: 768px) {
-    .card-body {
-        padding: 1.5rem;
+@media (max-width: 576px) {
+    .quick-login-wrapper {
+        gap: 6px;
     }
 }

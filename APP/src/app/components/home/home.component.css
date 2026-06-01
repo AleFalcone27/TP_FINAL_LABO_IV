@@ -1,7 +1,132 @@
-body {
-    background-image: url('https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/shutterstock_242389561-2560x852.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+.header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    border-radius: 0 0 20px 20px;
+    padding: 48px 32px;
+}
+
+.header h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+.header-inner {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.home-cards {
+    padding: 24px;
+    gap: 20px;
+    min-height: 55vh;
+}
+
+.info-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.08);
+    padding: 2.5rem 2rem;
+}
+
+.info-card h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+    margin-bottom: 1rem;
+}
+
+.info-card p {
+    color: #64748b;
+    line-height: 1.75;
+    font-size: 0.9375rem;
+    margin: 0;
+}
+
+.action-card {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem 2rem;
+    gap: 12px;
+    min-width: 260px;
+    max-width: 320px;
+}
+
+.action-card h2 {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.35rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.3px;
+}
+
+.action-card .btn-light {
+    background: #fff;
+    color: #2563eb;
+    font-weight: 600;
+    border: none;
+    padding: 11px 0;
+    border-radius: 8px;
+    width: 200px;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+.action-card .btn-light:hover {
+    background: #eff6ff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.action-card .btn-outline-light {
+    border: 1.5px solid rgba(255,255,255,0.55);
+    color: #fff;
+    font-weight: 600;
+    padding: 11px 0;
+    border-radius: 8px;
+    width: 200px;
+    font-size: 0.9375rem;
+    text-align: center;
+    background: transparent;
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+.action-card .btn-outline-light:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: #fff;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .home-cards {
+        flex-direction: column !important;
+        min-height: auto;
+    }
+
+    .action-card {
+        max-width: 100%;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
 }
 
