@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractContro
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { AuthService } from '../../../services/auth/auth.service';
 import { addDoc, collection, Firestore, query } from '@angular/fire/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -21,7 +21,7 @@ export class RegisterEspecialistaComponent implements OnInit {
   registerForm: FormGroup;
   specialties: { especialidad: string; image: string }[] = [];
 
-  constructor(private router: Router, private firestore: Firestore, private authService: AuthService, private appointmentsService:AppointmentsService) {
+  constructor(private router: Router, private firestore: Firestore, private authService: AuthService, private appointmentsService:AppointmentsService, private supabaseService: SupabaseService) {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
       lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -158,7 +158,6 @@ export class RegisterEspecialistaComponent implements OnInit {
 
   async onSubmit() {
     const auth = getAuth();
-    const storage = getStorage(); 
     const email = this.registerForm.get('email')?.value;
     const password = this.registerForm.get('password')?.value;
 
@@ -168,10 +167,10 @@ export class RegisterEspecialistaComponent implements OnInit {
           const user = userCredential.user;
 
           const file = this.registerForm.get('profileImage')?.value;
-          const storageRef = ref(storage, `especialistas/${user.uid}/profileImage.jpg`);
-          await uploadBytes(storageRef, file);
-
-          const profileImageUrl = await getDownloadURL(storageRef);
+          const path = `especialistas/${user.uid}/profileImage.jpg`;
+          await this.supabaseService.uploadFile('profiles', path, file);
+          const { data: imageData } = this.supabaseService.getPublicUrl('profiles', path);
+          const profileImageUrl = imageData.publicUrl;
           await sendEmailVerification(user);
 
           const especialistaData = {

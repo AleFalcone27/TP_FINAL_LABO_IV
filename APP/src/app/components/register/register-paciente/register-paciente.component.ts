@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { addDoc, collection, Firestore, query } from '@angular/fire/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL, Storage } from '@angular/fire/storage';
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 import { SpinnerComponent } from '../../spinner/spinner.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -21,7 +21,7 @@ export class RegisterPacienteComponent {
   loadingMessage = '';
   registerForm: FormGroup;
 
-  constructor(private router: Router, private firestore: Firestore, private storage: Storage) {
+  constructor(private router: Router, private firestore: Firestore, private supabaseService: SupabaseService) {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', [Validators.required, Validators.minLength(4)]),
       lastName: new FormControl('', [Validators.required, Validators.minLength(4)]),
@@ -90,7 +90,6 @@ export class RegisterPacienteComponent {
   this.loadingMessage = 'Registrando paciente';
 
     const auth = getAuth();
-    const storage = getStorage(); 
     const email = this.registerForm.get('email')?.value;
     const password = this.registerForm.get('password')?.value;
 
@@ -99,15 +98,15 @@ export class RegisterPacienteComponent {
             .then(async (userCredential) => {
                 const user = userCredential.user;
 
-                const files = this.registerForm.get('profileImages')?.value; 
+                const files = this.registerForm.get('profileImages')?.value;
                 const profileImageUrls = [];
 
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-                    const storageRef = ref(storage, `users/${user.uid}/profile_image_${i + 1}.jpg`);
-                    await uploadBytes(storageRef, file);
-                    const profileImageUrl = await getDownloadURL(storageRef);
-                    profileImageUrls.push(profileImageUrl);
+                    const path = `users/${user.uid}/profile_image_${i + 1}.jpg`;
+                    await this.supabaseService.uploadFile('profiles', path, file);
+                    const { data: imageData } = this.supabaseService.getPublicUrl('profiles', path);
+                    profileImageUrls.push(imageData.publicUrl);
                 }
 
                 await sendEmailVerification(user);
@@ -171,11 +170,11 @@ export class RegisterPacienteComponent {
 
 
   async uploadFiles(uid: string, files: File[]): Promise<string[]> {
-    const uploadPromises = files.map((file, index) => {
-      const filePath = `users/${uid}/profile_image_${index + 1}.${file.name.split('.').pop()}`;
-      const fileRef = ref(this.storage, filePath);
-
-      return uploadBytes(fileRef, file).then(() => filePath);
+    const uploadPromises = files.map(async (file, index) => {
+      const path = `users/${uid}/profile_image_${index + 1}.${file.name.split('.').pop()}`;
+      await this.supabaseService.uploadFile('profiles', path, file);
+      const { data } = this.supabaseService.getPublicUrl('profiles', path);
+      return data.publicUrl;
     });
 
     return Promise.all(uploadPromises);

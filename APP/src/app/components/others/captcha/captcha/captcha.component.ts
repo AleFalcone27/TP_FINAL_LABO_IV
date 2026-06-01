@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { getStorage, ref, getDownloadURL } from '@angular/fire/storage';
+import { SupabaseService } from '../../../../services/supabase/supabase.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,7 +18,7 @@ export class CaptchaComponent implements OnInit {
   public validString: string = '';
   @Output() captchaValidated = new EventEmitter<boolean>();
 
-  constructor() {}
+  constructor(private supabaseService: SupabaseService) {}
 
   ngOnInit() {
     this.getCaptchaImage();
@@ -31,10 +31,10 @@ export class CaptchaComponent implements OnInit {
   }
 
   async getCaptchaImage(): Promise<void> {
-    const storage = getStorage();
     const randomIndex = Math.floor(Math.random() * 3) + 1;
-    const imageRef = ref(storage, `captcha/captcha${randomIndex}.png`);
-    this.captchaImageUrl = await getDownloadURL(imageRef);
+    const path = `captcha/captcha${randomIndex}.png`;
+    const { data } = this.supabaseService.getPublicUrl('captcha', path);
+    this.captchaImageUrl = data.publicUrl;
     switch (randomIndex) {
       case 1:
         this.validString = '61760';
