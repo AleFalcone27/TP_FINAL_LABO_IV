@@ -3,6 +3,31 @@
     <app-sidebar></app-sidebar>
     <div class="content-wrapper">
         <app-users-table></app-users-table>
+        
+        <!-- Configuración de Captcha -->
+        <div class="text-center my-4">
+            <div class="card mx-auto" style="max-width: 500px;">
+                <div class="card-body">
+                    <h5 class="card-title">⚙️ Configuración de Seguridad</h5>
+                    <div class="form-check form-switch d-flex justify-content-center align-items-center">
+                        <input 
+                            class="form-check-input me-2" 
+                            type="checkbox" 
+                            role="switch" 
+                            id="captchaToggle"
+                            [(ngModel)]="captchaEnabled"
+                            (change)="toggleCaptcha()">
+                        <label class="form-check-label" for="captchaToggle">
+                            <strong>{{ captchaEnabled ? 'Captcha Activado' : 'Captcha Desactivado' }}</strong>
+                        </label>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        {{ captchaEnabled ? 'Los usuarios deben completar un captcha al registrarse' : 'Registro sin verificación de captcha' }}
+                    </small>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center">
             <h2>Crear usuario</h2>
             

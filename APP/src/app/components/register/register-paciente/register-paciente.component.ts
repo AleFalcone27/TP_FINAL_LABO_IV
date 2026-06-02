@@ -75,7 +75,6 @@ export class RegisterPacienteComponent {
 
   async onSubmit() {
 
-    console.log(this.isCaptchaValidated)
     if (!this.isCaptchaValidated) {
       Swal.fire({
           title: 'Error',

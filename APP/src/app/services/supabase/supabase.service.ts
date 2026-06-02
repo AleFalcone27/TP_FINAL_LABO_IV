@@ -9,7 +9,7 @@ export class SupabaseService {
 
   private supabase: SupabaseClient = createClient(
     environment.supabaseUrl,
-    environment.supabaseAnonKey
+    environment.supabaseAnonKey,
   );
 
   get storage() {

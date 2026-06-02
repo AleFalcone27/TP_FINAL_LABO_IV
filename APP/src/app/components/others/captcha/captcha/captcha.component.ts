@@ -31,20 +31,32 @@ export class CaptchaComponent implements OnInit {
   }
 
   async getCaptchaImage(): Promise<void> {
-    const randomIndex = Math.floor(Math.random() * 3) + 1;
-    const path = `captcha/captcha${randomIndex}.png`;
-    const { data } = this.supabaseService.getPublicUrl('captcha', path);
-    this.captchaImageUrl = data.publicUrl;
-    switch (randomIndex) {
-      case 1:
-        this.validString = '61760';
-        break;
-      case 2:
-        this.validString = 'YKQET';
-        break;
-      case 3:
-        this.validString = 'sciarna';
-        break;
+    try {
+      const randomIndex = Math.floor(Math.random() * 3) + 1;
+      const path = `captcha${randomIndex}.jpeg`;
+      const { data } = this.supabaseService.getPublicUrl('other', path);
+      this.captchaImageUrl = data.publicUrl;
+      console.log('Captcha URL:', this.captchaImageUrl);
+      
+      switch (randomIndex) {
+        case 1:
+          this.validString = '61760';
+          break;
+        case 2:
+          this.validString = 'YKQET';
+          break;
+        case 3:
+          this.validString = 'sciarna';
+          break;
+      }
+    } catch (error) {
+      console.error('Error al cargar captcha:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo cargar el captcha. Por favor, refresca la página.',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
     }
   }
 
@@ -71,7 +83,7 @@ export class CaptchaComponent implements OnInit {
   private showErrorPopup() {
     Swal.fire({
       title: '¡Error!',
-      text: 'Eres un huumano?',
+      text: '¿Eres un humano?',
       icon: 'error',
       confirmButtonText: 'Volver a intentar'
     });
