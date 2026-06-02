@@ -1,27 +1,26 @@
-<body>
-    <div class="main-container d-flex" style="height: 100vh;">
-        <app-sidebar @slideFromLeft ></app-sidebar>
-        <div  @slideFromLeft class="content-wrapper d-flex flex-column ">
-            <main style="height: 100vh;">
-                <div class="container-fluid h-100">
-                    <div class="row h-100 justify-content-center align-items-center">
-                        <div class="col-md-6 text-center">
-                            <div class="d-flex justify-content-around mt-4">
-                                <div class="btn btn-primary btn-lg rectangular-button d-flex flex-column align-items-center"
-                                    (click)="navigateToEspecialista()">
-                                    <span>Soy un especialista</span>
-                                    <img src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/sj-objio-8hHxO3iYuU0-unsplash.jpg"
-                                        alt="Especialista" class="img-fluid">
-                                </div>
-                                <div class="btn btn-primary btn-lg rectangular-button d-flex flex-column align-items-center"
-                                    (click)="navigateToPaciente()">
-                                    <span>Soy un paciente</span>
-                                    <img src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/accuray-ThpS0DVkPBs-unsplash.jpg"
-                                        alt="Paciente" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="main-container d-flex">
+    <app-sidebar @slideFromLeft></app-sidebar>
+    <div @slideFromLeft class="content-wrapper">
+        <div class="role-select-page">
+            <h2 class="page-title">¿Cómo querés registrarte?</h2>
+            <div class="role-select-grid">
+                <div class="role-card" (click)="navigateToEspecialista()">
+                    <img class="role-card-img"
+                        src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/sj-objio-8hHxO3iYuU0-unsplash.jpg"
+                        alt="Especialista">
+                    <h3>Soy Especialista</h3>
+                    <p>Registrate como médico y gestioná tus turnos</p>
+                    <span class="btn-action info" style="margin-top:4px">Comenzar →</span>
                 </div>
-            </main>
+                <div class="role-card" (click)="navigateToPaciente()">
+                    <img class="role-card-img"
+                        src="https://boxjlgemcqztmbmmdcmq.supabase.co/storage/v1/object/public/TP_FINAL_LABO4/accuray-ThpS0DVkPBs-unsplash.jpg"
+                        alt="Paciente">
+                    <h3>Soy Paciente</h3>
+                    <p>Registrate y pedí turnos con nuestros especialistas</p>
+                    <span class="btn-action success" style="margin-top:4px">Comenzar →</span>
+                </div>
+            </div>
         </div>
+    </div>
+</div>

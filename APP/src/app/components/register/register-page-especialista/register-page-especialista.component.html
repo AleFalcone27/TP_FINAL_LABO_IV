@@ -1,20 +1,11 @@
-<body class="bg-body-tertiary">
-    <div>
-        <div class="main-container d-flex" style="height: 100vh; overflow: hidden;">
-            <app-sidebar></app-sidebar>
-
-            <div class="content-wrapper d-flex flex-column flex-grow-1" style="overflow-y: auto;">
-                <div class="row justify-content-center flex-grow-1">
-                    <div class="col-md-8">
-                        <main>
-                            <div class="py-5 text-center">
-                                <h2>Hacete un Especialista en Clínica OnLine</h2>
-                            </div>
-                            <app-register-especialista @fade ></app-register-especialista>
-                        </main>
-                    </div>
-                </div>
+<div class="main-container d-flex">
+    <app-sidebar></app-sidebar>
+    <div class="content-wrapper" style="overflow-y: auto;">
+        <div class="register-page">
+            <div class="register-form-card">
+                <h3>Registrate como Especialista</h3>
+                <app-register-especialista @fade></app-register-especialista>
             </div>
         </div>
     </div>
-</body>
+</div>
