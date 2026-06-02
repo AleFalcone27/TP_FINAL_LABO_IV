@@ -32,8 +32,8 @@
             <h2>Crear usuario</h2>
             
             <button (click)="setRole('specialist')" class="btn btn-primary">Especialista</button>
-            <button (click)="setRole('patient')" class="btn btn-success">Paciente</button>
-            <button (click)="setRole('admin')" class="btn btn-danger">Administrador</button>
+            <button (click)="setRole('patient')" class="btn btn-primary">Paciente</button>
+            <button (click)="setRole('admin')" class="btn btn-primary">Administrador</button>
           </div>
           
           <div *ngIf="selectedRole === 'specialist'">
