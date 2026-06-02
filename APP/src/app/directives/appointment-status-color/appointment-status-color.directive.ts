@@ -11,28 +11,44 @@ export class AppointmentStatusColorDirective {
   constructor(private el: ElementRef) {}
 
   ngOnChanges() {
-    this.updateColor();
+    this.updateStyle();
   }
 
-  private updateColor() {
+  private updateStyle() {
+    const el = this.el.nativeElement;
+    el.style.display = 'inline-flex';
+    el.style.alignItems = 'center';
+    el.style.padding = '4px 12px';
+    el.style.borderRadius = '999px';
+    el.style.fontSize = '0.75rem';
+    el.style.fontWeight = '600';
+    el.style.letterSpacing = '0.03em';
+    el.style.whiteSpace = 'nowrap';
+
     switch (this.appAppointmentStatusColor) {
       case 0:
-        this.el.nativeElement.style.backgroundColor = '#ffeb3b'; // Amarillo Pastel (Pendiente)
+        el.style.backgroundColor = '#fef9c3';
+        el.style.color = '#854d0e';
         break;
       case 1:
-        this.el.nativeElement.style.backgroundColor = '#a5d6a7'; // Verde Pastel (Aceptado)
+        el.style.backgroundColor = '#dcfce7';
+        el.style.color = '#166534';
         break;
       case 2:
-        this.el.nativeElement.style.backgroundColor = '#ef9a9a'; // Rojo Pastel (Rechazado)
+        el.style.backgroundColor = '#fee2e2';
+        el.style.color = '#991b1b';
         break;
       case 3:
-        this.el.nativeElement.style.backgroundColor = '#90caf9'; // Azul Pastel (Finalizado)
+        el.style.backgroundColor = '#dbeafe';
+        el.style.color = '#1e40af';
         break;
       case 5:
-        this.el.nativeElement.style.backgroundColor = '#e0e0e0'; // Gris Pastel (Cancelado)
+        el.style.backgroundColor = '#f1f5f9';
+        el.style.color = '#475569';
         break;
       default:
-        this.el.nativeElement.style.backgroundColor = '#ffffff'; // Blanco (Estado desconocido)
+        el.style.backgroundColor = '#f1f5f9';
+        el.style.color = '#475569';
     }
   }
 }

@@ -1,30 +1,38 @@
-<div class="container">
-    <h2>Tabla de Usuarios</h2>
+<div class="w-100">
     <app-spinner></app-spinner>
-  
-    <select [(ngModel)]="selectedRole" (change)="onRoleChange()">
-        <option value="all">Todos los roles</option>
-        <option value="user">Pacientes</option>
-        <option value="doctor">Doctores</option>
-        <option value="admin">Administradores</option>
-    </select>
 
-    <input 
-      type="text" 
-      placeholder="Buscar..." 
-      (input)="onSearch($event)"
-      [(ngModel)]="searchTerm">
+    <div class="table-toolbar">
+        <div class="table-toolbar-left">
+            <select class="table-select" [(ngModel)]="selectedRole" (change)="onRoleChange()">
+                <option value="all">Todos los roles</option>
+                <option value="user">Pacientes</option>
+                <option value="doctor">Doctores</option>
+                <option value="admin">Administradores</option>
+            </select>
+            <input type="text" class="form-control table-search"
+                placeholder="Buscar por nombre, apellido o email..."
+                (input)="onSearch($event)"
+                [(ngModel)]="searchTerm">
+        </div>
+        <div class="table-toolbar-right">
+            <span class="table-count" *ngIf="!isLoading">
+                {{ filteredUsers.length }} resultado{{ filteredUsers.length !== 1 ? 's' : '' }}
+            </span>
+            <button class="btn-action info" (click)="downloadExcel()">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align:-2px;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Exportar
+            </button>
+        </div>
+    </div>
 
-      <button class="btn btn-primary" (click)="downloadExcel()">Exportar Usuarios</button>
-  
-    <div *ngIf="isLoading" class="spinner">Cargando...</div>
-
-    <table class="centered-table" *ngIf="!isLoading && filteredUsers.length > 0">
+    <div class="data-table-wrapper">
+    <table class="data-table" *ngIf="!isLoading && filteredUsers.length > 0">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
+            <th style="width:52px"></th>
+            <th class="text-left">Nombre</th>
+            <th class="text-left">Apellido</th>
+            <th class="text-left">Email</th>
             <th>Rol</th>
             <th *ngIf="selectedRole === 'doctor'">Especialidad</th>
             <th *ngIf="selectedRole === 'doctor'">Estado</th>
@@ -33,28 +41,38 @@
         </thead>
         <tbody>
           <tr *ngFor="let user of filteredUsers">
-            <td>{{user.firstName}}</td>
-            <td>{{user.lastName}}</td>
-            <td>{{user.email}}</td>
-            <td>{{user.role}}</td>
-            <td *ngIf="selectedRole === 'doctor'">{{getValue(user, 'specialty')}}</td>
-            <td *ngIf="selectedRole === 'doctor'">{{getValue(user, 'approved')}}</td>
+            <td>
+              <span class="user-avatar" [ngClass]="user.role">{{ user.firstName | slice:0:1 | uppercase }}</span>
+            </td>
+            <td class="text-left">{{user.firstName}}</td>
+            <td class="text-left">{{user.lastName}}</td>
+            <td class="text-left td-email">{{user.email}}</td>
+            <td>
+              <span class="role-badge" [ngClass]="user.role">
+                {{ user.role === 'user' ? 'Paciente' : user.role === 'doctor' ? 'Doctor' : 'Admin' }}
+              </span>
+            </td>
+            <td *ngIf="selectedRole === 'doctor'" class="text-left">{{getValue(user, 'specialty')}}</td>
+            <td *ngIf="selectedRole === 'doctor'">
+              <span *ngIf="isDoctor(user)" class="approved-badge" [ngClass]="user.approved ? 'yes' : 'no'">
+                {{ user.approved ? 'Aprobado' : 'Pendiente' }}
+              </span>
+            </td>
             <td *ngIf="selectedRole === 'doctor' && isDoctor(user)">
-              <button 
-                (click)="toggleDoctorStatus(user)"
-                [ngClass]="{'approve-btn': !user.approved, 'disapprove-btn': user.approved}">
+              <button
+                class="btn-action"
+                [ngClass]="user.approved ? 'danger' : 'success'"
+                (click)="toggleDoctorStatus(user)">
                 {{ getStatusButtonText(user.approved) }}
               </button>
             </td>
           </tr>
         </tbody>
       </table>
-  
-    <div *ngIf="!isLoading && filteredUsers.length === 0" class="no-results">
-      No se encontraron usuarios que coincidan con los criterios de búsqueda.
     </div>
-    <hr>
 
-    
-
+    <div class="empty-state" *ngIf="!isLoading && filteredUsers.length === 0">
+      <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+      <p>No se encontraron usuarios que coincidan con los criterios de búsqueda.</p>
+    </div>
 </div>
