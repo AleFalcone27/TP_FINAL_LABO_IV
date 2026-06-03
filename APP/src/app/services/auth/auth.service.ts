@@ -18,8 +18,16 @@ export class AuthService {
 
   constructor(private firestore: Firestore) {
     this.auth = getAuth();
-    this.updateAuthState();
-    this.getUser();
+    
+    // Escuchar cambios en el estado de autenticación
+    onAuthStateChanged(this.auth, async (user) => {
+      this.user = user;
+      console.log('🔐 Estado de autenticación cambió:', user ? 'Autenticado' : 'No autenticado');
+      this.updateAuthState();
+      if (user) {
+        await this.getUser();
+      }
+    });
   }
 
   get currentUser(): User | null {
@@ -27,7 +35,9 @@ export class AuthService {
   }
 
   private updateAuthState() {
-    this.authStateSubject.next(this.isLoggedIn());
+    const isAuthenticated = this.isLoggedIn();
+    console.log('📢 Actualizando authState:', isAuthenticated);
+    this.authStateSubject.next(isAuthenticated);
   }
 
   public async logIn(email: string, password: string) {
@@ -78,7 +88,7 @@ export class AuthService {
   }
 
   public isLoggedIn(): boolean {
-    return !!this.auth.currentUser;
+    return this.user !== null;
   }
 
   async updateAppointmentDurations(schedulesToUpdate: { specialty: string; appointmentDuration: string; schedule: any }[]): Promise<void> {

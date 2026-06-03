@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,18 +11,32 @@ import { CommonModule } from '@angular/common';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   userRole: string = '';
   isLoggedIn: boolean = false;
+  private authSubscription?: Subscription;
 
-  constructor(private authService: AuthService, private router: Router) {
-
-    
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.checkUserRole();
-    this.isLoggedIn = this.authService.isLoggedIn();
+    
+    // Suscribirse a cambios en el estado de autenticación
+    this.authSubscription = this.authService.authState$.subscribe(isAuthenticated => {
+      this.isLoggedIn = isAuthenticated;
+      if (isAuthenticated) {
+        this.checkUserRole();
+      } else {
+        this.userRole = '';
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    // Limpiar suscripción para evitar memory leaks
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 
   async checkUserRole() {
