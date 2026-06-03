@@ -19,24 +19,10 @@ import { routeAnimations } from '../../../animations/animations';
 export class PerfilEspecialistaComponent implements OnInit {
 
   userData: any;
-  appointmentDuration: string = '';
   appointmentDurations: string[] = [];
   schedules: any[] = [];
   isLoading = false;
   loadingMessage = '';
-
-  lunesStart: string = '';
-  lunesEnd: string = '';
-  martesStart: string = '';
-  martesEnd: string = '';
-  miercolesStart: string = '';
-  miercolesEnd: string = '';
-  juevesStart: string = '';
-  juevesEnd: string = '';
-  viernesStart: string = '';
-  viernesEnd: string = '';
-  sabadoStart: string = '';
-  sabadoEnd: string = '';
 
   constructor(private authService: AuthService, private appointmentsService: AppointmentsService) { }
 
@@ -106,8 +92,6 @@ export class PerfilEspecialistaComponent implements OnInit {
       return;
     }
 
-    console.log(schedulesToUpdate);
-
     await this.authService.updateAppointmentDurations(schedulesToUpdate);
     this.isLoading = false;
 
@@ -144,19 +128,19 @@ export class PerfilEspecialistaComponent implements OnInit {
     return { isValid: true };
   }
 
-  resetFields(): void {
-    this.lunesStart = '';
-    this.lunesEnd = '';
-    this.martesStart = '';
-    this.martesEnd = '';
-    this.miercolesStart = '';
-    this.miercolesEnd = '';
-    this.juevesStart = '';
-    this.juevesEnd = '';
-    this.viernesStart = '';
-    this.viernesEnd = '';
-    this.sabadoStart = '';
-    this.sabadoEnd = '';
+  resetForm(): void {
+    // Resetear las duraciones de citas
+    this.appointmentDurations = this.appointmentDurations.map(() => '');
+    
+    // Resetear los horarios de cada especialidad
+    this.schedules = this.schedules.map(() => ({
+      lunes: { start: '', end: '' },
+      martes: { start: '', end: '' },
+      miercoles: { start: '', end: '' },
+      jueves: { start: '', end: '' },
+      viernes: { start: '', end: '' },
+      sabado: { start: '', end: '' }
+    }));
   }
 
   private isTimeInRange(time: string, range: { start: string, end: string }): boolean {
