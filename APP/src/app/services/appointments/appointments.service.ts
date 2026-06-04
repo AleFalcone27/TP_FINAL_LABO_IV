@@ -3,6 +3,9 @@ import { Firestore, collection, addDoc, Timestamp, query, where, getDocs, QueryD
 import { Appointment } from '../../interfaces/appointment';
 import { MedicalData } from '../../interfaces/medicalData';
 import { Specialties } from '../../interfaces/appointment';
+import { MedicalHistory } from '../../interfaces/medicalHistory';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +60,66 @@ export class AppointmentsService {
       console.error('Error fetching medical history:', error);
       return []; 
     }
+  }
+
+  async getMedicalHistoryByUserId(userId: string): Promise<MedicalHistory[]> {
+    return (await this.getMedicalHistoryByUserID(userId)) as MedicalHistory[];
+  }
+
+  async generateMedicalHistoryPdfByUserId(userId: string): Promise<void> {
+    const histories = await this.getMedicalHistoryByUserId(userId);
+
+    if (!histories.length) {
+      throw new Error('No medical history found for this user');
+    }
+
+    const patient = histories[0];
+    const pdf = new jsPDF();
+    const logoDataUrl = await this.loadImageAsDataUrl(
+      'https://pdxwznmonhqdpvxpadpa.supabase.co/storage/v1/object/public/other/logo.png'
+    );
+
+    pdf.setFontSize(18);
+    if (logoDataUrl) {
+      pdf.addImage(logoDataUrl, 'PNG', 14, 12, 12, 12);
+      pdf.text('Historia Clínica', 30, 20);
+    } else {
+      pdf.text('Historia Clínica', 14, 20);
+    }
+    pdf.setFontSize(11);
+    pdf.text(`Paciente: ${patient.patientFirstName} ${patient.patientLastName}`, 14, 32);
+    pdf.text(`Generado el: ${new Date().toLocaleString()}`, 14, 38);
+
+    autoTable(pdf, {
+      startY: 46,
+      head: [[
+        'Fecha',
+        'Doctor',
+        'Altura',
+        'Peso',
+        'Presión',
+        'Comportamiento',
+        'Estado General',
+        'Segunda Visita',
+        'Datos Dinámicos'
+      ]],
+      body: histories.map((history) => ([
+        this.formatHistoryDate(history.date),
+        `${history.doctorFirstName} ${history.doctorLastName}`,
+        `${history.height ?? ''}`,
+        `${history.weight ?? ''}`,
+        history.pressure ?? '',
+        `${history.patientBehavior ?? ''}`,
+        `${history.patientGeneralState ?? ''}`,
+        `${history.secondVisitRecommendation ?? ''}`,
+        this.formatDynamicData(history.dynamicData),
+      ])),
+      styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+      headStyles: { fillColor: [30, 41, 59] },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+    });
+
+    pdf.save(`clinical-history-${patient.patientUID}.pdf`);
   }
 
 
@@ -287,8 +350,45 @@ export class AppointmentsService {
     }
 }
 
+  private formatHistoryDate(date: { seconds: number; nanoseconds: number }): string {
+    return new Date(date.seconds * 1000).toLocaleDateString();
+  }
+
+  private formatDynamicData(dynamicData: { key: string; value: number }[] = []): string {
+    return dynamicData.length
+      ? dynamicData.map((item) => `${item.key}: ${item.value}`).join(' | ')
+      : '';
+  }
+
+  private async loadImageAsDataUrl(url: string): Promise<string | null> {
+    try {
+      return await new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+
+          const context = canvas.getContext('2d');
+          if (!context) {
+            resolve(null);
+            return;
+          }
+
+          context.drawImage(image, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+
+        image.onerror = () => resolve(null);
+        image.src = url;
+      });
+    } catch (error) {
+      console.error('Error loading PDF logo:', error);
+      return null;
+    }
+  }
+
 }
-
-
-
 

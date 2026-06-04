@@ -120,6 +120,26 @@ export class MisTurnosEspecialistaComponent {
     });
   }
 
+  async downloadPatientHistoryPdf(appointment: Appointment): Promise<void> {
+    if (!appointment.uidPatient) {
+      await Swal.fire('Error', 'No se pudo obtener el paciente asociado al turno.', 'error');
+      return;
+    }
+
+    try {
+      this.isLoading = true;
+      this.loadingMessage = 'Generando PDF de historia clínica...';
+      await this.appointmentService.generateMedicalHistoryPdfByUserId(appointment.uidPatient);
+      await Swal.fire('PDF generado', 'La historia clínica del paciente fue descargada correctamente.', 'success');
+    } catch (error) {
+      console.error('Error al generar la historia clínica del paciente:', error);
+      await Swal.fire('Error', 'No se pudo generar la historia clínica del paciente.', 'error');
+    } finally {
+      this.isLoading = false;
+      this.loadingMessage = '';
+    }
+  }
+
 
   async acceptAppointment(appointment: Appointment) {
     const formattedDate = this.formatDate(appointment.date);

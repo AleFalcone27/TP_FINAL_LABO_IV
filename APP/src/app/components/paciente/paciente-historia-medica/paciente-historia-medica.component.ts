@@ -7,6 +7,7 @@ import { MedicalHistory } from '../../../interfaces/medicalHistory';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PatientBehaviorColorDirective } from '../../../directives/patient-behavior-color/patient-behavior-color.directive';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-paciente-historia-medica',
@@ -21,6 +22,7 @@ export class PacienteHistoriaMedicaComponent {
   medicalHistories: MedicalHistory[] = []; 
   filteredMedicalHistories: MedicalHistory[] = []; 
   searchTerm: string = '';
+  isGeneratingPdf = false;
 
   constructor(
     private appointmentsService: AppointmentsService,
@@ -97,5 +99,26 @@ applyFilters() {
 onSearch(event: Event) {
   this.searchTerm = (event.target as HTMLInputElement).value;
   this.applyFilters();
+}
+
+async downloadMedicalHistoryPdf(): Promise<void> {
+  const userData = this.authService.getUserData();
+  const userId = userData.uid;
+
+  if (!userId) {
+    await Swal.fire('Error', 'No se pudo obtener el ID del usuario.', 'error');
+    return;
+  }
+
+  try {
+    this.isGeneratingPdf = true;
+    await this.appointmentsService.generateMedicalHistoryPdfByUserId(userId);
+    await Swal.fire('PDF generado', 'El archivo de historia clínica fue descargado correctamente.', 'success');
+  } catch (error) {
+    console.error('Error al generar el PDF:', error);
+    await Swal.fire('Error', 'No se pudo generar el PDF de la historia clínica.', 'error');
+  } finally {
+    this.isGeneratingPdf = false;
+  }
 }
 }

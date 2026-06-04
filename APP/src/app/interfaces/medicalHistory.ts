@@ -6,6 +6,7 @@ export interface DynamicData {
 export interface MedicalHistory {
     id: string;
     height: number;
+    temperature?: number;
     weight: number;
     patientLastName: string
     patientFirstName: string,
