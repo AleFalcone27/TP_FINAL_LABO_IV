@@ -31,6 +31,12 @@
                                 <b>Obra Social: </b>{{ userData?.socialInsurance }}
                             </div>
 
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn-action info" (click)="downloadMedicalHistoryPdf()">
+                                    Descargar historia clínica
+                                </button>
+                            </div>
+
                             <div class="form-text text-center mb-5 text-dark"></div>
                         </form>
                     </div>
