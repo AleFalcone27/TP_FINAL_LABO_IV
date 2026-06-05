@@ -11,6 +11,7 @@ import { MakeAppointmentComponent } from './components/paciente/make-appointment
 import { PerfilPacienteComponent } from './components/paciente/perfil-paciente/perfil-paciente.component';
 import { PerfilEspecialistaComponent } from './components/especialista/perfil-especialista/perfil-especialista.component';
 import { MisTurnosEspecialistaComponent } from './components/especialista/mis-turnos-especialista/mis-turnos-especialista.component';
+import { MisPacientesEspecialistaComponent } from './components/especialista/mis-pacientes-especialista/mis-pacientes-especialista.component';
 import { AdminTurnosComponent } from './components/admin/admin-turnos/admin-turnos.component';
 import { PerfilAdminComponent } from './components/admin/perfil-admin/perfil-admin.component';
 import { InformesComponent } from './components/admin/informes/informes.component';
@@ -45,6 +46,7 @@ export const routes: Routes = [
 
     // Rutas Especialista
     { path: 'especialista/misTurnos', component:MisTurnosEspecialistaComponent },
+    { path: 'especialista/misPacientes', component:MisPacientesEspecialistaComponent },
     { path: 'especialista/perfil', component:PerfilEspecialistaComponent },
 
 
