@@ -11,6 +11,7 @@ import { FormatAppointmentStatusPipe } from '../../../pipes/format-appointment-s
 import { AppointmentStatusColorDirective } from '../../../directives/appointment-status-color/appointment-status-color.directive';
 import Swal from 'sweetalert2';
 import { routeAnimations } from '../../../animations/animations';
+import { MedicalHistory } from '../../../interfaces/medicalHistory';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class MyAppointmentsComponent {
 
   appointments: Appointment[] = [];
   filteredAppointments: Appointment[] = [];
+  private medicalHistoriesByAppointmentId = new Map<string, MedicalHistory[]>();
   searchTerm: string = '';
   isLoading: boolean = true;
   loadingMessage = '';
@@ -41,6 +43,7 @@ export class MyAppointmentsComponent {
       const userId = this.authService.getUserData()['uid'];
       console.log(userId);
       this.appointments = await this.appointmentService.getAppointmentsByUserId(userId!); 
+      await this.loadMedicalHistories(userId!);
       console.log(this.appointments);
       this.applyFilters();
     } catch (error) {
@@ -50,19 +53,26 @@ export class MyAppointmentsComponent {
     }
   }
 
+  private async loadMedicalHistories(userId: string): Promise<void> {
+    const histories = await this.appointmentService.getMedicalHistoryByUserID(userId);
+    this.medicalHistoriesByAppointmentId.clear();
+
+    for (const history of histories) {
+      if (!this.medicalHistoriesByAppointmentId.has(history.appointmentId)) {
+        this.medicalHistoriesByAppointmentId.set(history.appointmentId, []);
+      }
+
+      this.medicalHistoriesByAppointmentId.get(history.appointmentId)!.push(history);
+    }
+  }
+
 
   applyFilters() {
     let filtered = [...this.appointments];
 
     if (this.searchTerm) {
         const searchLower = this.searchTerm.toLowerCase();
-        filtered = filtered.filter(appointment => {
-            return appointment.doctorFirstName.toLowerCase().includes(searchLower) ||
-                   appointment.doctorLastName.toLowerCase().includes(searchLower) ||
-                   appointment.specialty.toLowerCase().includes(searchLower) ||
-                   this.getTime(appointment.date).includes(searchLower)  ||
-                   this.formatDate(appointment.date).includes(searchLower)
-        });
+        filtered = filtered.filter(appointment => this.matchesSearch(appointment, searchLower));
     }
 
     this.filteredAppointments = filtered;
@@ -73,6 +83,52 @@ onSearch(event: Event) {
     this.searchTerm = (event.target as HTMLInputElement).value;
     this.applyFilters();
 }
+
+  private matchesSearch(appointment: Appointment, searchLower: string): boolean {
+    const historyMatches = (this.medicalHistoriesByAppointmentId.get(appointment.id) || []).some(history =>
+      this.searchableHistoryText(history).includes(searchLower)
+    );
+
+    return this.searchableAppointmentText(appointment).includes(searchLower) || historyMatches;
+  }
+
+  private searchableAppointmentText(appointment: Appointment): string {
+    return [
+      appointment.doctorFirstName,
+      appointment.doctorLastName,
+      appointment.specialty,
+      appointment.cancellationComment || '',
+      appointment.doctorReview || '',
+      this.getTime(appointment.date),
+      this.formatDate(appointment.date),
+      String(appointment.status)
+    ].join(' ').toLowerCase();
+  }
+
+  private searchableHistoryText(history: MedicalHistory): string {
+    const dynamicData = (history.dynamicData || [])
+      .map(data => `${data.key} ${data.value}`)
+      .join(' ');
+
+    return [
+      history.patientFirstName,
+      history.patientLastName,
+      history.doctorFirstName,
+      history.doctorLastName,
+      history.height,
+      history.weight,
+      history.pressure,
+      history.secondVisitRecommendation,
+      history.patientBehavior,
+      history.patientGeneralState,
+      history.date ? this.formatHistoryDate(history.date) : '',
+      dynamicData
+    ].join(' ').toLowerCase();
+  }
+
+  private formatHistoryDate(date: { seconds: number; nanoseconds: number }): string {
+    return new Date(date.seconds * 1000).toLocaleDateString();
+  }
 
 formatDate(date: Timestamp): string {
     const dateObj = date.toDate(); 

@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { FormatAppointmentStatusPipe } from '../../../pipes/format-appointment-status/format-appointment-status.pipe';
 import { AppointmentStatusColorDirective } from '../../../directives/appointment-status-color/appointment-status-color.directive';
 import { MedicalData } from '../../../interfaces/medicalData';
+import { MedicalHistory } from '../../../interfaces/medicalHistory';
 import Swal from 'sweetalert2';
 import { routeAnimations } from '../../../animations/animations';
 
@@ -25,6 +26,7 @@ export class MisTurnosEspecialistaComponent {
 
   appointments: Appointment[] = [];
   filteredAppointments: Appointment[] = [];
+  private medicalHistoriesByAppointmentId = new Map<string, MedicalHistory[]>();
   searchTerm: string = '';
   isLoading: boolean = true;
   loadingMessage = '';
@@ -40,6 +42,7 @@ export class MisTurnosEspecialistaComponent {
       this.isLoading = true;
       const userId = this.authService.getUserData()['uid'];
       this.appointments = await this.appointmentService.getAppointmentsByDoctorId(userId!);
+      await this.loadMedicalHistories();
 
       this.applyFilters();
     } catch (error) {
@@ -49,19 +52,34 @@ export class MisTurnosEspecialistaComponent {
     }
   }
 
+  private async loadMedicalHistories(): Promise<void> {
+    this.medicalHistoriesByAppointmentId.clear();
+
+    const uniquePatientIds = [...new Set(this.appointments.map(appointment => appointment.uidPatient).filter(Boolean))];
+    const historiesByPatient = await Promise.all(
+      uniquePatientIds.map(async (patientId) => ({
+        patientId,
+        histories: await this.appointmentService.getMedicalHistoryByUserID(patientId)
+      }))
+    );
+
+    for (const { histories } of historiesByPatient) {
+      for (const history of histories) {
+        if (!this.medicalHistoriesByAppointmentId.has(history.appointmentId)) {
+          this.medicalHistoriesByAppointmentId.set(history.appointmentId, []);
+        }
+        this.medicalHistoriesByAppointmentId.get(history.appointmentId)!.push(history);
+      }
+    }
+  }
+
   applyFilters() {
     let filtered = [...this.appointments];
 
     if (this.searchTerm) {
       const searchLower = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(appointment => {
-          return appointment.patientFirstName.toLowerCase().includes(searchLower) ||
-                 appointment.patientLastName.toLowerCase().includes(searchLower) ||
-                 appointment.specialty.toLowerCase().includes(searchLower) ||
-                 this.getTime(appointment.date).includes(searchLower)  ||
-                 this.formatDate(appointment.date).includes(searchLower)
-      });
-  }
+      filtered = filtered.filter(appointment => this.matchesSearch(appointment, searchLower));
+    }
 
     this.filteredAppointments = filtered;
   }
@@ -69,6 +87,52 @@ export class MisTurnosEspecialistaComponent {
   onSearch(event: Event) {
     this.searchTerm = (event.target as HTMLInputElement).value;
     this.applyFilters();
+  }
+
+  private matchesSearch(appointment: Appointment, searchLower: string): boolean {
+    const historyMatches = (this.medicalHistoriesByAppointmentId.get(appointment.id) || []).some(history =>
+      this.searchableHistoryText(history).includes(searchLower)
+    );
+
+    return this.searchableAppointmentText(appointment).includes(searchLower) || historyMatches;
+  }
+
+  private searchableAppointmentText(appointment: Appointment): string {
+    return [
+      appointment.patientFirstName,
+      appointment.patientLastName,
+      appointment.specialty,
+      appointment.doctorReview || '',
+      appointment.cancellationComment || '',
+      this.getTime(appointment.date),
+      this.formatDate(appointment.date),
+      String(appointment.status)
+    ].join(' ').toLowerCase();
+  }
+
+  private searchableHistoryText(history: MedicalHistory): string {
+    const dynamicData = (history.dynamicData || [])
+      .map(data => `${data.key} ${data.value}`)
+      .join(' ');
+
+    return [
+      history.patientFirstName,
+      history.patientLastName,
+      history.doctorFirstName,
+      history.doctorLastName,
+      history.height,
+      history.weight,
+      history.pressure,
+      history.secondVisitRecommendation,
+      history.patientBehavior,
+      history.patientGeneralState,
+      history.date ? this.formatHistoryDate(history.date) : '',
+      dynamicData
+    ].join(' ').toLowerCase();
+  }
+
+  private formatHistoryDate(date: { seconds: number; nanoseconds: number }): string {
+    return new Date(date.seconds * 1000).toLocaleDateString();
   }
 
   formatDate(date: Timestamp): string {

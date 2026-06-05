@@ -48,11 +48,6 @@
                             <div *ngIf="appointment.status === 3 && appointment.doctorReview" class="button-container">
                                 <button class="btn-action info" (click)="showReview(appointment.doctorReview)">Ver reseña</button>
                             </div>
-                            <div *ngIf="appointment.uidPatient" class="button-container">
-                                <button class="btn-action info" (click)="downloadPatientHistoryPdf(appointment)">
-                                    Historia PDF
-                                </button>
-                            </div>
                             <div *ngIf="appointment.status === 0" class="button-container">
                                 <button class="btn-action success" (click)="acceptAppointment(appointment)">Aceptar</button>
                                 <button class="btn-action danger" (click)="cancelAppointment(appointment)">Rechazar</button>
