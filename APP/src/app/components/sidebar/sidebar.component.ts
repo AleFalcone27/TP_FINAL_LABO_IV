@@ -67,6 +67,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.router.navigate(['especialista/misTurnos']);
   }
 
+  navigateToMyPatients() {
+    this.router.navigate(['especialista/misPacientes']);
+  }
+
   navigateToTurnos(){
     this.router.navigate(['admin/turnos']);
   }

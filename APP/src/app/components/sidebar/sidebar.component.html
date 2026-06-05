@@ -50,6 +50,11 @@
         Mis Turnos
       </a>
     </li>
+    <li *ngIf="userRole === 'especialista'" class="nav-item">
+      <a (click)="navigateToMyPatients()" class="nav-link" aria-current="page">
+        Mis Pacientes
+      </a>
+    </li>
   </ul>
   <hr>
 
