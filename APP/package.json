@@ -24,6 +24,8 @@
     "chart.js": "^4.4.7",
     "critters": "^0.0.25",
     "firebase": "^10.14.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "ngx-captcha": "^13.0.0",
     "popper.js": "^1.16.1",
     "rxjs": "~7.8.0",
