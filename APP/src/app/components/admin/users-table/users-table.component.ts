@@ -8,6 +8,8 @@ import { Doctor } from '../../../interfaces/doctor';
 import { Admin } from '../../../interfaces/admin';
 import { SpinnerComponent } from '../../spinner/spinner.component';
 import * as XLSX from 'xlsx';
+import { AppointmentsService } from '../../../services/appointments/appointments.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-users-table',
@@ -26,7 +28,10 @@ export class UsersTableComponent implements OnInit {
   columns: Column[] = [];
   loadingMessage = '';
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private appointmentsService: AppointmentsService
+  ) {}
 
   async ngOnInit() {
     await this.loadUsers();
@@ -143,7 +148,7 @@ export class UsersTableComponent implements OnInit {
   }
 
   isDoctor(user: User | Admin | Doctor): user is Doctor {
-    return (user as Doctor).approved !== undefined;
+    return user.role === 'doctor' || user.role === 'especialista' || (user as Doctor).approved !== undefined;
   }
 
   isAdmin(user: User | Admin | Doctor): user is Admin {
@@ -151,7 +156,7 @@ export class UsersTableComponent implements OnInit {
   }
 
   isUser(user: User | Admin | Doctor): user is User {
-    return user.role === 'user';
+    return user.role === 'user' || user.role === 'paciente';
   }
 
 
@@ -197,13 +202,27 @@ export class UsersTableComponent implements OnInit {
     }
   }
   
-  private translateRole(role: string): string {
+  translateRole(role: string): string {
     const roles = {
       'user': 'Paciente',
+      'paciente': 'Paciente',
       'doctor': 'Doctor',
+      'especialista': 'Especialista',
       'admin': 'Administrador'
     };
     return roles[role as keyof typeof roles] || role;
+  }
+
+  getRoleClass(role: string): string {
+    const roles = {
+      'user': 'user',
+      'paciente': 'user',
+      'doctor': 'doctor',
+      'especialista': 'doctor',
+      'admin': 'admin'
+    };
+
+    return roles[role as keyof typeof roles] || '';
   }
   
   // Métodos auxiliares
@@ -229,6 +248,29 @@ export class UsersTableComponent implements OnInit {
 
   getStatusButtonText(approved: boolean): string {
     return approved ? 'Desaprobar' : 'Aprobar';
+  }
+
+  async downloadMedicalHistoryPdf(user: User | Admin | Doctor): Promise<void> {
+    if (!this.isUser(user)) {
+      await Swal.fire('No disponible', 'Solo se puede generar la historia clínica de pacientes.', 'info');
+      return;
+    }
+
+    try {
+      this.isLoading = true;
+      this.loadingMessage = 'Generando PDF de historia clínica...';
+      await this.appointmentsService.generateMedicalHistoryPdfByUserId(user.uid);
+      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+    } catch (error) {
+      console.error('Error al generar la historia clínica:', error);
+      const message = error instanceof Error && error.message === 'No medical history found for this user'
+        ? 'Este paciente no tiene historia clínica registrada todavía.'
+        : 'No se pudo generar la historia clínica.';
+      await Swal.fire('Error', message, 'error');
+    } finally {
+      this.isLoading = false;
+      this.loadingMessage = '';
+    }
   }
 
 

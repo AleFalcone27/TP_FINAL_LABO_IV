@@ -36,20 +36,21 @@
             <th>Rol</th>
             <th *ngIf="selectedRole === 'doctor'">Especialidad</th>
             <th *ngIf="selectedRole === 'doctor'">Estado</th>
-            <th *ngIf="selectedRole === 'doctor'">Acción</th>
+            <th *ngIf="selectedRole === 'doctor'" class="action-column">Acción</th>
+            <th *ngIf="selectedRole === 'user' || selectedRole === 'all'" class="action-column">Acción</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let user of filteredUsers">
             <td>
-              <span class="user-avatar" [ngClass]="user.role">{{ user.firstName | slice:0:1 | uppercase }}</span>
+              <span class="user-avatar" [ngClass]="getRoleClass(user.role)">{{ user.firstName | slice:0:1 | uppercase }}</span>
             </td>
             <td class="text-left">{{user.firstName}}</td>
             <td class="text-left">{{user.lastName}}</td>
             <td class="text-left td-email">{{user.email}}</td>
             <td>
-              <span class="role-badge" [ngClass]="user.role">
-                {{ user.role === 'user' ? 'Paciente' : user.role === 'doctor' ? 'Doctor' : 'Admin' }}
+              <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+                {{ translateRole(user.role) }}
               </span>
             </td>
             <td *ngIf="selectedRole === 'doctor'" class="text-left">{{getValue(user, 'specialty')}}</td>
@@ -58,12 +59,20 @@
                 {{ user.approved ? 'Aprobado' : 'Pendiente' }}
               </span>
             </td>
-            <td *ngIf="selectedRole === 'doctor' && isDoctor(user)">
+            <td *ngIf="selectedRole === 'doctor' && isDoctor(user)" class="action-column">
               <button
                 class="btn-action"
                 [ngClass]="user.approved ? 'danger' : 'success'"
                 (click)="toggleDoctorStatus(user)">
                 {{ getStatusButtonText(user.approved) }}
+              </button>
+            </td>
+            <td *ngIf="selectedRole === 'user' || selectedRole === 'all'" class="action-column">
+              <button
+                *ngIf="(selectedRole === 'user')"
+                class="btn-action info"
+                (click)="downloadMedicalHistoryPdf(user)">
+                Historia PDF
               </button>
             </td>
           </tr>
