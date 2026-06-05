@@ -294,6 +294,17 @@ select.form-control.is-invalid,
 .data-table th.text-left,
 .data-table td.text-left { text-align: left; }
 
+.data-table th.action-column,
+.data-table td.action-column {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.data-table td.action-column {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
 .td-email {
     color: var(--text-muted);
     font-size: 0.825rem;
