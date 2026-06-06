@@ -26,37 +26,37 @@ import { PacienteHistoriaMedicaComponent } from './components/paciente/paciente-
 export const routes: Routes = [
 
     { path: '', redirectTo: '/home', pathMatch:'full' },
-    { path: 'home', component: HomeComponent },
-    { path: 'registerpaciente', component: RegisterPagePacienteComponent },
-    { path: 'registerespecialista', component: RegisterPageEspecialistaComponent },
-    { path: 'register', component: RegisterComponent },
+    { path: 'home', component: HomeComponent, data: { animation: 'home' } },
+    { path: 'registerpaciente', component: RegisterPagePacienteComponent, data: { animation: 'registerPaciente' } },
+    { path: 'registerespecialista', component: RegisterPageEspecialistaComponent, data: { animation: 'registerEspecialista' } },
+    { path: 'register', component: RegisterComponent, data: { animation: 'registerHome' } },
 
 
 
-    { path: 'login', component:LoginComponent },
+    { path: 'login', component:LoginComponent, data: { animation: 'login' } },
 
 
     // Rutas Admin
-    { path: 'admin', component:AdminDashboardComponent },
-    { path: 'admin/perfil', component:PerfilAdminComponent },
-    { path: 'admin/turnos', component:AdminTurnosComponent },
-    { path: 'admin/informes', component:InformesComponent
+    { path: 'admin', component:AdminDashboardComponent, data: { animation: 'adminHome' } },
+    { path: 'admin/perfil', component:PerfilAdminComponent, data: { animation: 'adminProfile' } },
+    { path: 'admin/turnos', component:AdminTurnosComponent, data: { animation: 'adminAppointments' } },
+    { path: 'admin/informes', component:InformesComponent, data: { animation: 'adminReports' }
     },
    
 
     // Rutas Especialista
-    { path: 'especialista/misTurnos', component:MisTurnosEspecialistaComponent },
-    { path: 'especialista/misPacientes', component:MisPacientesEspecialistaComponent },
-    { path: 'especialista/perfil', component:PerfilEspecialistaComponent },
+    { path: 'especialista/misTurnos', component:MisTurnosEspecialistaComponent, data: { animation: 'specialistAppointments' } },
+    { path: 'especialista/misPacientes', component:MisPacientesEspecialistaComponent, data: { animation: 'specialistPatients' } },
+    { path: 'especialista/perfil', component:PerfilEspecialistaComponent, data: { animation: 'specialistProfile' } },
 
 
 
     // Rutas Paciente
-    { path: 'paciente', component:PacienteDashboardComponent },
-    { path: 'paciente/perfil', component:PerfilPacienteComponent },
-    { path: 'paciente/misTurnos', component:MyAppointmentsComponent },
-    { path: 'paciente/reservarTurno', component:MakeAppointmentComponent },
-    { path: 'paciente/historiaMedica', component:PacienteHistoriaMedicaComponent }
+    { path: 'paciente', component:PacienteDashboardComponent, data: { animation: 'patientHome' } },
+    { path: 'paciente/perfil', component:PerfilPacienteComponent, data: { animation: 'patientProfile' } },
+    { path: 'paciente/misTurnos', component:MyAppointmentsComponent, data: { animation: 'patientAppointments' } },
+    { path: 'paciente/reservarTurno', component:MakeAppointmentComponent, data: { animation: 'patientBooking' } },
+    { path: 'paciente/historiaMedica', component:PacienteHistoriaMedicaComponent, data: { animation: 'patientHistory' } }
 
 
 ];

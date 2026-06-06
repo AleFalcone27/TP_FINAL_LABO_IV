@@ -9,7 +9,6 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { slideFromBelowAnimation } from '../../animations/animations';
 import { ZoomInImagesDirective } from '../../directives/zoom-in-images/zoom-in-images.directive';
-import { slideFromLeftAnimation } from '../../animations/animations';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +16,7 @@ import { slideFromLeftAnimation } from '../../animations/animations';
   imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, SidebarComponent,ZoomInImagesDirective,],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css', 
-  animations: [slideFromBelowAnimation,slideFromLeftAnimation]
+  animations: [slideFromBelowAnimation]
 })
 export class LoginComponent {
   loginForm: FormGroup;

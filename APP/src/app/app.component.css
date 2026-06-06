@@ -1,0 +1,10 @@
+main {
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.route-shell {
+    flex: 1;
+    min-width: 0;
+}
