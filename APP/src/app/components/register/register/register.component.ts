@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
-import { slideFromLeftAnimation } from '../../../animations/animations';
 
 @Component({
   selector: 'app-register',
@@ -9,7 +8,6 @@ import { slideFromLeftAnimation } from '../../../animations/animations';
   imports: [SidebarComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
-  animations: [slideFromLeftAnimation]
 })
 
 export class RegisterComponent {

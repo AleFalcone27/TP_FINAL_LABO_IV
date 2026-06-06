@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -15,6 +15,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   userRole: string = '';
   isLoggedIn: boolean = false;
   private authSubscription?: Subscription;
+  private routerSubscription?: Subscription;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -30,6 +31,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.userRole = '';
       }
     });
+
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.checkUserRole();
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -37,10 +44,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 
   async checkUserRole() {
     this.userRole = this.authService.getRole() || '';
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   navigateToLogin() {

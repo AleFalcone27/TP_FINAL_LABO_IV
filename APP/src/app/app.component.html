@@ -1,2 +1,6 @@
-<router-outlet />
-
+<main class="main-container">
+  <app-sidebar></app-sidebar>
+  <section class="route-shell" [@routeAnimations]="prepareRoute(outlet)">
+    <router-outlet #outlet="outlet" />
+  </section>
+</main>

@@ -1,9 +1,7 @@
 <app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
 
 <body >
-  <div class="main-container d-flex" style="height: 100vh;">
-    <app-sidebar @slideFromLeft ></app-sidebar>
-    <div class="content-wrapper d-flex flex-column ">
+  <div class="content-wrapper d-flex flex-column ">
 
       <div @slideFromBelow class="container-fluid vh-100">
         <div class="row h-100 justify-content-center align-items-center">
@@ -95,5 +93,4 @@
           </div>
         </div>
       </div>
-    </div>
   </div>
