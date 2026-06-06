@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { RegisterPacienteComponent } from '../register-paciente/register-paciente.component';
-import { CaptchaComponent } from '../../others/captcha/captcha/captcha.component';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { fade } from '../../../animations/animations';
 import { CaptchaService } from '../../../services/captcha/captcha.service';
+import { OwnCaptchaDirective } from '../../../directives/captcha/captcha.directive';
 
 @Component({
   selector: 'app-register-page-paciente',
   standalone: true,
-  imports: [RegisterPacienteComponent, CaptchaComponent, CommonModule, SidebarComponent],
+  imports: [RegisterPacienteComponent, CommonModule, SidebarComponent, OwnCaptchaDirective],
   templateUrl: './register-page-paciente.component.html',
   styleUrls: ['./register-page-paciente.component.css'], 
   animations: [fade]

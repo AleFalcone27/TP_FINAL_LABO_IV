@@ -17,6 +17,7 @@ import Swal from 'sweetalert2'
 })
 export class RegisterPacienteComponent {
   @Input() isCaptchaValidated: boolean = false;
+  @Input() isCaptchaEnabled: boolean = true;
   isLoading = false;
   loadingMessage = '';
   registerForm: FormGroup;
@@ -76,6 +77,9 @@ export class RegisterPacienteComponent {
   async onSubmit() {
 
     if (!this.isCaptchaValidated) {
+      if (!this.isCaptchaEnabled) {
+        this.isCaptchaValidated = true;
+      } else {
       Swal.fire({
           title: 'Error',
           text: 'Por favor, valida el captcha antes de continuar.',
@@ -83,7 +87,8 @@ export class RegisterPacienteComponent {
           confirmButtonText: 'Ok'
       });
       return;
-  }
+      }
+    }
 
   this.isLoading = true;
   this.loadingMessage = 'Registrando paciente';
@@ -218,7 +223,6 @@ export class RegisterPacienteComponent {
     };
   }
 }
-
 
 
 

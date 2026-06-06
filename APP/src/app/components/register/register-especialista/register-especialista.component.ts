@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { AuthService } from '../../../services/auth/auth.service';
@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { SpecialtyNamePipe } from '../../../pipes/specialty-name-pipe/specialty-name.pipe';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
-
 @Component({
   selector: 'app-register-especialista',
   standalone: true,
@@ -18,6 +17,8 @@ import { AppointmentsService } from '../../../services/appointments/appointments
   styleUrl: './register-especialista.component.css'
 })
 export class RegisterEspecialistaComponent implements OnInit {
+  @Input() isCaptchaValidated: boolean = false;
+  @Input() isCaptchaEnabled: boolean = true;
   registerForm: FormGroup;
   specialties: { especialidad: string; image: string }[] = [];
 
@@ -157,6 +158,20 @@ export class RegisterEspecialistaComponent implements OnInit {
   
 
   async onSubmit() {
+    if (!this.isCaptchaValidated) {
+      if (!this.isCaptchaEnabled) {
+        this.isCaptchaValidated = true;
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Por favor, valida el captcha antes de continuar.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+        return;
+      }
+    }
+
     const auth = getAuth();
     const email = this.registerForm.get('email')?.value;
     const password = this.registerForm.get('password')?.value;

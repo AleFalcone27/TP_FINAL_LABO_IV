@@ -4,11 +4,16 @@
         <div class="register-page">
             <div class="register-form-card">
                 <h3>Registrate como Paciente</h3>
-                <app-register-paciente @fade [isCaptchaValidated]="captchaValidated"></app-register-paciente>
-                <app-captcha 
-                    *ngIf="captchaEnabled" 
+                <app-register-paciente
+                    @fade
+                    [isCaptchaValidated]="captchaValidated"
+                    [isCaptchaEnabled]="captchaEnabled">
+                </app-register-paciente>
+                <div
+                    appOwnCaptcha
+                    [appOwnCaptchaEnabled]="captchaEnabled"
                     (captchaValidated)="onCaptchaValidated($event)">
-                </app-captcha>
+                </div>
                 <div *ngIf="!captchaEnabled" class="alert alert-info text-center mt-3">
                     <i class="bi bi-info-circle"></i> El captcha está desactivado
                 </div>

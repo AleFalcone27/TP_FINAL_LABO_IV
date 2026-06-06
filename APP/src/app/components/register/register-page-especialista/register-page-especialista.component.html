@@ -4,7 +4,19 @@
         <div class="register-page">
             <div class="register-form-card">
                 <h3>Registrate como Especialista</h3>
-                <app-register-especialista @fade></app-register-especialista>
+                <app-register-especialista
+                    @fade
+                    [isCaptchaValidated]="captchaValidated"
+                    [isCaptchaEnabled]="captchaEnabled">
+                </app-register-especialista>
+                <div
+                    appOwnCaptcha
+                    [appOwnCaptchaEnabled]="captchaEnabled"
+                    (captchaValidated)="onCaptchaValidated($event)">
+                </div>
+                <div *ngIf="!captchaEnabled" class="alert alert-info text-center mt-3">
+                    <i class="bi bi-info-circle"></i> El captcha está desactivado
+                </div>
             </div>
         </div>
     </div>
