@@ -1,1 +1,15 @@
+.table-toolbar {
+  margin-top: 12px;
+}
 
+.table-toolbar-left {
+  align-items: center;
+}
+
+.table-toolbar-left {
+  gap: 12px;
+}
+
+.table-search {
+  margin-top: 12px;
+}

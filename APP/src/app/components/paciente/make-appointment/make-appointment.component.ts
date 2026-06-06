@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
@@ -16,7 +15,7 @@ import { Schedule } from '../../../interfaces/appointment';
 @Component({
   selector: 'app-make-appointment',
   standalone: true,
-  imports: [SidebarComponent, CommonModule, SpinnerComponent, FormatDatePipe, FormatHourPipe],
+  imports: [CommonModule, SpinnerComponent, FormatDatePipe, FormatHourPipe],
   templateUrl: './make-appointment.component.html',
   styleUrls: ['./make-appointment.component.css']
 })
@@ -30,6 +29,8 @@ export class MakeAppointmentComponent implements OnInit {
   groupedSlots: { date: string; slots: Date[] }[] = [];
   isOpen: { [key: string]: boolean } = {};
   reservedSlots: Date[] = [];
+  selectedSpecialtyLabel = '';
+  selectedDoctorLabel = '';
 
   loadingMessage = '';
   isLoading = false;
@@ -62,6 +63,11 @@ export class MakeAppointmentComponent implements OnInit {
       this.loadingMessage = 'Cargando especialistas...';
       this.isLoading = true;
       this.selectedSpecialty = specialty;
+      this.selectedSpecialtyLabel = specialty;
+      this.selectedDoctor = null;
+      this.selectedDoctorLabel = '';
+      this.availableSlots = [];
+      this.groupedSlots = [];
       this.doctors = await this.appointmentsService.getDoctorsBySpecialty(specialty);
       console.log('Doctores encontrados:', this.doctors);
     } catch (error) {
@@ -89,6 +95,7 @@ export class MakeAppointmentComponent implements OnInit {
 
   async selectDoctor(doctor: any): Promise<void> {
     this.selectedDoctor = doctor;
+    this.selectedDoctorLabel = `${doctor.firstName} ${doctor.lastName}`;
     await this.loadAvailableSlots(doctor.uid);
   }
 
@@ -225,6 +232,10 @@ export class MakeAppointmentComponent implements OnInit {
       .then(() => {
         console.log('Turno reservado con éxito:', appointmentData);
         this.isLoading = false;
+        this.selectedDoctor = null;
+        this.selectedDoctorLabel = '';
+        this.availableSlots = [];
+        this.groupedSlots = [];
 
         Swal.fire({
           icon: 'success',
@@ -244,5 +255,17 @@ export class MakeAppointmentComponent implements OnInit {
         });
       });
     this.isLoading = false;
+  }
+
+  hasSpecialtySelection(): boolean {
+    return !!this.selectedSpecialty;
+  }
+
+  hasDoctorSelection(): boolean {
+    return !!this.selectedDoctor;
+  }
+
+  hasSlots(): boolean {
+    return this.groupedSlots.length > 0;
   }
 }

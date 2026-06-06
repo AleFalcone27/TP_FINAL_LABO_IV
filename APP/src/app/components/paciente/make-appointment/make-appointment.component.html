@@ -1,54 +1,106 @@
 <app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
 
-<div class="main-container d-flex" style="height: 100vh;">
-    <div class="content-wrapper d-flex flex-column align-items-center p-4">
-        <h2 class="text-center mb-4">Selecciona una Especialidad</h2>
-        <div class="specialty-buttons d-flex flex-wrap justify-content-center">
-            <div *ngFor="let specialty of specialties" class="specialty-item m-2">
+<div class="main-container d-flex make-appointment-layout">
+    <div class="content-wrapper d-flex flex-column align-items-center p-4 make-appointment-content">
+        <section class="booking-hero">
+            <div class="booking-hero-text">
+                <p class="booking-kicker">Paso a paso</p>
+                <h2>Reservar turno</h2>
+                <p class="booking-copy">Elegí una especialidad, luego un profesional y finalmente el horario disponible.</p>
+            </div>
+            <div class="booking-steps">
+                <div class="step-pill" [class.active]="!hasSpecialtySelection()">1. Especialidad</div>
+                <div class="step-pill" [class.active]="hasSpecialtySelection() && !hasDoctorSelection()">2. Profesional</div>
+                <div class="step-pill" [class.active]="hasDoctorSelection() && !hasSlots()">3. Horario</div>
+                <div class="step-pill" [class.active]="hasSlots()">4. Confirmar</div>
+            </div>
+        </section>
+
+        <section class="booking-summary" *ngIf="hasSpecialtySelection() || hasDoctorSelection()">
+            <div class="summary-item">
+                <span class="summary-label">Especialidad</span>
+                <span class="summary-value">{{ selectedSpecialtyLabel || 'Sin seleccionar' }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Profesional</span>
+                <span class="summary-value">{{ selectedDoctorLabel || 'Sin seleccionar' }}</span>
+            </div>
+        </section>
+
+        <section class="booking-section">
+            <div class="section-header">
+                <h3>1. Seleccioná una especialidad</h3>
+                <p>Tocá una tarjeta para ver los especialistas disponibles.</p>
+            </div>
+            <div class="specialty-grid">
                 <button
-                    class="btn specialty-button"
+                    *ngFor="let specialty of specialties"
+                    type="button"
+                    class="specialty-card"
+                    [class.selected]="selectedSpecialty === specialty.especialidad"
                     (click)="selectSpecialty(specialty.especialidad)"
-                    [style.backgroundImage]="'url(' + specialty.image + ')'"
                 >
-                </button>
-                <p class="specialty-name mt-2 text-center">{{ specialty.especialidad }}</p>
-            </div>
-        </div>
-        <div *ngIf="doctors.length > 0; else noDoctors" class="doctor-buttons d-flex flex-wrap justify-content-center">
-            <div *ngFor="let doctor of doctors" class="doctor-button-item m-2">
-                <button class="btn btn-primary doctor-button" (click)="selectDoctor(doctor)">
-                    <div class="doctor-info">
-                        <div class="doctor-name">{{ doctor.firstName }} {{ doctor.lastName }}</div>
-                        <img [src]="doctor.profileImage" alt="{{ doctor.firstName }} {{ doctor.lastName }}" class="doctor-image">
-                    </div>
+                    <span class="specialty-image" [style.backgroundImage]="'url(' + specialty.image + ')'"></span>
+                    <span class="specialty-name">{{ specialty.especialidad }}</span>
                 </button>
             </div>
-        </div>
-        <ng-template #noDoctors>
-            <p>No hay doctores disponibles.</p>
-        </ng-template>
-        <div *ngIf="groupedSlots.length > 0" class="available-slots mt-4 w-100">
-            <h3 class="text-center">Turnos disponibles</h3>
-            <div class="row">
-                <div *ngFor="let group of groupedSlots" class="col-12 mb-4">
-                    <h4 class="text-center" (click)="toggleSlots(group.date)">
-                        {{ group.date | formatDate }} <span [ngClass]="{'arrow-up': isOpen[group.date], 'arrow-down': !isOpen[group.date]}"></span>
-                    </h4>
-                    <div *ngIf="isOpen[group.date]">
-                        <div class="row">
-                            <div *ngFor="let slot of group.slots" class="col-3 mb-2"> 
-                                <button 
-                                    class="btn slot-button w-100" 
-                                    [ngClass]="{'reserved-slot': isSlotReserved(slot)}" 
-                                    [disabled]="isSlotReserved(slot)" 
-                                    (click)="!isSlotReserved(slot) && bookAppointment(slot)">
-                                    {{ slot | formatHour }}
-                                </button>
-                            </div>
-                        </div>
+        </section>
+
+        <section class="booking-section" *ngIf="hasSpecialtySelection()">
+            <div class="section-header">
+                <h3>2. Elegí un profesional</h3>
+                <p>Mostramos solo médicos que trabajan esta especialidad.</p>
+            </div>
+            <div *ngIf="doctors.length > 0; else noDoctors" class="doctor-grid">
+                <button
+                    *ngFor="let doctor of doctors"
+                    type="button"
+                    class="doctor-card"
+                    [class.selected]="selectedDoctor?.uid === doctor.uid"
+                    (click)="selectDoctor(doctor)"
+                >
+                    <img [src]="doctor.profileImage" alt="{{ doctor.firstName }} {{ doctor.lastName }}" class="doctor-image">
+                    <div class="doctor-name">{{ doctor.firstName }} {{ doctor.lastName }}</div>
+                    <div class="doctor-meta">{{ selectedSpecialtyLabel }}</div>
+                </button>
+            </div>
+            <ng-template #noDoctors>
+                <div class="empty-panel">
+                    <p>No hay doctores disponibles para esta especialidad.</p>
+                </div>
+            </ng-template>
+        </section>
+
+        <section class="booking-section" *ngIf="hasDoctorSelection()">
+            <div class="section-header">
+                <h3>3. Seleccioná un horario</h3>
+                <p>Los turnos se agrupan por día. Hacé clic para desplegar cada jornada.</p>
+            </div>
+            <div *ngIf="hasSlots(); else noSlots" class="available-slots">
+                <div *ngFor="let group of groupedSlots" class="slot-group">
+                    <button type="button" class="slot-group-header" (click)="toggleSlots(group.date)">
+                        <span>{{ group.date | formatDate }}</span>
+                        <span class="slot-group-toggle" [ngClass]="{'arrow-up': isOpen[group.date], 'arrow-down': !isOpen[group.date]}"></span>
+                    </button>
+                    <div *ngIf="isOpen[group.date]" class="slot-grid">
+                        <button
+                            *ngFor="let slot of group.slots"
+                            type="button"
+                            class="slot-button"
+                            [ngClass]="{'reserved-slot': isSlotReserved(slot)}"
+                            [disabled]="isSlotReserved(slot)"
+                            (click)="!isSlotReserved(slot) && bookAppointment(slot)"
+                        >
+                            {{ slot | formatHour }}
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
+            <ng-template #noSlots>
+                <div class="empty-panel">
+                    <p>No hay turnos disponibles para este profesional en los próximos días.</p>
+                </div>
+            </ng-template>
+        </section>
     </div>
 </div>
