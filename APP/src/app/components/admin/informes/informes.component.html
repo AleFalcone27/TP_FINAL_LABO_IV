@@ -1,14 +1,141 @@
-<div class="main-container d-flex" style="height: 100vh;">
-    <app-sidebar></app-sidebar>
-    <div class="content-wrapper d-flex flex-column align-items-center p-4 flex-grow-1">
-        <h2 class="mb-3">Informes</h2>
+<div class="main-container d-flex">
+  <app-sidebar></app-sidebar>
 
-        <div>
-            <!-- <h2>Gráfico Doughnut</h2>
-            <canvas #doughnutCanvas style="width: 400px; height: 400px;"></canvas>
-          </div> -->
+  <div class="content-wrapper informes-page">
+    <div class="informes-header">
+      <div>
+        <h2 class="page-title">Informes</h2>
+      </div>
 
-     
-            No se encontraron datos para mostrar en el gráfico.
-        </div>
+      <div class="date-range">
+        <label>
+          Desde
+          <input type="date" class="form-control" [(ngModel)]="startDate" (change)="onDateRangeChange()">
+        </label>
+        <label>
+          Hasta
+          <input type="date" class="form-control" [(ngModel)]="endDate" (change)="onDateRangeChange()">
+        </label>
+      </div>
     </div>
+
+    <div class="reports-grid">
+      <section class="report-panel report-panel-wide">
+        <div class="report-heading">
+          <h3>Log de ingresos al sistema</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(loginRows, 'log-ingresos')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(loginRows, 'Log de ingresos al sistema', 'log-ingresos')">PDF</button>
+          </div>
+        </div>
+
+        <div class="report-table-wrapper">
+          <table class="data-table compact-table" *ngIf="loginRows.length; else emptyLog">
+            <thead>
+              <tr>
+                <th class="text-left">Usuario</th>
+                <th class="text-left">Email</th>
+                <th>Rol</th>
+                <th>Dia</th>
+                <th>Horario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of loginRows">
+                <td class="text-left">{{ row['Usuario'] }}</td>
+                <td class="text-left">{{ row['Email'] }}</td>
+                <td>{{ row['Rol'] }}</td>
+                <td>{{ row['Dia'] }}</td>
+                <td>{{ row['Horario'] }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #emptyLog>
+            <p class="report-empty">Todavia no hay ingresos registrados.</p>
+          </ng-template>
+        </div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Cantidad de turnos por especialidad</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(specialtyRows, 'turnos-por-especialidad')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(specialtyRows, 'Cantidad de turnos por especialidad', 'turnos-por-especialidad')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #specialtyCanvas></canvas></div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Cantidad de turnos por dia</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(dayRows, 'turnos-por-dia')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(dayRows, 'Cantidad de turnos por dia', 'turnos-por-dia')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #dayCanvas></canvas></div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Cantidad de visitas de la clinica</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(clinicVisitsRows, 'visitas-clinica')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(clinicVisitsRows, 'Cantidad de visitas de la clinica', 'visitas-clinica')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #clinicVisitsCanvas></canvas></div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Pacientes por especialidad</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(patientsBySpecialtyRows, 'pacientes-por-especialidad')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(patientsBySpecialtyRows, 'Pacientes por especialidad', 'pacientes-por-especialidad')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #patientsBySpecialtyCanvas></canvas></div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Medicos por especialidad</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(doctorsBySpecialtyRows, 'medicos-por-especialidad')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(doctorsBySpecialtyRows, 'Medicos por especialidad', 'medicos-por-especialidad')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #doctorsBySpecialtyCanvas></canvas></div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Turnos solicitados por medico</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(requestedDoctorRows, 'turnos-solicitados-por-medico')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(requestedDoctorRows, 'Cantidad de turnos solicitados por medico', 'turnos-solicitados-por-medico')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #requestedDoctorCanvas></canvas></div>
+      </section>
+
+      <section class="report-panel">
+        <div class="report-heading">
+          <h3>Turnos finalizados por medico</h3>
+          <div class="report-actions">
+            <button class="btn-action info" (click)="exportExcel(finishedDoctorRows, 'turnos-finalizados-por-medico')">Excel</button>
+            <button class="btn-action danger" (click)="exportPdf(finishedDoctorRows, 'Cantidad de turnos finalizados por medico', 'turnos-finalizados-por-medico')">PDF</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas #finishedDoctorCanvas></canvas></div>
+      </section>
+    </div>
+
+    <div class="empty-state" *ngIf="isLoading">
+      <p>Cargando informes...</p>
+    </div>
+  </div>
+</div>

@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { Firestore, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, addDoc, Timestamp } from '@angular/fire/firestore';
 import Swal from 'sweetalert2';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -51,6 +51,7 @@ export class LoginComponent {
         console.log(userDoc)
         await this.checkEmailVerification(user, userDoc!.role);
         await this.handleUserRole(userDoc);
+        await this.registerLoginLog(userDoc);
         
         this.redirectUser(userDoc!.role);
   
@@ -101,6 +102,21 @@ export class LoginComponent {
   
     localStorage.setItem('userRole', userDoc.role);
     localStorage.setItem('userData', JSON.stringify(userDoc));
+  }
+
+  private async registerLoginLog(userDoc: any): Promise<void> {
+    try {
+      await addDoc(collection(this.firestore, 'loginLogs'), {
+        uid: userDoc.uid,
+        email: userDoc.email,
+        firstName: userDoc.firstName || '',
+        lastName: userDoc.lastName || '',
+        role: userDoc.role,
+        loggedAt: Timestamp.now()
+      });
+    } catch (error) {
+      console.error('Error registrando log de ingreso:', error);
+    }
   }
   
   private redirectUser (role: string) {
