@@ -26,7 +26,7 @@ export class UsersTableComponent implements OnInit {
   searchTerm: string = '';
   isLoading: boolean = true;
   columns: Column[] = [];
-  loadingMessage = '';
+  loadingMessage = 'Cargando usuarios...';
 
   constructor(
     private userService: UserService,
@@ -40,6 +40,7 @@ export class UsersTableComponent implements OnInit {
   async loadUsers() {
     try {
       this.isLoading = true;
+      this.loadingMessage = 'Cargando usuarios...';
       switch (this.selectedRole) {
         case 'user':
           this.users = await this.userService.getUsers();
@@ -62,6 +63,7 @@ export class UsersTableComponent implements OnInit {
     } catch (error) {
     } finally {
       this.isLoading = false;
+      this.loadingMessage = '';
     }
   }
 
@@ -233,7 +235,7 @@ export class UsersTableComponent implements OnInit {
 
   async toggleDoctorStatus(especialista: Doctor): Promise<void> {
     this.isLoading = true;
-    this.loadingMessage = 'Actualizando estado';
+    this.loadingMessage = 'Actualizando estado...';
   
     try {
       await this.userService.updateDoctorStatus(especialista.uid, !especialista.approved);
