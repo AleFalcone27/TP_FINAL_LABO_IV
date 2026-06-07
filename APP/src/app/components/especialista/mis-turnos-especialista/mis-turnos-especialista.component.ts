@@ -241,50 +241,100 @@ export class MisTurnosEspecialistaComponent {
     const { value: formValues } = await Swal.fire({
       title: 'Finalizar Cita',
       html: `
-            <textarea id="feedback" placeholder="Escribe tus comentarios aquí..." style="width: 100%; height: 100px;"></textarea>
-            <br><br>
-            <label for="altura">Altura (cm):</label>
-            <input id="altura" type="number" placeholder="Ej. 170" style="width: 100%;" />
-            <br><br>
-            <label for="peso">Peso (kg):</label>
-            <input id="peso" type="number" placeholder="Ej. 70" style="width: 100%;" />
-            <br><br>
-            <label for="temperatura">Temperatura (°C):</label>
-            <input id="temperatura" type="number" placeholder="Ej. 37" style="width: 100%;" />
-            <br><br>
-            <label for="presion">Presión (mmHg):</label>
-            <input id="presion" type="text" placeholder="Ej. 120/80" style="width: 100%;" />
-            <br><br>
-            <label for="comportamiento">Comportamiento del paciente (0-100):</label>
-            <input id="comportamiento" type="range" min="0" max="100" value="50" style="width: 100%;" />
-            <br><br>
-            <label for="estadoGeneral">Estado general del paciente:</label>
-            <input id="estadoGeneral" type="number" placeholder="Ej. 75" style="width: 100%;" />
-            <br><br>
-            <label for="segundaVisita">¿Recomiendas una segunda visita?</label>
-            <select id="segundaVisita" style="width: 100%;">
-                <option value="Si">Sí</option>
-                <option value="No">No</option>
-            </select>
-            <br><br>
-            <label for="dynamicKey1">Dato 1:</label>
-            <input id="dynamicKey1" type="text" placeholder="Ej. caries" style="width: 100%;" />
-            <label for="dynamicValue1">Valor 1:</label>
-            <input id="dynamicValue1" type="number" placeholder="Ej. 4" style="width: 100%;" />
-            <br><br>
-            <label for="dynamicKey2">Dato 2:</label>
-            <input id="dynamicKey2" type="text" placeholder="Ej. alergia" style="width: 100%;" />
-            <label for="dynamicValue2">Valor 2:</label>
-            <input id="dynamicValue2" type="number" placeholder="Ej. 2" style="width: 100%;" />
-            <br><br>
-            <label for="dynamicKey3">Dato 3:</label>
-            <input id="dynamicKey3" type="text" placeholder="Ej. dolor" style="width: 100%;" />
-            <label for="dynamicValue3">Valor 3:</label>
-            <input id="dynamicValue3" type="number" placeholder="Ej. 5 " style="width: 100%;" />
+            <div class="finalize-modal">
+              <div class="finalize-modal-hero">
+                <span class="finalize-modal-kicker">Registro clínico</span>
+                <p>Completá los datos del cierre del turno para guardar la historia médica.</p>
+              </div>
+
+              <div class="finalize-modal-section">
+                <h4>Observación general</h4>
+                <label for="feedback" class="swal-field-label">Comentarios del especialista</label>
+                <textarea id="feedback" class="swal-textarea" placeholder="Escribe tus comentarios aquí..."></textarea>
+              </div>
+
+              <div class="finalize-modal-section">
+                <h4>Signos y medidas</h4>
+                <div class="swal-grid">
+                  <div class="swal-field">
+                    <label for="altura" class="swal-field-label">Altura (cm)</label>
+                    <input id="altura" class="swal-input" type="number" placeholder="Ej. 170" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="peso" class="swal-field-label">Peso (kg)</label>
+                    <input id="peso" class="swal-input" type="number" placeholder="Ej. 70" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="temperatura" class="swal-field-label">Temperatura (°C)</label>
+                    <input id="temperatura" class="swal-input" type="number" placeholder="Ej. 37" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="presion" class="swal-field-label">Presión (mmHg)</label>
+                    <input id="presion" class="swal-input" type="text" placeholder="Ej. 120/80" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="finalize-modal-section">
+                <h4>Evaluación</h4>
+                <div class="swal-field">
+                  <label for="comportamiento" class="swal-field-label">Comportamiento del paciente (0-100)</label>
+                  <input id="comportamiento" class="swal-range" type="range" min="0" max="100" value="50" />
+                </div>
+                <div class="swal-field">
+                  <label for="estadoGeneral" class="swal-field-label">Estado general del paciente</label>
+                  <input id="estadoGeneral" class="swal-input" type="number" placeholder="Ej. 75" />
+                </div>
+                <div class="swal-field">
+                  <label for="segundaVisita" class="swal-field-label">¿Recomiendas una segunda visita?</label>
+                  <select id="segundaVisita" class="swal-input">
+                      <option value="Si">Sí</option>
+                      <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="finalize-modal-section">
+                <h4>Datos dinámicos</h4>
+                <div class="swal-grid">
+                  <div class="swal-field">
+                    <label for="dynamicKey1" class="swal-field-label">Dato 1</label>
+                    <input id="dynamicKey1" class="swal-input" type="text" placeholder="Ej. caries" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="dynamicValue1" class="swal-field-label">Valor 1</label>
+                    <input id="dynamicValue1" class="swal-input" type="number" placeholder="Ej. 4" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="dynamicKey2" class="swal-field-label">Dato 2</label>
+                    <input id="dynamicKey2" class="swal-input" type="text" placeholder="Ej. alergia" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="dynamicValue2" class="swal-field-label">Valor 2</label>
+                    <input id="dynamicValue2" class="swal-input" type="number" placeholder="Ej. 2" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="dynamicKey3" class="swal-field-label">Dato 3</label>
+                    <input id="dynamicKey3" class="swal-input" type="text" placeholder="Ej. dolor" />
+                  </div>
+                  <div class="swal-field">
+                    <label for="dynamicValue3" class="swal-field-label">Valor 3</label>
+                    <input id="dynamicValue3" class="swal-input" type="number" placeholder="Ej. 5" />
+                  </div>
+                </div>
+              </div>
+            </div>
         `,
       showCancelButton: true,
       confirmButtonText: 'Finalizar Cita',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        popup: 'finalize-swal-popup',
+        title: 'finalize-swal-title',
+        htmlContainer: 'finalize-swal-html',
+        confirmButton: 'finalize-swal-confirm',
+        cancelButton: 'finalize-swal-cancel'
+      },
       preConfirm: () => {
         const feedback = (document.getElementById('feedback') as HTMLTextAreaElement).value;
         const altura = parseInt((document.getElementById('altura') as HTMLInputElement).value);
