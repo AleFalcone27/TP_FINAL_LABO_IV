@@ -1,47 +1,58 @@
-<body >
-    <div class="main-container d-flex" style="height: 100vh;">
-      <div  @routeAnimations class="content-wrapper d-flex flex-column ">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <h2 class="text-center text-dark mt-5">¡Hola, {{ userData?.firstName || 'Usuario' }}!</h2>
-                    <div class="card my-5">
-                        <form class="card-body cardbody-color p-lg-5">
-
-                            <div class="text-center">
-                                <img [src]="userData?.profileImages[0]" class="rounded-circle" width="200px" alt="profile">
-                            </div>
-
-                            <div class="form-text text-center mb-5 text-dark"></div>
-
-                            <div class="mb-3">
-                                <b>Nombre: </b>{{ userData?.firstName }}
-                            </div>
-
-                            <div class="mb-3">
-                                <b>Aplleido: </b>{{ userData?.lastName }}
-                            </div>
-
-                            <div class="mb-3">
-                                <b>Email: </b>{{ userData?.email }}
-                            </div>
-
-                            <div class="mb-3">
-                                <b>Obra Social: </b>{{ userData?.socialInsurance }}
-                            </div>
-
-                            <div class="text-center mt-4">
-                                <button type="button" class="btn-action info" (click)="downloadMedicalHistoryPdf()">
-                                    Descargar historia clínica
-                                </button>
-                            </div>
-
-                            <div class="form-text text-center mb-5 text-dark"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<div class="profile-page">
+  <div class="profile-shell main-container d-flex">
+    <div @routeAnimations class="content-wrapper d-flex flex-column flex-grow-1">
+      <section class="profile-hero">
+        <div class="profile-hero-copy">
+          <span class="profile-badge">Mi perfil</span>
+          <h2>¡Hola, {{ userData?.firstName || 'Usuario' }}!</h2>
+          <p>Desde acá podés revisar tus datos principales y descargar tu historia clínica cuando la necesites.</p>
         </div>
-      </div>
+
+        <div class="profile-avatar-card">
+          <img *ngIf="userData?.profileImages?.[0]; else avatarFallback" [src]="userData?.profileImages?.[0]" class="profile-avatar" alt="profile">
+          <ng-template #avatarFallback>
+            <div class="profile-avatar profile-avatar-fallback">
+              {{ (userData?.firstName || 'U').charAt(0) }}{{ (userData?.lastName || '').charAt(0) }}
+            </div>
+          </ng-template>
+          <div class="profile-avatar-meta">
+            <strong>{{ userData?.firstName }} {{ userData?.lastName }}</strong>
+            <span>{{ userData?.email }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-grid">
+        <article class="profile-card">
+          <h3>Datos personales</h3>
+          <div class="profile-data-list">
+            <div class="profile-data-item">
+              <span>Nombre</span>
+              <strong>{{ userData?.firstName || '-' }}</strong>
+            </div>
+            <div class="profile-data-item">
+              <span>Apellido</span>
+              <strong>{{ userData?.lastName || '-' }}</strong>
+            </div>
+            <div class="profile-data-item">
+              <span>Email</span>
+              <strong>{{ userData?.email || '-' }}</strong>
+            </div>
+            <div class="profile-data-item">
+              <span>Obra social</span>
+              <strong>{{ userData?.socialInsurance || '-' }}</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="profile-card profile-card-accent">
+          <h3>Historia clínica</h3>
+          <p>Descargá un PDF con tus registros médicos para tenerlos siempre a mano.</p>
+          <button type="button" class="profile-cta" (click)="downloadMedicalHistoryPdf()">
+            Descargar historia clínica
+          </button>
+        </article>
+      </section>
     </div>
-</body>
+  </div>
+</div>

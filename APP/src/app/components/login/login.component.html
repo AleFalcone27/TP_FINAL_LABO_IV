@@ -1,96 +1,87 @@
 <app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
 
-<body >
-  <div class="content-wrapper d-flex flex-column ">
+<div class="login-page">
+  <div class="login-shell">
+    <div @slideFromBelow class="login-card">
+      <div class="login-hero">
+        <span class="login-badge">Acceso seguro</span>
+        <h2>Iniciar Sesión</h2>
+        <p>Ingresá con tu cuenta para gestionar turnos, historias clínicas y seguimiento médico en un solo lugar.</p>
+      </div>
 
-      <div @slideFromBelow class="container-fluid vh-100">
-        <div class="row h-100 justify-content-center align-items-center">
-          <div class="col-12 col-sm-10 col-md-8 col-lg-6">
-            <div class="card">
-              <div class="card-body">
-                <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+      <div class="login-body">
+        <div class="quick-login-wrapper">
+          <button type="button" class="quick-login-btn" (click)="quickLogin('alejofalcone60@gmail.com', '123456')">
+            <img src="https://randomuser.me/api/portraits/men/90.jpg" alt="Admin" appZoomInImages>
+            <small>Admin</small>
+          </button>
 
-                <div class="quick-login-wrapper">
-                  <button type="button" class="quick-login-btn"
-                    (click)="quickLogin('alejofalcone60@gmail.com', '123456')">
-                    <img src="https://randomuser.me/api/portraits/men/90.jpg" alt="Admin" appZoomInImages>
-                    <small>Admin</small>
-                  </button>
+          <button type="button" class="quick-login-btn" (click)="quickLogin('aleefalcone@gmail.com', '123456')">
+            <img src="https://randomuser.me/api/portraits/men/24.jpg" alt="Paciente 1" appZoomInImages>
+            <small>Paciente 1</small>
+          </button>
 
-                  <button type="button" class="quick-login-btn"
-                    (click)="quickLogin('aleefalcone@gmail.com', '123456')">
-                    <img src="https://randomuser.me/api/portraits/men/24.jpg" alt="Paciente 1" appZoomInImages>
-                    <small>Paciente 1</small>
-                  </button>
+          <button type="button" class="quick-login-btn" (click)="quickLogin('vifarit466@merotx.com', '123456')">
+            <img src="https://randomuser.me/api/portraits/men/25.jpg" alt="Paciente 2" appZoomInImages>
+            <small>Paciente 2</small>
+          </button>
 
-                  <button type="button" class="quick-login-btn"
-                    (click)="quickLogin('vifarit466@merotx.com', '123456')">
-                    <img src="https://randomuser.me/api/portraits/men/25.jpg" alt="Paciente 2" appZoomInImages>
-                    <small>Paciente 2</small>
-                  </button>
+          <button type="button" class="quick-login-btn" (click)="quickLogin('wijeye6103@kazvi.com', '123456')">
+            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Paciente 3" appZoomInImages>
+            <small>Paciente 3</small>
+          </button>
 
-                  <button type="button" class="quick-login-btn"
-                    (click)="quickLogin('wijeye6103@kazvi.com', '123456')">
-                    <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Paciente 3" appZoomInImages>
-                    <small>Paciente 3</small>
-                  </button>
+          <button type="button" class="quick-login-btn" (click)="quickLogin('dimoseb157@nozamas.com', '123456')">
+            <img src="https://randomuser.me/api/portraits/men/66.jpg" alt="Especialista 1" appZoomInImages>
+            <small>Especialista 1</small>
+          </button>
 
-                  <button type="button" class="quick-login-btn"
-                    (click)="quickLogin('dimoseb157@nozamas.com', '123456')">
-                    <img src="https://randomuser.me/api/portraits/men/66.jpg" alt="Especialista 1" appZoomInImages>
-                    <small>Especialista 1</small>
-                  </button>
+          <button type="button" class="quick-login-btn" (click)="quickLogin('gawiw76542@nozamas.com', '123456')">
+            <img src="https://randomuser.me/api/portraits/women/7.jpg" alt="Especialista 2" appZoomInImages>
+            <small>Especialista 2</small>
+          </button>
+        </div>
 
-                  <button type="button" class="quick-login-btn"
-                    (click)="quickLogin('gawiw76542@nozamas.com', '123456')">
-                    <img src="https://randomuser.me/api/portraits/women/7.jpg" alt="Especialista 2" appZoomInImages>
-                    <small>Especialista 2</small>
-                  </button>
-                </div>
-
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" formControlName="email"
-                      [ngClass]="{'is-invalid': email?.invalid && (email?.dirty || email?.touched)}"
-                      placeholder="nombre@ejemplo.com">
-                    <div class="invalid-feedback" *ngIf="email?.errors?.['required']">
-                      El email es requerido.
-                    </div>
-                    <div class="invalid-feedback" *ngIf="email?.errors?.['email']">
-                      Por favor, ingrese un email válido.
-                    </div>
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" class="form-control" id="password" formControlName="password"
-                      [ngClass]="{'is-invalid': password?.invalid && (password?.dirty || password?.touched)}"
-                      placeholder="Ingrese su contraseña">
-                    <div class="invalid-feedback" *ngIf="password?.errors?.['required']">
-                      La contraseña es requerida.
-                    </div>
-                    <div class="invalid-feedback" *ngIf="password?.errors?.['minlength']">
-                      La contraseña debe tener al menos 6 caracteres.
-                    </div>
-                  </div>
-
-                  <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
-                      Iniciar Sesión
-                    </button>
-                  </div>
-
-                  <div class="text-center mt-3">
-                    <small class="text-muted">
-                      ¿No tienes una cuenta? <a href="/register" class="text-primary">Regístrate</a>
-                    </small>
-                  </div>
-                </form>
-
-              </div>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <div class="field-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" formControlName="email"
+              [ngClass]="{'is-invalid': email?.invalid && (email?.dirty || email?.touched)}"
+              placeholder="nombre@ejemplo.com">
+            <div class="invalid-feedback" *ngIf="email?.errors?.['required']">
+              El email es requerido.
+            </div>
+            <div class="invalid-feedback" *ngIf="email?.errors?.['email']">
+              Por favor, ingrese un email válido.
             </div>
           </div>
-        </div>
+
+          <div class="field-group">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" formControlName="password"
+              [ngClass]="{'is-invalid': password?.invalid && (password?.dirty || password?.touched)}"
+              placeholder="Ingrese su contraseña">
+            <div class="invalid-feedback" *ngIf="password?.errors?.['required']">
+              La contraseña es requerida.
+            </div>
+            <div class="invalid-feedback" *ngIf="password?.errors?.['minlength']">
+              La contraseña debe tener al menos 6 caracteres.
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary login-submit" [disabled]="loginForm.invalid">
+              Iniciar Sesión
+            </button>
+          </div>
+
+          <div class="login-footer text-center mt-3">
+            <small>
+              ¿No tienes una cuenta? <a href="/register">Regístrate</a>
+            </small>
+          </div>
+        </form>
       </div>
+    </div>
   </div>
+</div>

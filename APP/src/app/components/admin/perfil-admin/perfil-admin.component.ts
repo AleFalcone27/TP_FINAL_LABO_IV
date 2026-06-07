@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-perfil-admin',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, CommonModule],
   templateUrl: './perfil-admin.component.html',
   styleUrl: './perfil-admin.component.css'
 })

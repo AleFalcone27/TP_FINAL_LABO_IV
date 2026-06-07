@@ -1,35 +1,70 @@
-<body>
-    <div class="content-wrapper d-flex flex-column">
-            <main>
-                <div class="header text-center">
-                    <div class="header-inner">
-                        <h1>Clinica OnLine</h1>
-                        <p>Gestiona tus turnos de manera sencilla</p>
-                    </div>
-                </div>
-
-                <div @slideFromBelow class="home-cards d-flex">
-                    <div class="info-card flex-fill">
-                        <h2>¿Quiénes somos?</h2>
-                        <p>
-                            Somos el software líder en Argentina para la gestión de turnos médicos,
-                            transformando la manera en que clínicas y profesionales organizan su agenda.
-                            Con más de 500,000 turnos gestionados y la confianza de más de 1,000 especialistas,
-                            nuestra plataforma ofrece eficiencia, flexibilidad y una experiencia superior
-                            tanto para médicos como para pacientes. Simplifica tu práctica y optimiza tu tiempo
-                            con la solución preferida por las principales instituciones de salud del país.
-                        </p>
-                    </div>
-
-                    <div class="action-card">
-                        <h2>Bienvenido</h2>
-                        <a class="btn-light" href="/login">Ya tengo una cuenta</a>
-                        <a class="btn-outline-light" href="/register">Registrarme</a>
-                    </div>
-                </div>
-            </main>
+<div class="home-page">
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="hero-badge">Plataforma médica inteligente</span>
+            <h1>Clinica OnLine</h1>
+            <p>Gestioná turnos, seguimientos y atención médica desde un solo lugar, con una experiencia simple y profesional.</p>
+            <div class="hero-actions">
+                <a class="btn-primary" href="/register">Crear cuenta</a>
+                <a class="btn-secondary" href="/login">Ingresar</a>
+            </div>
         </div>
-</body>
+        <div class="hero-panel">
+            <div class="panel-card panel-highlight">
+                <span>Turnos gestionados</span>
+                <strong>500K+</strong>
+                <small>Organizados de forma ágil y segura</small>
+            </div>
+            <div class="panel-card">
+                <span>Especialistas</span>
+                <strong>1.000+</strong>
+                <small>Profesionales trabajando con la plataforma</small>
+            </div>
+            <div class="panel-card">
+                <span>Experiencia</span>
+                <strong>24/7</strong>
+                <small>Acceso disponible cuando lo necesites</small>
+            </div>
+        </div>
+    </section>
+
+    <main class="content-wrapper">
+        <section class="trust-strip" @slideFromBelow>
+            <div>
+                <span class="trust-label">Atención integral</span>
+                <h2>Una plataforma pensada para pacientes y profesionales</h2>
+            </div>
+            <p>
+                Centralizá la gestión de tu salud con una interfaz clara, rápida y adaptada al día a día de una clínica moderna.
+            </p>
+        </section>
+
+        <div @slideFromBelow class="home-cards">
+            <div class="info-card">
+                <h2>¿Quiénes somos?</h2>
+                <p>
+                    Somos una solución para la gestión de turnos médicos que ayuda a clínicas, especialistas y pacientes a coordinar su atención con menos fricción.
+                    Nuestra propuesta combina organización, trazabilidad y una experiencia visual más humana para que cada interacción sea clara desde el primer clic.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3>Turnos simples</h3>
+                    <p>Reservá, consultá y administrá tus citas con un flujo directo y ordenado.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Seguimiento claro</h3>
+                    <p>Accedé a la evolución de cada atención y mantené todo centralizado.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Experiencia cuidada</h3>
+                    <p>Interfaz limpia, consistente y pensada para no saturar al usuario.</p>
+                </article>
+            </div>
+        </div>
+    </main>
+</div>
 
 
     

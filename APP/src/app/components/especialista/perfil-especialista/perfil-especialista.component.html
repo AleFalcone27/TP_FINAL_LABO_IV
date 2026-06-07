@@ -1,73 +1,91 @@
-<app-spinner [isLoading]="isLoading" [message]="loadingMessage"></app-spinner>
-<body>
-    <div class="main-container d-flex" style="height: 100vh;">
-        <div @routeAnimations class="content-wrapper d-flex flex-column">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        <h2 class="text-center text-dark mt-5">¡Hola, {{ userData?.firstName || 'Usuario' }}!</h2>
-                        <div class="card my-5">
-                            <form class="card-body cardbody-color p-lg-5">
-                                <div class="text-center">
-                                    <img [src]="userData?.profileImage" class="rounded-circle" width="200px" alt="profile">
-                                </div>
+<div class="profile-page">
+    <div class="profile-shell main-container d-flex">
+        <div @routeAnimations class="content-wrapper d-flex flex-column flex-grow-1">
+            <section class="profile-hero">
+                <div class="profile-hero-copy">
+                    <span class="profile-badge">Perfil profesional</span>
+                    <h2>¡Hola, {{ userData?.firstName || 'Usuario' }}!</h2>
+                    <p>Administrá tus datos personales, especialidades, duración de turnos y disponibilidad semanal desde un solo lugar.</p>
+                </div>
 
-                                <div class="form-text text-center mb-5 text-dark"></div>
+                <div class="profile-avatar-card">
+                    <img *ngIf="userData?.profileImage; else avatarFallback" [src]="userData?.profileImage" class="profile-avatar" alt="profile">
+                    <ng-template #avatarFallback>
+                        <div class="profile-avatar profile-avatar-fallback">
+                            {{ (userData?.firstName || 'U').charAt(0) }}{{ (userData?.lastName || '').charAt(0) }}
+                        </div>
+                    </ng-template>
+                    <div class="profile-avatar-meta">
+                        <strong>{{ userData?.firstName }} {{ userData?.lastName }}</strong>
+                        <span>{{ userData?.email }}</span>
+                    </div>
+                </div>
+            </section>
 
-                                <div class="mb-3">
-                                    <b>Nombre: </b>{{ userData?.firstName }}
-                                </div>
-
-                                <div class="mb-3">
-                                    <b>Apellido: </b>{{ userData?.lastName }}
-                                </div>
-
-                                <div class="mb-3">
-                                    <b>Email: </b>{{ userData?.email }}
-                                </div>
-
-                                <div class="mb-3">
-                                    <b>Especialidades: </b>{{ userData?.specialties }}
-                                </div>
-
-                                <div class="form-text text-center mb-5 text-dark"></div>
-                            </form>
+            <section class="profile-grid">
+                <article class="profile-card">
+                    <h3>Datos personales</h3>
+                    <div class="profile-data-list">
+                        <div class="profile-data-item">
+                            <span>Nombre</span>
+                            <strong>{{ userData?.firstName || '-' }}</strong>
+                        </div>
+                        <div class="profile-data-item">
+                            <span>Apellido</span>
+                            <strong>{{ userData?.lastName || '-' }}</strong>
+                        </div>
+                        <div class="profile-data-item">
+                            <span>Email</span>
+                            <strong>{{ userData?.email || '-' }}</strong>
+                        </div>
+                        <div class="profile-data-item">
+                            <span>Especialidades</span>
+                            <strong>{{ userData?.specialties?.length ? userData?.specialties.join(', ') : '-' }}</strong>
                         </div>
                     </div>
-                </div>
+                </article>
 
-                <div class="container">
-                    <div class="row">
-                        <div class="container mt-4">
-                            <div *ngFor="let specialty of userData.specialties; let i = index" class="card mb-3 p-3">
-                              <h3 class="card-title">{{ specialty }}</h3>
-                              
-                              <div class="form-group">
-                                <label>Duración de la cita:</label>
-                                <input [(ngModel)]="appointmentDurations[i]" type="text" class="form-control" placeholder="Duración en minutos" />
-                              </div>
-                              
-                              <div class="mt-3">
-                                <h4>Días de la semana</h4>
-                                <div *ngFor="let day of ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']" class="form-group">
-                                  <label>{{ day | titlecase }}:</label>
-                                  <div class="input-group mb-2">
-                                    <input [(ngModel)]="schedules[i][day].start" type="time" class="form-control" placeholder="Inicio" />
-                                    <input [(ngModel)]="schedules[i][day].end" type="time" class="form-control" placeholder="Fin" />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between">
-                              <button class="btn btn-primary" (click)="updateAppointmentDuration()">Actualizar</button>
-                                <button class="btn btn-secondary" (click)="resetForm()">Resetear</button>
-                            </div>
-                          </div>
+                <article class="profile-card profile-card-accent">
+                    <h3>Gestión profesional</h3>
+                    <p>Tu perfil permite configurar las reglas de atención y mantener tu agenda organizada para cada especialidad.</p>
+                </article>
+            </section>
+
+            <section class="schedule-section">
+                <article class="schedule-card">
+                    <div class="schedule-card-header">
+                        <div>
+                            <span class="schedule-kicker">Configuración por especialidad</span>
+                            <h3>Duración y horarios</h3>
+                        </div>
+                        <p>Actualizá la disponibilidad semanal según cada especialidad.</p>
                     </div>
-                </div>
 
-            </div>
+                    <div *ngFor="let specialty of userData?.specialties; let i = index" class="specialty-card">
+                        <h4>{{ specialty }}</h4>
+
+                        <div class="field-row">
+                            <label>Duración de la cita</label>
+                            <input [(ngModel)]="appointmentDurations[i]" type="text" class="form-control" placeholder="Duración en minutos" />
+                        </div>
+
+                        <div class="days-grid">
+                            <div *ngFor="let day of ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']" class="day-card">
+                                <label>{{ day | titlecase }}</label>
+                                <div class="day-inputs">
+                                    <input [(ngModel)]="schedules[i][day].start" type="time" class="form-control" />
+                                    <input [(ngModel)]="schedules[i][day].end" type="time" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="schedule-actions">
+                        <button class="btn btn-primary" (click)="updateAppointmentDuration()">Actualizar</button>
+                        <button class="btn btn-secondary" (click)="resetForm()">Resetear</button>
+                    </div>
+                </article>
+            </section>
         </div>
     </div>
-</body>
+</div>
