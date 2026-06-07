@@ -44,10 +44,10 @@
                             </div>
                         </td>
                         <td>
-                            <div *ngIf="appointment.status === 3 && appointment.doctorReview" class="button-container">
+                            <div *ngIf="appointment.status === 4 && appointment.doctorReview" class="button-container">
                                 <button class="btn-action info" (click)="showReview(appointment.doctorReview)">Ver reseña</button>
-                                <button class="btn-action info" (click)="rateDoctor(appointment)">Calificar</button>
-                                <button class="btn-action info" (click)="fillSurvey(appointment)">Encuesta</button>
+                                <button *ngIf="canFillSurvey(appointment)" class="btn-action info" (click)="fillSurvey(appointment)">Encuesta</button>
+                                <button *ngIf="appointment.patientSurvey?.overallSatisfaction" class="btn-action info" (click)="fillSurvey(appointment)">Ver/editar encuesta</button>
                             </div>
                             <div *ngIf="appointment.status === 0" class="button-container">
                                 <button class="btn-action danger" (click)="cancelAppointment(appointment)">Cancelar</button>

@@ -181,7 +181,13 @@ export class AppointmentsService {
           cancellationComment: data['cancellationComment'] || "",
           patientSurvey: {
               knowledgeRating: data['patientSurvey']?.knowledgeRating || 0,
-              conformeRating: data['patientSurvey']?.conformeRating || ""
+              conformeRating: data['patientSurvey']?.conformeRating || "",
+              overallSatisfaction: data['patientSurvey']?.overallSatisfaction,
+              wouldRecommend: data['patientSurvey']?.wouldRecommend,
+              waitTimeRating: data['patientSurvey']?.waitTimeRating,
+              facilitiesRating: data['patientSurvey']?.facilitiesRating,
+              attentionAspects: data['patientSurvey']?.attentionAspects || [],
+              comments: data['patientSurvey']?.comments || ""
           },
           specialty: data['specialty'], // Asignando specialties directamente
           stars: data['stars'] || "0",
@@ -219,7 +225,13 @@ export class AppointmentsService {
                 cancellationComment: data['cancellationComment'] || "",
                 patientSurvey: {
                     knowledgeRating: data['patientSurvey']?.knowledgeRating || 0,
-                    conformeRating: data['patientSurvey']?.conformeRating || ""
+                    conformeRating: data['patientSurvey']?.conformeRating || "",
+                    overallSatisfaction: data['patientSurvey']?.overallSatisfaction,
+                    wouldRecommend: data['patientSurvey']?.wouldRecommend,
+                    waitTimeRating: data['patientSurvey']?.waitTimeRating,
+                    facilitiesRating: data['patientSurvey']?.facilitiesRating,
+                    attentionAspects: data['patientSurvey']?.attentionAspects || [],
+                    comments: data['patientSurvey']?.comments || ""
                 },
                 specialty: data['specialty'], // Asignando specialties directamente
                 stars: data['stars'] || "0",
@@ -264,6 +276,30 @@ export class AppointmentsService {
       });
     } catch (error) {
       console.error('Error guardando la encuesta:', error);
+      throw error;
+    }
+  }
+
+  async submitPatientSurvey(
+    appointmentId: string,
+    survey: {
+      overallSatisfaction: number;
+      wouldRecommend: string;
+      waitTimeRating: number;
+      facilitiesRating: number;
+      attentionAspects: string[];
+      comments: string;
+    }
+  ): Promise<void> {
+    const appointmentRef = doc(this.firestore, `appointments/${appointmentId}`);
+
+    try {
+      await updateDoc(appointmentRef, {
+        patientSurvey: survey,
+        surveyCompletedAt: new Date()
+      });
+    } catch (error) {
+      console.error('Error guardando la encuesta de satisfacción:', error);
       throw error;
     }
   }
@@ -391,4 +427,3 @@ export class AppointmentsService {
   }
 
 }
-

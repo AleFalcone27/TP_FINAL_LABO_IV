@@ -202,37 +202,135 @@ async cancelAppointment(appointment: Appointment) {
   }
 
   async fillSurvey(appointment: Appointment) {
+    const existingSurvey = appointment.patientSurvey;
     const { value: formValues } = await Swal.fire({
       title: 'Encuesta de Satisfacción',
+      customClass: {
+        popup: 'survey-swal-popup',
+        title: 'survey-swal-title',
+        htmlContainer: 'survey-swal-html',
+        confirmButton: 'survey-swal-confirm',
+        cancelButton: 'survey-swal-cancel'
+      },
       html: `
-        <label for="knowledge">Evalúa los conocimientos del médico (1-50):</label>
-        <input id="knowledge" type="range" min="1" max="50" value="25" style="width: 100%;" />
-        <span id="knowledgeValue">25</span>
-        <br><br>
-        <label>¿Estás conforme con la consulta?</label><br>
-        <input type="radio" id="conformeYes" name="conforme" value="yes">
-        <label for="conformeYes">Sí</label><br>
-        <input type="radio" id="conformeNo" name="conforme" value="no">
-        <label for="conformeNo">No</label>
+        <div class="survey-modal">
+          <div class="survey-modal-hero">
+            <span class="survey-modal-kicker">Feedback del paciente</span>
+            <p>Tu opinión nos ayuda a mejorar la atención y la experiencia en cada consulta.</p>
+          </div>
+
+          <div class="survey-modal-section">
+            <h4>Valoración general</h4>
+            <p class="survey-hint">Elegí una calificación rápida para resumir tu experiencia.</p>
+            <div class="survey-stars">
+            ${[5, 4, 3, 2, 1].map((value) => `
+              <label class="survey-star-option">
+                <input type="radio" name="overallSatisfaction" value="${value}" ${existingSurvey?.overallSatisfaction === value ? 'checked' : ''}>
+                <span>★</span>
+              </label>
+            `).join('')}
+            </div>
+          </div>
+
+          <div class="survey-modal-section">
+            <h4>Tiempo de espera</h4>
+            <div class="survey-field">
+              <div class="survey-field-header">
+                <label for="waitTime" class="swal-field-label">Del 1 al 10</label>
+                <span class="survey-value-badge"><span id="waitTimeValue">${existingSurvey?.waitTimeRating ?? 5}</span>/10</span>
+              </div>
+              <input id="waitTime" class="swal-range" type="range" min="1" max="10" value="${existingSurvey?.waitTimeRating ?? 5}" />
+            </div>
+          </div>
+
+          <div class="survey-modal-section">
+            <h4>Recomendación</h4>
+            <p class="survey-hint">¿Volverías a elegir este profesional?</p>
+            <div class="survey-pill-group">
+              <label class="survey-pill"><input type="radio" name="wouldRecommend" value="si" ${existingSurvey?.wouldRecommend === 'si' ? 'checked' : ''}><span>Sí</span></label>
+              <label class="survey-pill"><input type="radio" name="wouldRecommend" value="no" ${existingSurvey?.wouldRecommend === 'no' ? 'checked' : ''}><span>No</span></label>
+            </div>
+          </div>
+
+          <div class="survey-modal-section">
+            <h4>Aspectos destacados</h4>
+            <div class="survey-checkbox-grid">
+              <label class="survey-check-card"><input type="checkbox" name="attentionAspects" value="Amabilidad" ${(existingSurvey?.attentionAspects || []).includes('Amabilidad') ? 'checked' : ''}><span>Amabilidad</span></label>
+              <label class="survey-check-card"><input type="checkbox" name="attentionAspects" value="Claridad" ${(existingSurvey?.attentionAspects || []).includes('Claridad') ? 'checked' : ''}><span>Claridad</span></label>
+              <label class="survey-check-card"><input type="checkbox" name="attentionAspects" value="Rapidez" ${(existingSurvey?.attentionAspects || []).includes('Rapidez') ? 'checked' : ''}><span>Rapidez</span></label>
+              <label class="survey-check-card"><input type="checkbox" name="attentionAspects" value="Empatia" ${(existingSurvey?.attentionAspects || []).includes('Empatia') ? 'checked' : ''}><span>Empatía</span></label>
+            </div>
+          </div>
+
+          <div class="survey-modal-section">
+            <h4>Infraestructura y comodidad</h4>
+            <label for="facilitiesRating" class="swal-field-label">Del 1 al 10</label>
+            <select id="facilitiesRating" class="swal-input">
+              ${[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((value) => `
+                <option value="${value}" ${existingSurvey?.facilitiesRating === value ? 'selected' : ''}>${value}/10</option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div class="survey-modal-section">
+            <h4>Comentario final</h4>
+            <label for="comments" class="swal-field-label">Dejanos un texto breve sobre tu experiencia</label>
+            <textarea id="comments" class="swal-textarea survey-textarea" maxlength="400" placeholder="Contanos cómo fue tu experiencia...">${existingSurvey?.comments ?? ''}</textarea>
+          </div>
+        </div>
       `,
       showCancelButton: true,
       confirmButtonText: 'Enviar Encuesta',
       cancelButtonText: 'Cancelar',
-      preConfirm: () => {
-        const knowledge = (document.getElementById('knowledge') as HTMLInputElement).value;
-        const conforme = (document.querySelector('input[name="conforme"]:checked') as HTMLInputElement)?.value;
-        if (!conforme) {
-          Swal.showValidationMessage('Por favor, selecciona si estás conforme con la consulta.');
+      didOpen: () => {
+        const waitTimeInput = document.getElementById('waitTime') as HTMLInputElement | null;
+        const waitTimeValue = document.getElementById('waitTimeValue') as HTMLSpanElement | null;
+
+        if (waitTimeInput && waitTimeValue) {
+          waitTimeInput.oninput = () => {
+            waitTimeValue.innerText = waitTimeInput.value;
+          };
         }
-        return { knowledge, conforme };
+      },
+      preConfirm: () => {
+        const overallSatisfaction = Number((document.querySelector('input[name="overallSatisfaction"]:checked') as HTMLInputElement)?.value || 0);
+        const wouldRecommend = (document.querySelector('input[name="wouldRecommend"]:checked') as HTMLInputElement)?.value || '';
+        const waitTimeRating = Number((document.getElementById('waitTime') as HTMLInputElement)?.value || 0);
+        const facilitiesRating = Number((document.getElementById('facilitiesRating') as HTMLSelectElement)?.value || 0);
+        const comments = (document.getElementById('comments') as HTMLTextAreaElement)?.value.trim() || '';
+        const attentionAspects = Array.from(document.querySelectorAll('input[name="attentionAspects"]:checked'))
+          .map((input) => (input as HTMLInputElement).value);
+
+        if (!overallSatisfaction) {
+          Swal.showValidationMessage('Por favor, elegí una calificación general.');
+          return false;
+        }
+
+        if (!wouldRecommend) {
+          Swal.showValidationMessage('Por favor, indicá si recomendarías al profesional.');
+          return false;
+        }
+
+        if (!waitTimeRating || !facilitiesRating) {
+          Swal.showValidationMessage('Por favor, completá todos los controles de la encuesta.');
+          return false;
+        }
+        return { overallSatisfaction, wouldRecommend, waitTimeRating, facilitiesRating, attentionAspects, comments };
       }
     });
   
     if (formValues) {
-      const { knowledge, conforme } = formValues;
+      const { overallSatisfaction, wouldRecommend, waitTimeRating, facilitiesRating, attentionAspects, comments } = formValues;
   
       try {
-        await this.appointmentService.fillSurvey(appointment.id, Number(knowledge), conforme);
+        await this.appointmentService.submitPatientSurvey(appointment.id, {
+          overallSatisfaction,
+          wouldRecommend,
+          waitTimeRating,
+          facilitiesRating,
+          attentionAspects,
+          comments
+        });
         Swal.fire('Gracias!', 'Tu encuesta ha sido enviada.', 'success');
         this.loadAppointments(); 
       } catch (error) {
@@ -240,12 +338,10 @@ async cancelAppointment(appointment: Appointment) {
         Swal.fire('Error!', 'No se pudo enviar la encuesta. Intenta de nuevo.', 'error');
       }
     }
-  
-    const knowledgeInput = document.getElementById('knowledge') as HTMLInputElement;
-    const knowledgeValue = document.getElementById('knowledgeValue') as HTMLSpanElement;
-    knowledgeInput.oninput = () => {
-      knowledgeValue.innerText = knowledgeInput.value;
-    };
+  }
+
+  canFillSurvey(appointment: Appointment): boolean {
+    return appointment.status === 4 && !appointment.patientSurvey?.overallSatisfaction;
   }
 
   getTime(date: Timestamp): string {

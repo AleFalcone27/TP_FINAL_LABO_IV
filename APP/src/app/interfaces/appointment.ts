@@ -6,7 +6,13 @@ export interface Appointment {
     doctorReview: string;
     patientSurvey: {
         knowledgeRating: number;
-        conformeRating: string; // Cambiado a string (debería ser 'string' en minúscula)
+        conformeRating: string;
+        overallSatisfaction?: number;
+        wouldRecommend?: string;
+        waitTimeRating?: number;
+        facilitiesRating?: number;
+        attentionAspects?: string[];
+        comments?: string;
     };
     specialty: ''; // Aquí se incluye la interfaz Specialties
     stars: string;

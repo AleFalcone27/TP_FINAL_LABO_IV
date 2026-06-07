@@ -7,6 +7,7 @@ import { Firestore, collection, addDoc, doc, query, where, getDocs } from '@angu
 import { FormatDatePipe } from '../../../pipes/format-date-pipe/format-date.pipe';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormatHourPipe } from '../../../pipes/format-hour/format-hour.pipe';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Specialties } from '../../../interfaces/appointment';
 import { SpecialtyDetails } from '../../../interfaces/appointment';
@@ -35,7 +36,12 @@ export class MakeAppointmentComponent implements OnInit {
   loadingMessage = '';
   isLoading = false;
 
-  constructor(private authService: AuthService, private appointmentsService: AppointmentsService, private firestore: Firestore) { }
+  constructor(
+    private authService: AuthService,
+    private appointmentsService: AppointmentsService,
+    private firestore: Firestore,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadSpecialties();
@@ -200,7 +206,7 @@ export class MakeAppointmentComponent implements OnInit {
     return (parts[0] || 0) * 60 + (parts[1] || 0);
   }
 
-  bookAppointment(slot: Date): void {
+  async bookAppointment(slot: Date): Promise<void> {
     console.log(slot);
 
     this.isLoading = true;
@@ -228,33 +234,35 @@ export class MakeAppointmentComponent implements OnInit {
     };
 
     const appointmentsCollection = collection(this.firestore, 'appointments');
-    addDoc(appointmentsCollection, appointmentData)
-      .then(() => {
-        console.log('Turno reservado con éxito:', appointmentData);
-        this.isLoading = false;
-        this.selectedDoctor = null;
-        this.selectedDoctorLabel = '';
-        this.availableSlots = [];
-        this.groupedSlots = [];
+    try {
+      await addDoc(appointmentsCollection, appointmentData);
+      console.log('Turno reservado con éxito:', appointmentData);
+      this.selectedDoctor = null;
+      this.selectedDoctorLabel = '';
+      this.availableSlots = [];
+      this.groupedSlots = [];
 
-        Swal.fire({
-          icon: 'success',
-          title: '¡Turno reservado!',
-          text: 'Tu turno ha sido reservado con éxito.',
-          confirmButtonText: 'Aceptar'
-        });
-      })
-      .catch(error => {
-        console.error('Error al reservar el turno:', error);
-
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al reservar el turno',
-          text: 'Ocurrió un error al intentar reservar tu turno. Por favor, inténtalo de nuevo.',
-          confirmButtonText: 'Aceptar'
-        });
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Turno reservado!',
+        text: 'Tu turno ha sido reservado con éxito.',
+        confirmButtonText: 'Aceptar'
       });
-    this.isLoading = false;
+
+      await this.router.navigate(['/paciente/misTurnos']);
+    } catch (error) {
+      console.error('Error al reservar el turno:', error);
+
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error al reservar el turno',
+        text: 'Ocurrió un error al intentar reservar tu turno. Por favor, inténtalo de nuevo.',
+        confirmButtonText: 'Aceptar'
+      });
+    } finally {
+      this.isLoading = false;
+      this.loadingMessage = '';
+    }
   }
 
   hasSpecialtySelection(): boolean {
