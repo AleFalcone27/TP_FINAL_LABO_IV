@@ -2,17 +2,17 @@
 
 <div class="main-container d-flex">
     <div class="content-wrapper d-flex flex-column align-items-center p-4 flex-grow-1">
-        <h2 class="page-title">Turnos</h2>
+        <h2 class="page-title">{{ t.title }}</h2>
 
         <div class="table-toolbar">
             <div class="table-toolbar-left">
                 <input type="text" class="form-control table-search"
-                    placeholder="Buscar por especialista, paciente, especialidad..."
+                    [placeholder]="t.searchPlaceholder"
                     (input)="onSearch($event)" [(ngModel)]="searchTerm">
             </div>
             <div class="table-toolbar-right">
                 <span class="table-count" *ngIf="!isLoading">
-                    {{ filteredAppointments.length }} resultado{{ filteredAppointments.length !== 1 ? 's' : '' }}
+                    {{ filteredAppointments.length }} {{ filteredAppointments.length !== 1 ? t.results : t.result }}
                 </span>
             </div>
         </div>
@@ -21,12 +21,12 @@
             <table class="data-table" *ngIf="!isLoading && filteredAppointments.length > 0">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
-                        <th class="text-left">Especialista</th>
-                        <th class="text-left">Paciente</th>
-                        <th class="text-left">Especialidad</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
+                        <th>{{ t.date }}</th>
+                        <th class="text-left">{{ t.specialist }}</th>
+                        <th class="text-left">{{ t.patient }}</th>
+                        <th class="text-left">{{ t.specialty }}</th>
+                        <th>{{ t.status }}</th>
+                        <th>{{ t.actions }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +45,7 @@
                         </td>
                         <td>
                             <div *ngIf="appointment.status !=1 && appointment.status !=3 && appointment.status !=4" class="button-container">
-                                <button class="btn-action danger" (click)="cancelAppointment(appointment)">Cancelar</button>
+                                <button class="btn-action danger" (click)="cancelAppointment(appointment)">{{ t.cancel }}</button>
                             </div>
                         </td>
                     </tr>
@@ -55,7 +55,7 @@
 
         <div class="empty-state" *ngIf="!isLoading && filteredAppointments.length === 0">
             <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-            <p>No se encontraron turnos que coincidan con la búsqueda.</p>
+            <p>{{ t.emptyState }}</p>
         </div>
     </div>
 </div>

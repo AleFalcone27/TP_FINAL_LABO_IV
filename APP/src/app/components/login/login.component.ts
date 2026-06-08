@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -13,7 +13,7 @@ import { ZoomInImagesDirective } from '../../directives/zoom-in-images/zoom-in-i
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, SidebarComponent,ZoomInImagesDirective,],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, SpinnerComponent, SidebarComponent,ZoomInImagesDirective,],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css', 
   animations: [slideFromBelowAnimation]
@@ -22,11 +22,13 @@ export class LoginComponent {
   loginForm: FormGroup;
   isLoading = false;
   loadingMessage = 'Iniciando sesión...';
+  selectedLanguage: 'es' | 'en' | 'pt';
 
   constructor(
     private router: Router,
     private firestore: Firestore
   ) {
+    this.selectedLanguage = this.getStoredLanguage();
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required])
@@ -44,13 +46,14 @@ export class LoginComponent {
       const auth = getAuth();
   
       try {
-        const userCredential = await this.signIn(auth);
-        const user = userCredential.user;
-        const userDoc = await this.findUserInCollections(user.uid);
-        console.log(userDoc)
-        await this.checkEmailVerification(user, userDoc!.role);
-        await this.handleUserRole(userDoc);
-        await this.registerLoginLog(userDoc);
+      const userCredential = await this.signIn(auth);
+      const user = userCredential.user;
+      const userDoc = await this.findUserInCollections(user.uid);
+      console.log(userDoc)
+      this.storeLanguagePreference();
+      await this.checkEmailVerification(user, userDoc!.role);
+      await this.handleUserRole(userDoc);
+      await this.registerLoginLog(userDoc);
         
         this.redirectUser(userDoc!.role);
   
@@ -193,5 +196,18 @@ export class LoginComponent {
       email: email,
       password: password
     });
+  }
+
+  setLanguage(language: 'es' | 'en' | 'pt') {
+    this.selectedLanguage = language;
+  }
+
+  private storeLanguagePreference(): void {
+    localStorage.setItem('appLanguage', this.selectedLanguage);
+  }
+
+  private getStoredLanguage(): 'es' | 'en' | 'pt' {
+    const storedLanguage = localStorage.getItem('appLanguage');
+    return storedLanguage === 'en' || storedLanguage === 'pt' ? storedLanguage : 'es';
   }
 }

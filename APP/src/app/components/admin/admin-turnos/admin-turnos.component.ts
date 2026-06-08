@@ -27,11 +27,88 @@ export class AdminTurnosComponent {
   searchTerm: string = '';
   isLoading: boolean = true;
   loadingMessage = '';
+  language: 'es' | 'en' | 'pt' = 'es';
+
+  readonly translations = {
+    es: {
+      title: 'Turnos',
+      searchPlaceholder: 'Buscar por especialista, paciente, especialidad...',
+      result: 'resultado',
+      results: 'resultados',
+      date: 'Fecha',
+      specialist: 'Especialista',
+      patient: 'Paciente',
+      specialty: 'Especialidad',
+      status: 'Estado',
+      actions: 'Acciones',
+      cancel: 'Cancelar',
+      cancelTitle: 'Cancelar Turno',
+      comment: 'Comentario',
+      commentPlaceholder: 'Escribe el motivo de la cancelación...',
+      cancelConfirm: 'Cancelar Turno',
+      cancelButton: 'Cancelar',
+      validationComment: 'Por favor, escribe un comentario',
+      successTitle: 'Cancelado!',
+      successText: 'Tu turno ha sido cancelado.',
+      errorTitle: 'Error!',
+      errorText: 'No se pudo cancelar el turno. Intenta de nuevo.',
+      emptyState: 'No se encontraron turnos que coincidan con la búsqueda.'
+    },
+    en: {
+      title: 'Appointments',
+      searchPlaceholder: 'Search by specialist, patient, specialty...',
+      result: 'result',
+      results: 'results',
+      date: 'Date',
+      specialist: 'Specialist',
+      patient: 'Patient',
+      specialty: 'Specialty',
+      status: 'Status',
+      actions: 'Actions',
+      cancel: 'Cancel',
+      cancelTitle: 'Cancel Appointment',
+      comment: 'Comment',
+      commentPlaceholder: 'Write the reason for the cancellation...',
+      cancelConfirm: 'Cancel Appointment',
+      cancelButton: 'Cancel',
+      validationComment: 'Please write a comment',
+      successTitle: 'Canceled!',
+      successText: 'The appointment has been canceled.',
+      errorTitle: 'Error!',
+      errorText: 'The appointment could not be canceled. Please try again.',
+      emptyState: 'No appointments were found that match the search.'
+    },
+    pt: {
+      title: 'Consultas',
+      searchPlaceholder: 'Buscar por especialista, paciente, especialidade...',
+      result: 'resultado',
+      results: 'resultados',
+      date: 'Data',
+      specialist: 'Especialista',
+      patient: 'Paciente',
+      specialty: 'Especialidade',
+      status: 'Status',
+      actions: 'Ações',
+      cancel: 'Cancelar',
+      cancelTitle: 'Cancelar consulta',
+      comment: 'Comentário',
+      commentPlaceholder: 'Escreva o motivo do cancelamento...',
+      cancelConfirm: 'Cancelar consulta',
+      cancelButton: 'Cancelar',
+      validationComment: 'Por favor, escreva um comentário',
+      successTitle: 'Cancelado!',
+      successText: 'A consulta foi cancelada.',
+      errorTitle: 'Erro!',
+      errorText: 'Não foi possível cancelar a consulta. Tente novamente.',
+      emptyState: 'Nenhuma consulta foi encontrada para a busca.'
+    }
+  } as const;
 
   constructor(private authService: AuthService, public appointmentService: AppointmentsService) { }
 
 
   async ngOnInit() {
+    this.language = this.authService.getLanguage();
     await this.loadAppointments();
   }
 
@@ -78,16 +155,16 @@ export class AdminTurnosComponent {
 
   async cancelAppointment(appointment: Appointment) {
     const { value: comment } = await Swal.fire({
-      title: 'Cancelar Turno',
+      title: this.t.cancelTitle,
       input: 'textarea',
-      inputLabel: 'Comentario',
-      inputPlaceholder: 'Escribe el motivo de la cancelación...',
+      inputLabel: this.t.comment,
+      inputPlaceholder: this.t.commentPlaceholder,
       showCancelButton: true,
-      confirmButtonText: 'Cancelar Turno',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: this.t.cancelConfirm,
+      cancelButtonText: this.t.cancelButton,
       preConfirm: (comment) => {
         if (!comment) {
-          Swal.showValidationMessage('Por favor, escribe un comentario');
+          Swal.showValidationMessage(this.t.validationComment);
         }
       }
     });
@@ -96,12 +173,16 @@ export class AdminTurnosComponent {
       try {
         await this.appointmentService.cancelAppointment(appointment.id, comment); 
         this.loadAppointments(); 
-        Swal.fire('Cancelado!', 'Tu turno ha sido cancelado.', 'success');
+        Swal.fire(this.t.successTitle, this.t.successText, 'success');
       } catch (error) {
         console.error('Error cancelando el turno:', error);
-        Swal.fire('Error!', 'No se pudo cancelar el turno. Intenta de nuevo.', 'error');
+        Swal.fire(this.t.errorTitle, this.t.errorText, 'error');
       }
     }
+  }
+
+  get t() {
+    return this.translations[this.language];
   }
 
 

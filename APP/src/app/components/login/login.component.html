@@ -7,6 +7,14 @@
         <span class="login-badge">Acceso seguro</span>
         <h2>Iniciar Sesión</h2>
         <p>Ingresá con tu cuenta para gestionar turnos, historias clínicas y seguimiento médico en un solo lugar.</p>
+        <div class="field-group mt-3">
+          <label for="language" class="form-label login-language-label">Idioma</label>
+          <select id="language" class="form-control" [ngModel]="selectedLanguage" (ngModelChange)="setLanguage($event)" name="language">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+          </select>
+        </div>
       </div>
 
       <div class="login-body">

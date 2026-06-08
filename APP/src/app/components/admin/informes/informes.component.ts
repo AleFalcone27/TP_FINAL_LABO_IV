@@ -12,6 +12,7 @@ import { AppointmentsService } from '../../../services/appointments/appointments
 import { UserService } from '../../../services/users/users.service';
 import { Doctor } from '../../../interfaces/doctor';
 import { User } from '../../../interfaces/user';
+import { AuthService } from '../../../services/auth/auth.service';
 
 interface LoginLog {
   uid: string;
@@ -22,8 +23,17 @@ interface LoginLog {
   loggedAt: Timestamp;
 }
 
-interface ReportRow {
-  [key: string]: string | number;
+interface LoginReportRow {
+  user: string;
+  email: string;
+  role: string;
+  day: string;
+  time: string;
+}
+
+interface CountReportRow {
+  label: string;
+  count: number;
 }
 
 @Component({
@@ -48,29 +58,149 @@ export class InformesComponent implements AfterViewInit {
   doctors: Doctor[] = [];
   patients: User[] = [];
 
-  loginRows: ReportRow[] = [];
-  specialtyRows: ReportRow[] = [];
-  dayRows: ReportRow[] = [];
-  requestedDoctorRows: ReportRow[] = [];
-  finishedDoctorRows: ReportRow[] = [];
-  clinicVisitsRows: ReportRow[] = [];
-  patientsBySpecialtyRows: ReportRow[] = [];
-  doctorsBySpecialtyRows: ReportRow[] = [];
+  loginRows: LoginReportRow[] = [];
+  specialtyRows: CountReportRow[] = [];
+  dayRows: CountReportRow[] = [];
+  requestedDoctorRows: CountReportRow[] = [];
+  finishedDoctorRows: CountReportRow[] = [];
+  clinicVisitsRows: CountReportRow[] = [];
+  patientsBySpecialtyRows: CountReportRow[] = [];
+  doctorsBySpecialtyRows: CountReportRow[] = [];
 
   startDate = '';
   endDate = '';
   isLoading = true;
+  language: 'es' | 'en' | 'pt' = 'es';
+
+  readonly translations = {
+    es: {
+      pageTitle: 'Informes',
+      from: 'Desde',
+      to: 'Hasta',
+      loading: 'Cargando informes...',
+      noLogins: 'Todavia no hay ingresos registrados.',
+      loginLogTitle: 'Log de ingresos al sistema',
+      loginLogPdf: 'Log de ingresos al sistema',
+      user: 'Usuario',
+      email: 'Email',
+      role: 'Rol',
+      day: 'Dia',
+      time: 'Horario',
+      specialtyAppointments: 'Cantidad de turnos por especialidad',
+      dayAppointments: 'Cantidad de turnos por dia',
+      clinicVisits: 'Cantidad de visitas de la clinica',
+      patientsBySpecialty: 'Pacientes por especialidad',
+      doctorsBySpecialty: 'Medicos por especialidad',
+      requestedByDoctor: 'Turnos solicitados por medico',
+      finishedByDoctor: 'Turnos finalizados por medico',
+      exportExcel: 'Excel',
+      exportPdf: 'PDF',
+      loginExcelFile: 'log-ingresos',
+      specialtyExcelFile: 'turnos-por-especialidad',
+      dayExcelFile: 'turnos-por-dia',
+      clinicVisitsExcelFile: 'visitas-clinica',
+      patientsExcelFile: 'pacientes-por-especialidad',
+      doctorsExcelFile: 'medicos-por-especialidad',
+      requestedExcelFile: 'turnos-solicitados-por-medico',
+      finishedExcelFile: 'turnos-finalizados-por-medico',
+      noData: 'Sin datos',
+      admin: 'Administrador',
+      patient: 'Paciente',
+      specialist: 'Especialista',
+      noSpecialty: 'Sin especialidad',
+      noDoctor: 'Sin medico',
+      reportTitle: 'Informe'
+    },
+    en: {
+      pageTitle: 'Reports',
+      from: 'From',
+      to: 'To',
+      loading: 'Loading reports...',
+      noLogins: 'There are no recorded logins yet.',
+      loginLogTitle: 'System login log',
+      loginLogPdf: 'System login log',
+      user: 'User',
+      email: 'Email',
+      role: 'Role',
+      day: 'Day',
+      time: 'Time',
+      specialtyAppointments: 'Appointments by specialty',
+      dayAppointments: 'Appointments by day',
+      clinicVisits: 'Clinic visits',
+      patientsBySpecialty: 'Patients by specialty',
+      doctorsBySpecialty: 'Doctors by specialty',
+      requestedByDoctor: 'Requested appointments by doctor',
+      finishedByDoctor: 'Completed appointments by doctor',
+      exportExcel: 'Excel',
+      exportPdf: 'PDF',
+      loginExcelFile: 'login-log',
+      specialtyExcelFile: 'appointments-by-specialty',
+      dayExcelFile: 'appointments-by-day',
+      clinicVisitsExcelFile: 'clinic-visits',
+      patientsExcelFile: 'patients-by-specialty',
+      doctorsExcelFile: 'doctors-by-specialty',
+      requestedExcelFile: 'requested-by-doctor',
+      finishedExcelFile: 'finished-by-doctor',
+      noData: 'No data',
+      admin: 'Administrator',
+      patient: 'Patient',
+      specialist: 'Specialist',
+      noSpecialty: 'No specialty',
+      noDoctor: 'No doctor',
+      reportTitle: 'Report'
+    },
+    pt: {
+      pageTitle: 'Relatórios',
+      from: 'De',
+      to: 'Até',
+      loading: 'Carregando relatórios...',
+      noLogins: 'Ainda não há registros de acesso.',
+      loginLogTitle: 'Registro de acessos ao sistema',
+      loginLogPdf: 'Registro de acessos ao sistema',
+      user: 'Usuário',
+      email: 'E-mail',
+      role: 'Função',
+      day: 'Dia',
+      time: 'Horário',
+      specialtyAppointments: 'Quantidade de consultas por especialidade',
+      dayAppointments: 'Quantidade de consultas por dia',
+      clinicVisits: 'Quantidade de visitas da clínica',
+      patientsBySpecialty: 'Pacientes por especialidade',
+      doctorsBySpecialty: 'Médicos por especialidade',
+      requestedByDoctor: 'Consultas solicitadas por médico',
+      finishedByDoctor: 'Consultas finalizadas por médico',
+      exportExcel: 'Excel',
+      exportPdf: 'PDF',
+      loginExcelFile: 'registros-acesso',
+      specialtyExcelFile: 'consultas-por-especialidade',
+      dayExcelFile: 'consultas-por-dia',
+      clinicVisitsExcelFile: 'visitas-clinica',
+      patientsExcelFile: 'pacientes-por-especialidade',
+      doctorsExcelFile: 'medicos-por-especialidade',
+      requestedExcelFile: 'consultas-solicitadas-por-medico',
+      finishedExcelFile: 'consultas-finalizadas-por-medico',
+      noData: 'Sem dados',
+      admin: 'Administrador',
+      patient: 'Paciente',
+      specialist: 'Especialista',
+      noSpecialty: 'Sem especialidade',
+      noDoctor: 'Sem médico',
+      reportTitle: 'Relatório'
+    }
+  } as const;
 
   private charts: Chart[] = [];
 
   constructor(
     private appointmentsService: AppointmentsService,
     private userService: UserService,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private authService: AuthService
   ) {}
 
   async ngAfterViewInit(): Promise<void> {
     Chart.register(...registerables);
+    this.language = this.authService.getLanguage();
     this.setDefaultDateRange();
     await this.loadReports();
   }
@@ -105,18 +235,18 @@ export class InformesComponent implements AfterViewInit {
     this.scheduleRenderCharts();
   }
 
-  exportExcel(rows: ReportRow[], filename: string): void {
+  exportExcel(rows: Array<LoginReportRow | CountReportRow>, filename: string): void {
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Informe');
+    XLSX.utils.book_append_sheet(workbook, worksheet, this.t.reportTitle);
     XLSX.writeFile(workbook, `${filename}.xlsx`);
   }
 
-  exportPdf(rows: ReportRow[], title: string, filename: string): void {
+  exportPdf(rows: Array<LoginReportRow | CountReportRow>, title: string, filename: string): void {
     const pdf = new jsPDF();
     const headers = Object.keys(rows[0] || { Informe: 'Sin datos' });
     const body = rows.length
-      ? rows.map(row => headers.map(header => `${row[header] ?? ''}`))
+      ? rows.map(row => headers.map(header => `${((row as unknown) as Record<string, string | number>)[header] ?? ''}`))
       : [['Sin datos']];
 
     pdf.setFontSize(16);
@@ -144,33 +274,35 @@ export class InformesComponent implements AfterViewInit {
     this.loginRows = this.loginLogs.map(log => {
       const loggedAt = this.toDate(log.loggedAt);
       return {
-        Usuario: `${log.firstName || ''} ${log.lastName || ''}`.trim() || log.email,
-        Email: log.email,
-        Rol: this.translateRole(log.role),
-        Dia: loggedAt.toLocaleDateString(),
-        Horario: loggedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        user: `${log.firstName || ''} ${log.lastName || ''}`.trim() || log.email,
+        email: log.email,
+        role: this.translateRole(log.role),
+        day: loggedAt.toLocaleDateString(),
+        time: loggedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
     });
 
     this.specialtyRows = this.countBy(this.appointments, appointment => appointment.specialty || 'Sin especialidad')
-      .map(row => ({ Especialidad: row.label, Turnos: row.count }));
+      .map(row => ({ label: row.label, count: row.count }));
 
     this.dayRows = this.countBy(this.appointments, appointment => this.toDate(appointment.date).toLocaleDateString())
-      .map(row => ({ Dia: row.label, Turnos: row.count }));
+      .map(row => ({ label: row.label, count: row.count }));
 
     this.requestedDoctorRows = this.countBy(rangedAppointments, appointment => this.getDoctorName(appointment))
-      .map(row => ({ Medico: row.label, TurnosSolicitados: row.count }));
+      .map(row => ({ label: row.label, count: row.count }));
 
     this.finishedDoctorRows = this.countBy(
       rangedAppointments.filter(appointment => appointment.status === 4),
       appointment => this.getDoctorName(appointment)
-    ).map(row => ({ Medico: row.label, TurnosFinalizados: row.count }));
+    ).map(row => ({ label: row.label, count: row.count }));
 
     this.clinicVisitsRows = this.countBy(rangedAppointments, appointment => this.toDate(appointment.date).toLocaleDateString())
-      .map(row => ({ Dia: row.label, Visitas: row.count }));
+      .map(row => ({ label: row.label, count: row.count }));
 
     const patientsBySpecialty = new Map<string, Set<string>>();
-    for (const appointment of rangedAppointments) {
+    // Este reporte debe reflejar todo el historial, no solo el rango seleccionado,
+    // para evitar que quede vacío cuando el filtro de fechas no coincide con citas recientes.
+    for (const appointment of this.appointments) {
       const specialty = appointment.specialty || 'Sin especialidad';
       const uidPatient = appointment.uidPatient || `${appointment.patientFirstName || ''} ${appointment.patientLastName || ''}`.trim();
       if (!patientsBySpecialty.has(specialty)) {
@@ -181,8 +313,8 @@ export class InformesComponent implements AfterViewInit {
       }
     }
     this.patientsBySpecialtyRows = [...patientsBySpecialty.entries()]
-      .map(([label, patients]) => ({ Especialidad: label, Pacientes: patients.size }))
-      .sort((a, b) => Number(b.Pacientes) - Number(a.Pacientes) || `${a.Especialidad}`.localeCompare(`${b.Especialidad}`));
+      .map(([label, patients]) => ({ label, count: patients.size }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
     const doctorsBySpecialty = new Map<string, number>();
     for (const doctor of this.doctors) {
@@ -197,20 +329,20 @@ export class InformesComponent implements AfterViewInit {
       }
     }
     this.doctorsBySpecialtyRows = [...doctorsBySpecialty.entries()]
-      .map(([label, count]) => ({ Especialidad: label, Medicos: count }))
-      .sort((a, b) => Number(b.Medicos) - Number(a.Medicos) || `${a.Especialidad}`.localeCompare(`${b.Especialidad}`));
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   }
 
   private renderCharts(): void {
     this.destroyCharts();
     this.charts = [
-      this.createBarChart(this.specialtyCanvas, 'Turnos por especialidad', this.specialtyRows, 'Especialidad', 'Turnos'),
-      this.createBarChart(this.dayCanvas, 'Turnos por dia', this.dayRows, 'Dia', 'Turnos'),
-      this.createBarChart(this.requestedDoctorCanvas, 'Turnos solicitados por medico', this.requestedDoctorRows, 'Medico', 'TurnosSolicitados'),
-      this.createBarChart(this.finishedDoctorCanvas, 'Turnos finalizados por medico', this.finishedDoctorRows, 'Medico', 'TurnosFinalizados'),
-      this.createBarChart(this.clinicVisitsCanvas, 'Cantidad de visitas de la clinica', this.clinicVisitsRows, 'Dia', 'Visitas'),
-      this.createBarChart(this.patientsBySpecialtyCanvas, 'Pacientes por especialidad', this.patientsBySpecialtyRows, 'Especialidad', 'Pacientes'),
-      this.createBarChart(this.doctorsBySpecialtyCanvas, 'Medicos por especialidad', this.doctorsBySpecialtyRows, 'Especialidad', 'Medicos')
+      this.createBarChart(this.specialtyCanvas, this.t.specialtyAppointments, this.specialtyRows),
+      this.createBarChart(this.dayCanvas, this.t.dayAppointments, this.dayRows),
+      this.createBarChart(this.requestedDoctorCanvas, this.t.requestedByDoctor, this.requestedDoctorRows),
+      this.createBarChart(this.finishedDoctorCanvas, this.t.finishedByDoctor, this.finishedDoctorRows),
+      this.createBarChart(this.clinicVisitsCanvas, this.t.clinicVisits, this.clinicVisitsRows),
+      this.createBarChart(this.patientsBySpecialtyCanvas, this.t.patientsBySpecialty, this.patientsBySpecialtyRows),
+      this.createBarChart(this.doctorsBySpecialtyCanvas, this.t.doctorsBySpecialty, this.doctorsBySpecialtyRows)
     ].filter((chart): chart is Chart => Boolean(chart));
   }
 
@@ -221,9 +353,7 @@ export class InformesComponent implements AfterViewInit {
   private createBarChart(
     canvas: ElementRef<HTMLCanvasElement> | undefined,
     label: string,
-    rows: ReportRow[],
-    labelKey: string,
-    valueKey: string
+    rows: CountReportRow[]
   ): Chart | null {
     const context = canvas?.nativeElement?.getContext('2d');
     if (!context) return null;
@@ -231,10 +361,10 @@ export class InformesComponent implements AfterViewInit {
     return new Chart(context, {
       type: 'bar',
       data: {
-        labels: rows.map(row => `${row[labelKey]}`),
+        labels: rows.map(row => row.label),
         datasets: [{
           label,
-          data: rows.map(row => Number(row[valueKey] || 0)),
+          data: rows.map(row => Number(row.count || 0)),
           backgroundColor: '#2563eb',
           borderRadius: 6
         }]
@@ -286,15 +416,19 @@ export class InformesComponent implements AfterViewInit {
   }
 
   private getDoctorName(appointment: Appointment): string {
-    return `${appointment.doctorFirstName || ''} ${appointment.doctorLastName || ''}`.trim() || 'Sin medico';
+    return `${appointment.doctorFirstName || ''} ${appointment.doctorLastName || ''}`.trim() || this.t.noDoctor;
   }
 
   private translateRole(role: string): string {
     const roles: Record<string, string> = {
-      admin: 'Administrador',
-      paciente: 'Paciente',
-      especialista: 'Especialista'
+      admin: this.t.admin,
+      paciente: this.t.patient,
+      especialista: this.t.specialist
     };
     return roles[role] || role;
+  }
+
+  get t() {
+    return this.translations[this.language];
   }
 }

@@ -8,6 +8,7 @@ import { Firestore, collection, addDoc, query, where, getDocs, updateDoc, doc, g
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly languageStorageKey = 'appLanguage';
 
   private user: User | null = null;
   private userData: any;
@@ -87,6 +88,15 @@ export class AuthService {
     return localStorage.getItem('userRole');
   }
 
+  public getLanguage(): 'es' | 'en' | 'pt' {
+    const storedLanguage = localStorage.getItem(this.languageStorageKey);
+    return storedLanguage === 'en' || storedLanguage === 'pt' ? storedLanguage : 'es';
+  }
+
+  public setLanguage(language: 'es' | 'en' | 'pt'): void {
+    localStorage.setItem(this.languageStorageKey, language);
+  }
+
   public isLoggedIn(): boolean {
     return this.user !== null;
   }
@@ -142,6 +152,7 @@ export class AuthService {
     localStorage.removeItem('userData');
     localStorage.removeItem('userRole');
     localStorage.removeItem('isAdmin');
+    localStorage.removeItem(this.languageStorageKey);
 
     signOut(this.auth).then(() => {
       this.updateAuthState();

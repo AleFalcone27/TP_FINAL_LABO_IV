@@ -18,6 +18,64 @@ import Swal from 'sweetalert2';
 
 export class PerfilPacienteComponent implements OnInit {
   userData: any;
+  language: 'es' | 'en' | 'pt' = 'es';
+
+  readonly translations = {
+    es: {
+      badge: 'Mi perfil',
+      greeting: 'Hola, {name}!',
+      intro: 'Aquí podés revisar tus datos principales y descargar tu historia clínica cuando la necesites.',
+      dataTitle: 'Datos personales',
+      firstName: 'Nombre',
+      lastName: 'Apellido',
+      email: 'Email',
+      insurance: 'Obra social',
+      historyTitle: 'Historia clínica',
+      historyText: 'Descargá un PDF con tus registros médicos para tenerlos siempre a mano.',
+      download: 'Descargar historia clínica',
+      profileLabel: 'Foto de perfil',
+      languageLabel: 'Idioma',
+      spanish: 'Español',
+      english: 'Inglés',
+      portuguese: 'Portugués'
+    },
+    en: {
+      badge: 'My profile',
+      greeting: 'Hello, {name}!',
+      intro: 'Here you can review your main data and download your medical history whenever you need it.',
+      dataTitle: 'Personal data',
+      firstName: 'First name',
+      lastName: 'Last name',
+      email: 'Email',
+      insurance: 'Insurance',
+      historyTitle: 'Medical history',
+      historyText: 'Download a PDF with your medical records so you always have them at hand.',
+      download: 'Download medical history',
+      profileLabel: 'Profile picture',
+      languageLabel: 'Language',
+      spanish: 'Spanish',
+      english: 'English',
+      portuguese: 'Portuguese'
+    },
+    pt: {
+      badge: 'Meu perfil',
+      greeting: 'Olá, {name}!',
+      intro: 'Aqui você pode revisar seus dados principais e baixar seu histórico clínico quando precisar.',
+      dataTitle: 'Dados pessoais',
+      firstName: 'Nome',
+      lastName: 'Sobrenome',
+      email: 'E-mail',
+      insurance: 'Convênio',
+      historyTitle: 'Histórico clínico',
+      historyText: 'Baixe um PDF com seus registros médicos para tê-los sempre à mão.',
+      download: 'Baixar histórico clínico',
+      profileLabel: 'Foto de perfil',
+      languageLabel: 'Idioma',
+      spanish: 'Espanhol',
+      english: 'Inglês',
+      portuguese: 'Português'
+    }
+  } as const;
 
   constructor(
     private authService: AuthService,
@@ -27,6 +85,20 @@ export class PerfilPacienteComponent implements OnInit {
   ngOnInit(): void {
     this.authService.getUser()
     this.userData = this.authService.getUserData();
+    this.language = this.authService.getLanguage();
+  }
+
+  get t() {
+    return this.translations[this.language];
+  }
+
+  get displayName(): string {
+    return this.userData?.firstName || 'Usuário';
+  }
+
+  setLanguage(language: 'es' | 'en' | 'pt') {
+    this.authService.setLanguage(language);
+    this.language = language;
   }
 
   async downloadMedicalHistoryPdf(): Promise<void> {
