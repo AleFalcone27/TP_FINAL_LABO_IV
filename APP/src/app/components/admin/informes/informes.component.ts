@@ -13,7 +13,6 @@ import { UserService } from '../../../services/users/users.service';
 import { Doctor } from '../../../interfaces/doctor';
 import { User } from '../../../interfaces/user';
 import { AuthService } from '../../../services/auth/auth.service';
-import { UiLoadingService } from '../../../services/ui-loading.service';
 
 interface LoginLog {
   uid: string;
