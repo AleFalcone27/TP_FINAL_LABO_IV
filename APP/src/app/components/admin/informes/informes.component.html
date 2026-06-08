@@ -7,11 +7,11 @@
       <div class="date-range">
         <label>
           {{ t.from }}
-          <input type="date" class="form-control" [(ngModel)]="startDate" (change)="onDateRangeChange()">
+          <input type="date" class="form-control" [(ngModel)]="startDate" (change)="onDateRangeChange()" [disabled]="isLoading">
         </label>
         <label>
           {{ t.to }}
-          <input type="date" class="form-control" [(ngModel)]="endDate" (change)="onDateRangeChange()">
+          <input type="date" class="form-control" [(ngModel)]="endDate" (change)="onDateRangeChange()" [disabled]="isLoading">
         </label>
       </div>
     </div>
@@ -21,8 +21,8 @@
         <div class="report-heading">
           <h3>{{ t.loginLogTitle }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(loginRows, 'login-log')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(loginRows, t.loginLogPdf, 'login-log')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(loginRows, 'login-log')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(loginRows, t.loginLogPdf, 'login-log')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
 
@@ -57,8 +57,8 @@
         <div class="report-heading">
           <h3>{{ t.specialtyAppointments }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(specialtyRows, 'turnos-por-especialidad')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(specialtyRows, t.specialtyAppointments, 'turnos-por-especialidad')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(specialtyRows, 'turnos-por-especialidad')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(specialtyRows, t.specialtyAppointments, 'turnos-por-especialidad')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #specialtyCanvas></canvas></div>
@@ -68,8 +68,8 @@
         <div class="report-heading">
           <h3>{{ t.dayAppointments }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(dayRows, 'turnos-por-dia')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(dayRows, t.dayAppointments, 'turnos-por-dia')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(dayRows, 'turnos-por-dia')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(dayRows, t.dayAppointments, 'turnos-por-dia')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #dayCanvas></canvas></div>
@@ -79,8 +79,8 @@
         <div class="report-heading">
           <h3>{{ t.clinicVisits }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(clinicVisitsRows, 'visitas-clinica')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(clinicVisitsRows, t.clinicVisits, 'visitas-clinica')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(clinicVisitsRows, 'visitas-clinica')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(clinicVisitsRows, t.clinicVisits, 'visitas-clinica')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #clinicVisitsCanvas></canvas></div>
@@ -90,8 +90,8 @@
         <div class="report-heading">
           <h3>{{ t.patientsBySpecialty }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(patientsBySpecialtyRows, 'pacientes-por-especialidad')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(patientsBySpecialtyRows, t.patientsBySpecialty, 'pacientes-por-especialidad')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(patientsBySpecialtyRows, 'pacientes-por-especialidad')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(patientsBySpecialtyRows, t.patientsBySpecialty, 'pacientes-por-especialidad')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #patientsBySpecialtyCanvas></canvas></div>
@@ -101,8 +101,8 @@
         <div class="report-heading">
           <h3>{{ t.doctorsBySpecialty }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(doctorsBySpecialtyRows, 'medicos-por-especialidad')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(doctorsBySpecialtyRows, t.doctorsBySpecialty, 'medicos-por-especialidad')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(doctorsBySpecialtyRows, 'medicos-por-especialidad')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(doctorsBySpecialtyRows, t.doctorsBySpecialty, 'medicos-por-especialidad')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #doctorsBySpecialtyCanvas></canvas></div>
@@ -112,8 +112,8 @@
         <div class="report-heading">
           <h3>{{ t.requestedByDoctor }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(requestedDoctorRows, 'turnos-solicitados-por-medico')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(requestedDoctorRows, t.requestedByDoctor, 'turnos-solicitados-por-medico')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(requestedDoctorRows, 'turnos-solicitados-por-medico')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(requestedDoctorRows, t.requestedByDoctor, 'turnos-solicitados-por-medico')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #requestedDoctorCanvas></canvas></div>
@@ -123,15 +123,11 @@
         <div class="report-heading">
           <h3>{{ t.finishedByDoctor }}</h3>
           <div class="report-actions">
-            <button class="btn-action info" (click)="exportExcel(finishedDoctorRows, 'turnos-finalizados-por-medico')">{{ t.exportExcel }}</button>
-            <button class="btn-action danger" (click)="exportPdf(finishedDoctorRows, t.finishedByDoctor, 'turnos-finalizados-por-medico')">{{ t.exportPdf }}</button>
+            <button class="btn-action info" (click)="exportExcel(finishedDoctorRows, 'turnos-finalizados-por-medico')" [disabled]="isLoading">{{ t.exportExcel }}</button>
+            <button class="btn-action danger" (click)="exportPdf(finishedDoctorRows, t.finishedByDoctor, 'turnos-finalizados-por-medico')" [disabled]="isLoading">{{ t.exportPdf }}</button>
           </div>
         </div>
         <div class="chart-box"><canvas #finishedDoctorCanvas></canvas></div>
       </section>
-    </div>
-
-    <div class="empty-state" *ngIf="isLoading">
-      <p>{{ t.loading }}</p>
     </div>
 </div>

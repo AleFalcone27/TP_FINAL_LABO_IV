@@ -1,6 +1,7 @@
 .informes-page {
   align-items: stretch;
   gap: 18px;
+  position: relative;
 }
 
 .informes-header {
