@@ -197,7 +197,6 @@ export class InformesComponent implements AfterViewInit {
     private userService: UserService,
     private firestore: Firestore,
     private authService: AuthService,
-    private uiLoadingService: UiLoadingService
   ) {}
 
   async ngAfterViewInit(): Promise<void> {
@@ -210,7 +209,6 @@ export class InformesComponent implements AfterViewInit {
   async loadReports(): Promise<void> {
     try {
       this.isLoading = true;
-      this.uiLoadingService.show(this.t.loading);
       const [appointments, loginLogs] = await Promise.all([
         this.appointmentsService.getAllAppointments(),
         this.getLoginLogs()
@@ -229,7 +227,6 @@ export class InformesComponent implements AfterViewInit {
       console.error('Error cargando informes:', error);
     } finally {
       this.isLoading = false;
-      this.uiLoadingService.hide();
       this.scheduleRenderCharts();
     }
   }
