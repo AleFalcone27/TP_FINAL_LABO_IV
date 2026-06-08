@@ -310,10 +310,10 @@ export class InformesComponent implements AfterViewInit {
       };
     });
 
-    this.specialtyRows = this.countBy(this.appointments, appointment => appointment.specialty || 'Sin especialidad')
+    this.specialtyRows = this.countBy(rangedAppointments, appointment => appointment.specialty || 'Sin especialidad')
       .map(row => ({ label: row.label, count: row.count }));
 
-    this.dayRows = this.countBy(this.appointments, appointment => this.toDate(appointment.date).toLocaleDateString())
+    this.dayRows = this.countBy(rangedAppointments, appointment => this.toDate(appointment.date).toLocaleDateString())
       .map(row => ({ label: row.label, count: row.count }));
 
     this.requestedDoctorRows = this.countBy(rangedAppointments, appointment => this.getDoctorName(appointment))
@@ -328,9 +328,7 @@ export class InformesComponent implements AfterViewInit {
       .map(row => ({ label: row.label, count: row.count }));
 
     const patientsBySpecialty = new Map<string, Set<string>>();
-    // Este reporte debe reflejar todo el historial, no solo el rango seleccionado,
-    // para evitar que quede vacío cuando el filtro de fechas no coincide con citas recientes.
-    for (const appointment of this.appointments) {
+    for (const appointment of rangedAppointments) {
       const specialty = appointment.specialty || 'Sin especialidad';
       const uidPatient = appointment.uidPatient || `${appointment.patientFirstName || ''} ${appointment.patientLastName || ''}`.trim();
       if (!patientsBySpecialty.has(specialty)) {
@@ -344,20 +342,19 @@ export class InformesComponent implements AfterViewInit {
       .map(([label, patients]) => ({ label, count: patients.size }))
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
-    const doctorsBySpecialty = new Map<string, number>();
-    for (const doctor of this.doctors) {
-      const specialties = Array.isArray((doctor as any).specialties)
-        ? (doctor as any).specialties
-        : doctor.specialty
-          ? [doctor.specialty]
-          : ['Sin especialidad'];
+    const doctorsBySpecialty = new Map<string, Set<string>>();
+    for (const appointment of rangedAppointments) {
+      const specialty = appointment.specialty || 'Sin especialidad';
+      const doctorId = appointment.uidDoctor || `${appointment.doctorFirstName || ''} ${appointment.doctorLastName || ''}`.trim();
+      if (!doctorId) continue;
 
-      for (const specialty of specialties) {
-        doctorsBySpecialty.set(specialty || 'Sin especialidad', (doctorsBySpecialty.get(specialty || 'Sin especialidad') || 0) + 1);
+      if (!doctorsBySpecialty.has(specialty)) {
+        doctorsBySpecialty.set(specialty, new Set<string>());
       }
+      doctorsBySpecialty.get(specialty)?.add(doctorId);
     }
     this.doctorsBySpecialtyRows = [...doctorsBySpecialty.entries()]
-      .map(([label, count]) => ({ label, count }))
+      .map(([label, doctors]) => ({ label, count: doctors.size }))
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   }
 
