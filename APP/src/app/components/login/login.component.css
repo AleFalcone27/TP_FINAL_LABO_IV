@@ -57,6 +57,21 @@
     line-height: 1.65;
 }
 
+.login-language-label {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.login-hero .form-control {
+    background: rgba(255, 255, 255, 0.96);
+    color: #0f172a;
+}
+
+.login-hero .form-control option {
+    color: #0f172a;
+}
+
 .login-body {
     padding: 1.6rem 2rem 2rem;
 }
