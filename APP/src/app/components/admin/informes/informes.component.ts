@@ -190,6 +190,7 @@ export class InformesComponent implements AfterViewInit {
   } as const;
 
   private charts: Chart[] = [];
+  private readonly clinicLogoUrl = 'https://pdxwznmonhqdpvxpadpa.supabase.co/storage/v1/object/public/other/logo.png';
 
   constructor(
     private appointmentsService: AppointmentsService,
@@ -243,16 +244,43 @@ export class InformesComponent implements AfterViewInit {
   }
 
   exportPdf(rows: Array<LoginReportRow | CountReportRow>, title: string, filename: string): void {
+    void this.exportPdfWithLogo(rows, title, filename);
+  }
+
+  private async exportPdfWithLogo(rows: Array<LoginReportRow | CountReportRow>, title: string, filename: string): Promise<void> {
     const pdf = new jsPDF();
     const headers = Object.keys(rows[0] || { Informe: 'Sin datos' });
     const body = rows.length
       ? rows.map(row => headers.map(header => `${((row as unknown) as Record<string, string | number>)[header] ?? ''}`))
       : [['Sin datos']];
+    const generatedAt = new Date();
+    const generatedLabel = generatedAt.toLocaleString([], {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    });
 
-    pdf.setFontSize(16);
-    pdf.text(title, 14, 18);
+    const logoDataUrl = await this.loadImageAsDataUrl(this.clinicLogoUrl);
+
+    if (logoDataUrl) {
+      pdf.addImage(logoDataUrl, 'PNG', 14, 10, 12, 12);
+      pdf.setFontSize(14);
+      pdf.text('Clínica Online', 30, 16);
+      pdf.setFontSize(16);
+      pdf.text(title, 30, 22);
+    } else {
+      pdf.setFontSize(14);
+      pdf.text('Clínica Online', 14, 16);
+      pdf.setFontSize(16);
+      pdf.text(title, 14, 22);
+    }
+
+    pdf.setFontSize(10);
+    pdf.setTextColor(100);
+    pdf.text(`Generado el: ${generatedLabel}`, 14, 30);
+    pdf.setTextColor(0);
+
     autoTable(pdf, {
-      startY: 26,
+      startY: 36,
       head: [headers],
       body,
       styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
@@ -413,6 +441,35 @@ export class InformesComponent implements AfterViewInit {
 
   private toDate(value: Timestamp | Date | any): Date {
     return value?.toDate ? value.toDate() : new Date(value);
+  }
+
+  private async loadImageAsDataUrl(url: string): Promise<string | null> {
+    try {
+      return await new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+
+          const context = canvas.getContext('2d');
+          if (!context) {
+            resolve(null);
+            return;
+          }
+
+          context.drawImage(image, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+
+        image.onerror = () => resolve(null);
+        image.src = url;
+      });
+    } catch {
+      return null;
+    }
   }
 
   private getDoctorName(appointment: Appointment): string {
