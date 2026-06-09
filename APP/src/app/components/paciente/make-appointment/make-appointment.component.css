@@ -167,8 +167,7 @@
   width: 100%;
   aspect-ratio: 1 / 0.84;
   border-radius: 16px;
-  background-size: cover;
-  background-position: center;
+  object-fit: cover;
   margin-bottom: 12px;
 }
 

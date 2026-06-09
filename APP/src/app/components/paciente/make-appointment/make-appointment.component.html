@@ -40,7 +40,12 @@
                     [class.selected]="selectedSpecialty === specialty.especialidad"
                     (click)="selectSpecialty(specialty.especialidad)"
                 >
-                    <span class="specialty-image" [style.backgroundImage]="'url(' + specialty.image + ')'"></span>
+                    <img
+                        class="specialty-image"
+                        [src]="getSpecialtyImageSource(specialty)"
+                        [alt]="specialty.especialidad"
+                        (error)="onSpecialtyImageError($event, specialty.especialidad)"
+                    >
                     <span class="specialty-name">{{ specialty.especialidad }}</span>
                 </button>
             </div>

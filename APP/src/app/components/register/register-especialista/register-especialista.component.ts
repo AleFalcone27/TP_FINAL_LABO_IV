@@ -89,16 +89,14 @@ export class RegisterEspecialistaComponent implements OnInit {
 
   async createSpecialty(newSpecialty: string) {
     try {
-      if (newSpecialty) {
+      const specialtyName = newSpecialty.trim();
+
+      if (specialtyName) {
         const specialtiesRef = collection(this.firestore, 'especialidades');
         let imageUrl = '';
 
         if (this.newSpecialtyImage) {
-          const safeName = newSpecialty
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(/[^a-z0-9\-]/g, '');
+          const safeName = this.normalizeSpecialtyName(specialtyName);
           const path = `especialidades/${safeName}-${Date.now()}.${this.getFileExtension(this.newSpecialtyImage.name)}`;
           await this.supabaseService.uploadFile('other', path, this.newSpecialtyImage);
           const { data: imageData } = this.supabaseService.getPublicUrl('other', path);
@@ -106,7 +104,7 @@ export class RegisterEspecialistaComponent implements OnInit {
         }
 
         await addDoc(specialtiesRef, {
-          especialidad: newSpecialty,
+          especialidad: specialtyName,
           image: imageUrl
         });
 
@@ -127,6 +125,16 @@ export class RegisterEspecialistaComponent implements OnInit {
   private getFileExtension(filename: string): string {
     const parts = filename.split('.');
     return parts.length > 1 ? parts.pop() || 'png' : 'png';
+  }
+
+  private normalizeSpecialtyName(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
   }
 
   onSpecialtyToggle(event: Event, specialty: string) {

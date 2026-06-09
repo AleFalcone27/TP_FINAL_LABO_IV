@@ -21,6 +21,8 @@ import { Schedule } from '../../../interfaces/appointment';
   styleUrls: ['./make-appointment.component.css']
 })
 export class MakeAppointmentComponent implements OnInit {
+  readonly fallbackSpecialtyImage = 'https://pdxwznmonhqdpvxpadpa.supabase.co/storage/v1/object/public/other/logo.png';
+  private readonly specialtyImageExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 
   specialties: { especialidad: string; image: string }[] = [];
   doctors: any[] = [];
@@ -58,6 +60,47 @@ export class MakeAppointmentComponent implements OnInit {
     }
     this.loadingMessage = 'cargando...';
     this.isLoading = false;
+  }
+
+  getSpecialtyImageSource(specialty: { especialidad: string; image: string }): string {
+    return specialty.image || this.buildSpecialtyImageCandidates(specialty.especialidad)[0] || this.fallbackSpecialtyImage;
+  }
+
+  onSpecialtyImageError(event: Event, specialtyName: string): void {
+    const image = event.target as HTMLImageElement;
+    const candidates = this.buildSpecialtyImageCandidates(specialtyName);
+    const currentSource = image.currentSrc || image.src;
+    const currentIndex = candidates.findIndex(candidate => currentSource.includes(candidate));
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex >= 0 && nextIndex < candidates.length) {
+      image.src = candidates[nextIndex];
+      return;
+    }
+
+    image.onerror = null;
+    image.src = this.fallbackSpecialtyImage;
+  }
+
+  private buildSpecialtyImageCandidates(specialtyName: string): string[] {
+    const slug = this.normalizeSpecialtyName(specialtyName);
+    const baseUrl = 'https://pdxwznmonhqdpvxpadpa.supabase.co/storage/v1/object/public/other';
+    const candidates = this.specialtyImageExtensions.flatMap(extension => ([
+      `${baseUrl}/${slug}.${extension}`,
+      `${baseUrl}/especialidades/${slug}.${extension}`
+    ]));
+
+    return Array.from(new Set(candidates));
+  }
+
+  private normalizeSpecialtyName(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
   }
 
   toggleSlots(date: string): void {

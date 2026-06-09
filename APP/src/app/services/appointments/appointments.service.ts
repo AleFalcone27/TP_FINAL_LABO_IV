@@ -11,7 +11,6 @@ import autoTable from 'jspdf-autotable';
   providedIn: 'root'
 })
 export class AppointmentsService {
-
   constructor(private firestore: Firestore) { }
 
 
@@ -19,10 +18,15 @@ export class AppointmentsService {
     try {
       const specialtiesRef = collection(this.firestore, 'especialidades');
       const querySnapshot = await getDocs(specialtiesRef);
-      return querySnapshot.docs.map(doc => ({
-        especialidad: doc.data()['especialidad'],
-        image: doc.data()['image'],
-      }));
+      return querySnapshot.docs.map(doc => {
+        const especialidad = doc.data()['especialidad'] || '';
+        const storedImage = doc.data()['image'] || '';
+
+        return {
+          especialidad,
+          image: storedImage,
+        };
+      });
     } catch (error) {
       console.error('Error fetching specialties:', error);
       return [];
@@ -425,5 +429,4 @@ export class AppointmentsService {
       return null;
     }
   }
-
 }
