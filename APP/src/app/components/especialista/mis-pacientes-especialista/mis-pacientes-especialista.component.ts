@@ -118,18 +118,26 @@ export class MisPacientesEspecialistaComponent implements OnInit {
   }
 
   async downloadMedicalHistoryPdf(patient: SpecialistPatientRow): Promise<void> {
+    let generated = false;
+    let errorMessage = 'No se pudo generar la historia clínica.';
     try {
       this.isGeneratingPdf = true;
       await this.appointmentsService.generateMedicalHistoryPdfByUserId(patient.uidPatient);
-      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+      generated = true;
     } catch (error) {
       console.error('Error al generar la historia clínica:', error);
-      const message = error instanceof Error && error.message === 'No medical history found for this user'
+      errorMessage = error instanceof Error && error.message === 'No medical history found for this user'
         ? 'Este paciente todavía no tiene historia clínica registrada.'
         : 'No se pudo generar la historia clínica.';
-      await Swal.fire('Error', message, 'error');
     } finally {
       this.isGeneratingPdf = false;
     }
+
+    if (generated) {
+      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+      return;
+    }
+
+    await Swal.fire('Error', errorMessage, 'error');
   }
 }

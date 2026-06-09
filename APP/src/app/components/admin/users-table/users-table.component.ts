@@ -258,21 +258,29 @@ export class UsersTableComponent implements OnInit {
       return;
     }
 
+    let generated = false;
+    let errorMessage = 'No se pudo generar la historia clínica.';
     try {
       this.isLoading = true;
       this.loadingMessage = 'Generando PDF de historia clínica...';
       await this.appointmentsService.generateMedicalHistoryPdfByUserId(user.uid);
-      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+      generated = true;
     } catch (error) {
       console.error('Error al generar la historia clínica:', error);
-      const message = error instanceof Error && error.message === 'No medical history found for this user'
+      errorMessage = error instanceof Error && error.message === 'No medical history found for this user'
         ? 'Este paciente no tiene historia clínica registrada todavía.'
         : 'No se pudo generar la historia clínica.';
-      await Swal.fire('Error', message, 'error');
     } finally {
       this.isLoading = false;
       this.loadingMessage = '';
     }
+
+    if (generated) {
+      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+      return;
+    }
+
+    await Swal.fire('Error', errorMessage, 'error');
   }
 
 

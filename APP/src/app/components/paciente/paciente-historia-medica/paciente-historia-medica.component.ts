@@ -110,15 +110,23 @@ async downloadMedicalHistoryPdf(): Promise<void> {
     return;
   }
 
+  let generated = false;
+  let errorMessage = 'No se pudo generar el PDF de la historia clínica.';
   try {
     this.isGeneratingPdf = true;
     await this.appointmentsService.generateMedicalHistoryPdfByUserId(userId);
-    await Swal.fire('PDF generado', 'El archivo de historia clínica fue descargado correctamente.', 'success');
+    generated = true;
   } catch (error) {
     console.error('Error al generar el PDF:', error);
-    await Swal.fire('Error', 'No se pudo generar el PDF de la historia clínica.', 'error');
   } finally {
     this.isGeneratingPdf = false;
   }
+
+  if (generated) {
+    await Swal.fire('PDF generado', 'El archivo de historia clínica fue descargado correctamente.', 'success');
+    return;
+  }
+
+  await Swal.fire('Error', errorMessage, 'error');
 }
 }

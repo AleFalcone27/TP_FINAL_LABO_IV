@@ -190,18 +190,29 @@ export class MisTurnosEspecialistaComponent {
       return;
     }
 
+    let generated = false;
+    let errorMessage = 'No se pudo generar la historia clínica del paciente.';
     try {
       this.isLoading = true;
       this.loadingMessage = 'Generando PDF de historia clínica...';
       await this.appointmentService.generateMedicalHistoryPdfByUserId(appointment.uidPatient);
-      await Swal.fire('PDF generado', 'La historia clínica del paciente fue descargada correctamente.', 'success');
+      generated = true;
     } catch (error) {
       console.error('Error al generar la historia clínica del paciente:', error);
-      await Swal.fire('Error', 'No se pudo generar la historia clínica del paciente.', 'error');
+      errorMessage = error instanceof Error && error.message === 'No medical history found for this user'
+        ? 'Este paciente todavía no tiene historia clínica registrada.'
+        : 'No se pudo generar la historia clínica del paciente.';
     } finally {
       this.isLoading = false;
       this.loadingMessage = '';
     }
+
+    if (generated) {
+      await Swal.fire('PDF generado', 'La historia clínica del paciente fue descargada correctamente.', 'success');
+      return;
+    }
+
+    await Swal.fire('Error', errorMessage, 'error');
   }
 
 

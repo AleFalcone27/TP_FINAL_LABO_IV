@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 export class PerfilPacienteComponent implements OnInit {
   userData: any;
   language: 'es' | 'en' | 'pt' = 'es';
+  isLoading = false;
 
   readonly translations = {
     es: {
@@ -107,15 +108,26 @@ export class PerfilPacienteComponent implements OnInit {
       return;
     }
 
+    let generated = false;
+    let errorMessage = 'No se pudo generar la historia clínica.';
     try {
+      this.isLoading = true;
       await this.appointmentsService.generateMedicalHistoryPdfByUserId(this.userData.uid);
-      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+      generated = true;
     } catch (error) {
       console.error('Error al generar la historia clínica:', error);
-      const message = error instanceof Error && error.message === 'No medical history found for this user'
+      errorMessage = error instanceof Error && error.message === 'No medical history found for this user'
         ? 'Todavía no tenés historia clínica registrada.'
         : 'No se pudo generar la historia clínica.';
-      await Swal.fire('Error', message, 'error');
+    } finally {
+      this.isLoading = false;
     }
+
+    if (generated) {
+      await Swal.fire('PDF generado', 'La historia clínica se descargó correctamente.', 'success');
+      return;
+    }
+
+    await Swal.fire('Error', errorMessage, 'error');
   }
 }
