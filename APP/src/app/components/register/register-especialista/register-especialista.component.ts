@@ -21,6 +21,9 @@ export class RegisterEspecialistaComponent implements OnInit {
   @Input() isCaptchaEnabled: boolean = true;
   registerForm: FormGroup;
   specialties: { especialidad: string; image: string }[] = [];
+  newSpecialtyImage: File | null = null;
+  newSpecialtyImageName = 'Sin imagen seleccionada';
+  showNewSpecialtyForm = false;
 
   constructor(private router: Router, private firestore: Firestore, private authService: AuthService, private appointmentsService:AppointmentsService, private supabaseService: SupabaseService) {
     this.registerForm = new FormGroup({
@@ -78,16 +81,52 @@ export class RegisterEspecialistaComponent implements OnInit {
 
 
 
+  onNewSpecialtyImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.newSpecialtyImage = input.files?.[0] || null;
+    this.newSpecialtyImageName = this.newSpecialtyImage?.name || 'Sin imagen seleccionada';
+  }
+
   async createSpecialty(newSpecialty: string) {
     try {
       if (newSpecialty) {
         const specialtiesRef = collection(this.firestore, 'especialidades');
-        await addDoc(specialtiesRef, { especialidad: newSpecialty });
+        let imageUrl = '';
+
+        if (this.newSpecialtyImage) {
+          const safeName = newSpecialty
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9\-]/g, '');
+          const path = `especialidades/${safeName}-${Date.now()}.${this.getFileExtension(this.newSpecialtyImage.name)}`;
+          await this.supabaseService.uploadFile('other', path, this.newSpecialtyImage);
+          const { data: imageData } = this.supabaseService.getPublicUrl('other', path);
+          imageUrl = imageData.publicUrl;
+        }
+
+        await addDoc(specialtiesRef, {
+          especialidad: newSpecialty,
+          image: imageUrl
+        });
+
+        this.newSpecialtyImage = null;
+        this.newSpecialtyImageName = 'Sin imagen seleccionada';
+        this.showNewSpecialtyForm = false;
         await this.loadSpecialties();
       }
     } catch (error) {
       console.error('Error creating new specialty:', error);
     }
+  }
+
+  toggleNewSpecialtyForm(): void {
+    this.showNewSpecialtyForm = !this.showNewSpecialtyForm;
+  }
+
+  private getFileExtension(filename: string): string {
+    const parts = filename.split('.');
+    return parts.length > 1 ? parts.pop() || 'png' : 'png';
   }
 
   onSpecialtyToggle(event: Event, specialty: string) {

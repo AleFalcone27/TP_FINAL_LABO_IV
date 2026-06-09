@@ -61,12 +61,25 @@
 
         <div class="col-12">
             <label class="form-label">Agregar nueva especialidad</label>
-            <div class="d-flex gap-2">
+            <button type="button" class="btn-action info mb-2" (click)="toggleNewSpecialtyForm()">
+                {{ showNewSpecialtyForm ? 'Ocultar formulario' : '+ Agregar especialidad nueva' }}
+            </button>
+
+            <div *ngIf="showNewSpecialtyForm" class="d-flex flex-column gap-2">
                 <input #newSpecialtyInput type="text" class="form-control" placeholder="Nueva especialidad">
-                <button type="button" class="btn-action info"
-                    (click)="createSpecialty(newSpecialtyInput.value); newSpecialtyInput.value = '';">
-                    + Agregar
-                </button>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <input #newSpecialtyImageInput type="file" class="d-none" accept="image/jpeg,image/png"
+                        (change)="onNewSpecialtyImageSelected($event)">
+                    <button type="button" class="btn-action info"
+                        (click)="newSpecialtyImageInput.click()">
+                        Elegir imagen
+                    </button>
+                    <small class="text-muted">{{ newSpecialtyImageName }}</small>
+                    <button type="button" class="btn-action info ms-auto"
+                        (click)="createSpecialty(newSpecialtyInput.value); newSpecialtyInput.value = ''; newSpecialtyImageInput.value = ''; newSpecialtyImageName = 'Sin imagen seleccionada';">
+                        + Agregar
+                    </button>
+                </div>
             </div>
         </div>
 
