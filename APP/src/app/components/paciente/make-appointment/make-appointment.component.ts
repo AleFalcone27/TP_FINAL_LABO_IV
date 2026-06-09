@@ -284,6 +284,8 @@ export class MakeAppointmentComponent implements OnInit {
       this.selectedDoctorLabel = '';
       this.availableSlots = [];
       this.groupedSlots = [];
+      this.isLoading = false;
+      this.loadingMessage = '';
 
       await Swal.fire({
         icon: 'success',
@@ -295,6 +297,8 @@ export class MakeAppointmentComponent implements OnInit {
       await this.router.navigate(['/paciente/misTurnos']);
     } catch (error) {
       console.error('Error al reservar el turno:', error);
+      this.isLoading = false;
+      this.loadingMessage = '';
 
       await Swal.fire({
         icon: 'error',
