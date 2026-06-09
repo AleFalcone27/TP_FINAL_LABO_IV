@@ -36,8 +36,7 @@
             <th>Rol</th>
             <th *ngIf="selectedRole === 'doctor'">Especialidad</th>
             <th *ngIf="selectedRole === 'doctor'">Estado</th>
-            <th *ngIf="selectedRole === 'doctor'" class="action-column">Acción</th>
-            <th *ngIf="selectedRole === 'user' || selectedRole === 'all'" class="action-column">Acción</th>
+            <th *ngIf="selectedRole !== 'admin'" class="action-column">Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -59,21 +58,21 @@
                 {{ user.approved ? 'Aprobado' : 'Pendiente' }}
               </span>
             </td>
-            <td *ngIf="selectedRole === 'doctor' && isDoctor(user)" class="action-column">
+            <td *ngIf="selectedRole !== 'admin'" class="action-column">
               <button
+                *ngIf="isUser(user)"
+                class="btn-action info"
+                (click)="downloadMedicalHistoryPdf(user)">
+                Historia PDF
+              </button>
+              <button
+                *ngIf="isDoctor(user)"
                 class="btn-action"
                 [ngClass]="user.approved ? 'danger' : 'success'"
                 (click)="toggleDoctorStatus(user)">
                 {{ getStatusButtonText(user.approved) }}
               </button>
-            </td>
-            <td *ngIf="selectedRole === 'user' || selectedRole === 'all'" class="action-column">
-              <button
-                *ngIf="(selectedRole === 'user')"
-                class="btn-action info"
-                (click)="downloadMedicalHistoryPdf(user)">
-                Historia PDF
-              </button>
+              <span *ngIf="isAdmin(user)">-</span>
             </td>
           </tr>
         </tbody>

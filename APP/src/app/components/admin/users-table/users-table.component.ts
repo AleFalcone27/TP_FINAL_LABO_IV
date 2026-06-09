@@ -150,7 +150,7 @@ export class UsersTableComponent implements OnInit {
   }
 
   isDoctor(user: User | Admin | Doctor): user is Doctor {
-    return user.role === 'doctor' || user.role === 'especialista' || (user as Doctor).approved !== undefined;
+    return user.role === 'doctor' || user.role === 'especialista';
   }
 
   isAdmin(user: User | Admin | Doctor): user is Admin {
@@ -226,7 +226,7 @@ export class UsersTableComponent implements OnInit {
 
     return roles[role as keyof typeof roles] || '';
   }
-  
+
   // Métodos auxiliares
   private formatDNI(dni: string): string {
     // Formato: XX.XXX.XXX
