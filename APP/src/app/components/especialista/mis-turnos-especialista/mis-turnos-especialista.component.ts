@@ -74,7 +74,7 @@ export class MisTurnosEspecialistaComponent {
   }
 
   applyFilters() {
-    let filtered = [...this.appointments];
+    let filtered = [...this.appointments].sort((a, b) => b.date.toMillis() - a.date.toMillis());
 
     if (this.searchTerm) {
       const searchLower = this.searchTerm.toLowerCase();
