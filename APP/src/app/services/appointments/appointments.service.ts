@@ -104,7 +104,7 @@ export class AppointmentsService {
         'Presión',
         'Comportamiento',
         'Estado General',
-        'Segunda Visita',
+        'Seguimiento clínico',
         'Datos Dinámicos'
       ]],
       body: histories.map((history) => ([

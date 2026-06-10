@@ -297,7 +297,7 @@ export class MisTurnosEspecialistaComponent {
                   <input id="estadoGeneral" class="swal-input" type="number" placeholder="Ej. 75" />
                 </div>
                 <div class="swal-field">
-                  <label for="segundaVisita" class="swal-field-label">¿Recomiendas una segunda visita?</label>
+                  <label for="segundaVisita" class="swal-field-label">Seguimiento clínico recomendado</label>
                   <select id="segundaVisita" class="swal-input">
                       <option value="Si">Sí</option>
                       <option value="No">No</option>
