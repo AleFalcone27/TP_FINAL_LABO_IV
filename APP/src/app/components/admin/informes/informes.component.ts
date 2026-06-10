@@ -45,13 +45,13 @@ interface CountReportRow {
   animations: []
 })
 export class InformesComponent implements AfterViewInit {
-  @ViewChild('specialtyCanvas') specialtyCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('dayCanvas') dayCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('requestedDoctorCanvas') requestedDoctorCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('finishedDoctorCanvas') finishedDoctorCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('clinicVisitsCanvas') clinicVisitsCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('patientsBySpecialtyCanvas') patientsBySpecialtyCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('doctorsBySpecialtyCanvas') doctorsBySpecialtyCanvas?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('specialtyCanvas') specialtyCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('dayCanvas') dayCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('requestedDoctorCanvas') requestedDoctorCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('finishedDoctorCanvas') finishedDoctorCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('clinicVisitsCanvas') clinicVisitsCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('patientsBySpecialtyCanvas') patientsBySpecialtyCanvasRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('doctorsBySpecialtyCanvas') doctorsBySpecialtyCanvasRef?: ElementRef<HTMLCanvasElement>;
 
   appointments: Appointment[] = [];
   loginLogs: LoginLog[] = [];
@@ -247,6 +247,10 @@ export class InformesComponent implements AfterViewInit {
     void this.exportPdfWithLogo(rows, title, filename);
   }
 
+  exportChartPdf(canvasRef: ElementRef<HTMLCanvasElement> | undefined, title: string, filename: string): void {
+    void this.exportChartPdfWithLogo(canvasRef, title, filename);
+  }
+
   private async exportPdfWithLogo(rows: Array<LoginReportRow | CountReportRow>, title: string, filename: string): Promise<void> {
     const pdf = new jsPDF();
     const headers = Object.keys(rows[0] || { Informe: 'Sin datos' });
@@ -286,6 +290,58 @@ export class InformesComponent implements AfterViewInit {
       styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
       headStyles: { fillColor: [15, 23, 42] }
     });
+    pdf.save(`${filename}.pdf`);
+  }
+
+  private async exportChartPdfWithLogo(
+    canvasRef: ElementRef<HTMLCanvasElement> | undefined,
+    title: string,
+    filename: string
+  ): Promise<void> {
+    const pdf = new jsPDF();
+    const generatedAt = new Date();
+    const generatedLabel = generatedAt.toLocaleString([], {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    });
+    const logoDataUrl = await this.loadImageAsDataUrl(this.clinicLogoUrl);
+
+    if (logoDataUrl) {
+      pdf.addImage(logoDataUrl, 'PNG', 14, 10, 12, 12);
+      pdf.setFontSize(14);
+      pdf.text('Clínica Online', 30, 16);
+      pdf.setFontSize(16);
+      pdf.text(title, 30, 22);
+    } else {
+      pdf.setFontSize(14);
+      pdf.text('Clínica Online', 14, 16);
+      pdf.setFontSize(16);
+      pdf.text(title, 14, 22);
+    }
+
+    pdf.setFontSize(10);
+    pdf.setTextColor(100);
+    pdf.text(`Generado el: ${generatedLabel}`, 14, 30);
+    pdf.setTextColor(0);
+
+    const chartImage = this.getCanvasImageDataUrl(canvasRef?.nativeElement);
+
+    if (chartImage) {
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 14;
+      const top = 40;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - top - margin;
+      const { width, height } = this.getImageDimensions(canvasRef?.nativeElement, maxWidth, maxHeight);
+      const x = (pageWidth - width) / 2;
+
+      pdf.addImage(chartImage, 'PNG', x, top, width, height);
+    } else {
+      pdf.setFontSize(12);
+      pdf.text(this.t.noData, 14, 46);
+    }
+
     pdf.save(`${filename}.pdf`);
   }
 
@@ -361,13 +417,13 @@ export class InformesComponent implements AfterViewInit {
   private renderCharts(): void {
     this.destroyCharts();
     this.charts = [
-      this.createBarChart(this.specialtyCanvas, this.t.specialtyAppointments, this.specialtyRows),
-      this.createBarChart(this.dayCanvas, this.t.dayAppointments, this.dayRows),
-      this.createBarChart(this.requestedDoctorCanvas, this.t.requestedByDoctor, this.requestedDoctorRows),
-      this.createBarChart(this.finishedDoctorCanvas, this.t.finishedByDoctor, this.finishedDoctorRows),
-      this.createBarChart(this.clinicVisitsCanvas, this.t.clinicVisits, this.clinicVisitsRows),
-      this.createBarChart(this.patientsBySpecialtyCanvas, this.t.patientsBySpecialty, this.patientsBySpecialtyRows),
-      this.createBarChart(this.doctorsBySpecialtyCanvas, this.t.doctorsBySpecialty, this.doctorsBySpecialtyRows)
+      this.createBarChart(this.specialtyCanvasRef, this.t.specialtyAppointments, this.specialtyRows),
+      this.createBarChart(this.dayCanvasRef, this.t.dayAppointments, this.dayRows),
+      this.createBarChart(this.requestedDoctorCanvasRef, this.t.requestedByDoctor, this.requestedDoctorRows),
+      this.createBarChart(this.finishedDoctorCanvasRef, this.t.finishedByDoctor, this.finishedDoctorRows),
+      this.createBarChart(this.clinicVisitsCanvasRef, this.t.clinicVisits, this.clinicVisitsRows),
+      this.createBarChart(this.patientsBySpecialtyCanvasRef, this.t.patientsBySpecialty, this.patientsBySpecialtyRows),
+      this.createBarChart(this.doctorsBySpecialtyCanvasRef, this.t.doctorsBySpecialty, this.doctorsBySpecialtyRows)
     ].filter((chart): chart is Chart => Boolean(chart));
   }
 
@@ -467,6 +523,42 @@ export class InformesComponent implements AfterViewInit {
     } catch {
       return null;
     }
+  }
+
+  private getCanvasImageDataUrl(canvas: HTMLCanvasElement | undefined): string | null {
+    if (!canvas || !canvas.width || !canvas.height) {
+      return null;
+    }
+
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.width = canvas.width;
+    exportCanvas.height = canvas.height;
+
+    const context = exportCanvas.getContext('2d');
+    if (!context) {
+      return null;
+    }
+
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+    context.drawImage(canvas, 0, 0);
+
+    return exportCanvas.toDataURL('image/png');
+  }
+
+  private getImageDimensions(
+    canvas: HTMLCanvasElement | undefined,
+    maxWidth: number,
+    maxHeight: number
+  ): { width: number; height: number } {
+    const sourceWidth = canvas?.width || maxWidth;
+    const sourceHeight = canvas?.height || maxHeight;
+    const ratio = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
+
+    return {
+      width: sourceWidth * ratio,
+      height: sourceHeight * ratio
+    };
   }
 
   private getDoctorName(appointment: Appointment): string {
