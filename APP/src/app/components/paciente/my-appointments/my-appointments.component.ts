@@ -118,7 +118,6 @@ onSearch(event: Event) {
       history.height,
       history.weight,
       history.pressure,
-      history.secondVisitRecommendation,
       history.patientBehavior,
       history.patientGeneralState,
       history.date ? this.formatHistoryDate(history.date) : '',

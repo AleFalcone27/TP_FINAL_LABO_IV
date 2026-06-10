@@ -123,7 +123,6 @@ export class MisTurnosEspecialistaComponent {
       history.height,
       history.weight,
       history.pressure,
-      history.secondVisitRecommendation,
       history.patientBehavior,
       history.patientGeneralState,
       history.date ? this.formatHistoryDate(history.date) : '',
@@ -296,13 +295,6 @@ export class MisTurnosEspecialistaComponent {
                   <label for="estadoGeneral" class="swal-field-label">Estado general del paciente</label>
                   <input id="estadoGeneral" class="swal-input" type="number" placeholder="Ej. 75" />
                 </div>
-                <div class="swal-field">
-                  <label for="segundaVisita" class="swal-field-label">Seguimiento clínico recomendado</label>
-                  <select id="segundaVisita" class="swal-input">
-                      <option value="Si">Sí</option>
-                      <option value="No">No</option>
-                  </select>
-                </div>
               </div>
 
               <div class="finalize-modal-section">
@@ -354,8 +346,6 @@ export class MisTurnosEspecialistaComponent {
         const presion = (document.getElementById('presion') as HTMLInputElement).value; // Presión se mantiene como string
         const comportamiento = parseInt((document.getElementById('comportamiento') as HTMLInputElement).value);
         const estadoGeneral = parseInt((document.getElementById('estadoGeneral') as HTMLInputElement).value);
-        const segundaVisita = (document.getElementById('segundaVisita') as HTMLSelectElement).value;
-
         // Obtener datos dinámicos
         const dynamicData = [];
         for (let i = 1; i <= 3; i++) {
@@ -368,12 +358,12 @@ export class MisTurnosEspecialistaComponent {
         if (!feedback || isNaN(altura) || isNaN(peso) || isNaN(temperatura) || !presion || isNaN(estadoGeneral)) {
           Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
         }
-        return { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, segundaVisita, dynamicData };
+        return { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, dynamicData };
       }
     });
 
     if (formValues) {
-      const { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, segundaVisita, dynamicData } = formValues;
+      const { feedback, altura, peso, temperatura, presion, comportamiento, estadoGeneral, dynamicData } = formValues;
 
       console.log(formValues);
 
@@ -385,7 +375,6 @@ export class MisTurnosEspecialistaComponent {
           pressure: presion,
           behavior: comportamiento,
           generalState: estadoGeneral,
-          secondVisitRecommendation: segundaVisita,
           dynamicData
         } as MedicalData);
         Swal.fire('Cita Finalizada', 'La historia médica ya está disponible.', 'success');

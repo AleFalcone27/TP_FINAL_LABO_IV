@@ -5,6 +5,5 @@ export interface MedicalData {
     pressure: string; 
     behavior: number;
     generalState: number; 
-    secondVisitRecommendation: string; 
     dynamicData: Array<{ key: string; value: string }>;
 }

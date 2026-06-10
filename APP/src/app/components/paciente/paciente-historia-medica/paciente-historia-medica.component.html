@@ -19,7 +19,6 @@
                         <th class="text-center">Fecha</th>
                         <th class="text-center">Comportamiento</th>
                         <th class="text-center">Estado general</th>
-                        <th class="text-center">Seguimiento clínico recomendado</th>
 
                         <th class="text-center">Presión</th>
                         <th class="text-center">Datos Dinámicos</th>
@@ -34,7 +33,6 @@
                         <td class="text-center">{{ formatDate(history.date) }}</td>
                         <td  class="text-center" [appPatientBehaviorColor]="history.patientBehavior">{{ history.patientBehavior }}</td>
                         <td class="text-center">{{ history.patientGeneralState }}</td>
-                        <td class="text-center">{{ history.secondVisitRecommendation }}</td>
                         <td class="text-center">{{ history.pressure }}</td>
                         <td>
                             <ul class="data-chips">

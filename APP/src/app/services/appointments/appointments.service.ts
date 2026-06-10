@@ -104,7 +104,6 @@ export class AppointmentsService {
         'Presión',
         'Comportamiento',
         'Estado General',
-        'Seguimiento clínico',
         'Datos Dinámicos'
       ]],
       body: histories.map((history) => ([
@@ -115,7 +114,6 @@ export class AppointmentsService {
         history.pressure ?? '',
         `${history.patientBehavior ?? ''}`,
         `${history.patientGeneralState ?? ''}`,
-        `${history.secondVisitRecommendation ?? ''}`,
         this.formatDynamicData(history.dynamicData),
       ])),
       styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
@@ -375,7 +373,6 @@ export class AppointmentsService {
             doctorFirstName: appointment.doctorFirstName,
             doctorLastName: appointment.doctorLastName,
             patientUID: appointment.uidPatient,
-            secondVisitRecommendation: medicalData.secondVisitRecommendation,
             patientBehavior: medicalData.behavior,
             patientGeneralState: medicalData.generalState,
             weight: medicalData.weight, 

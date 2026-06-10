@@ -12,7 +12,6 @@ export interface MedicalHistory {
     patientFirstName: string,
     doctorFirstName: string,
     doctorLastName: string,
-    secondVisitRecommendation: string,
     patientBehavior: any,
     patientGeneralState: any,
     dynamicData: DynamicData[]; 
