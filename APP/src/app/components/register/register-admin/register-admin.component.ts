@@ -5,6 +5,7 @@ import { addDoc, collection, Firestore } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 
 @Component({
   selector: 'app-register-admin',
@@ -15,8 +16,14 @@ import Swal from 'sweetalert2';
 })
 export class RegisterAdminComponent {
   registerForm: FormGroup;
+  isLoading = false;
+  loadingMessage = '';
 
-  constructor(private router: Router, private firestore: Firestore) {
+  constructor(
+    private router: Router,
+    private firestore: Firestore,
+    private supabaseService: SupabaseService
+  ) {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
       lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -70,7 +77,7 @@ export class RegisterAdminComponent {
     return (control: AbstractControl): ValidationErrors | null => {
       const file = control.value as File;
       if (file) {
-        const fileSize = file.size / 1024 / 1024; // convertir a MB
+        const fileSize = file.size / 1024 / 1024;
         if (fileSize > maxSize) {
           return {
             fileSize: {
@@ -85,16 +92,28 @@ export class RegisterAdminComponent {
   }
 
   onSubmit() {
+    this.isLoading = true;
+    this.loadingMessage = 'Registrando administrador';
+
     const auth = getAuth();
     const email = this.email?.value;
     const password = this.password?.value;
 
     if (this.registerForm.valid) {
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
           const user = userCredential.user;
+          const file = this.registerForm.get('profileImage')?.value;
+          let profileImageUrl = '';
 
-          // Guardar datos adicionales en Firestore
+          if (file) {
+            const extension = this.getFileExtension(file.name);
+            const path = `admins/${user.uid}/profileImage.${extension}`;
+            await this.supabaseService.uploadFile('profiles', path, file);
+            const { data } = this.supabaseService.getPublicUrl('profiles', path);
+            profileImageUrl = data.publicUrl;
+          }
+
           const adminData = {
             uid: user.uid,
             firstName: this.firstName?.value,
@@ -102,13 +121,15 @@ export class RegisterAdminComponent {
             age: this.age?.value,
             dni: this.dni?.value,
             email: this.email?.value,
-            role: 'admin'
+            role: 'admin',
+            profileImage: profileImageUrl
           };
 
 
           const adminsRef = collection(this.firestore, 'administradores');
           addDoc(adminsRef, adminData)
             .then(() => {
+              this.isLoading = false;
               Swal.fire({
                 title: 'Registro exitoso',
                 text: 'El administrador ha sido registrado correctamente',
@@ -118,6 +139,7 @@ export class RegisterAdminComponent {
               this.router.navigate(['/home']);
             })
             .catch((error) => {
+              this.isLoading = false;
               console.error("Error adding document: ", error);
               Swal.fire({
                 title: 'Error',
@@ -128,6 +150,7 @@ export class RegisterAdminComponent {
             });
         })
         .catch((error) => {
+          this.isLoading = false;
           let errorMessage = '';
           switch (error.code) {
             case 'auth/invalid-email':
@@ -151,7 +174,15 @@ export class RegisterAdminComponent {
             icon: 'error',
             confirmButtonText: 'Ok'
           });
-        });
+      });
+    } else {
+      this.isLoading = false;
+      this.registerForm.markAllAsTouched();
     }
+  }
+
+  private getFileExtension(filename: string): string {
+    const parts = filename.split('.');
+    return parts.length > 1 ? parts.pop() || 'jpg' : 'jpg';
   }
 }

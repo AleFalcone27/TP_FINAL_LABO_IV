@@ -3,6 +3,7 @@ import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Firestore, collection, addDoc, query, where, getDocs, updateDoc, doc, getDoc } from '@angular/fire/firestore';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,10 @@ export class AuthService {
   private authStateSubject = new BehaviorSubject<boolean>(false);
   public authState$ = this.authStateSubject.asObservable();
 
-  constructor(private firestore: Firestore) {
+  constructor(
+    private firestore: Firestore,
+    private supabaseService: SupabaseService
+  ) {
     this.auth = getAuth();
     
     // Escuchar cambios en el estado de autenticación
@@ -50,7 +54,7 @@ export class AuthService {
   }
 
   public getUserData(): any {
-    return JSON.parse(localStorage.getItem('userData') || '{}');
+    return JSON.parse(localStorage.getItem('userData') || localStorage.getItem('userDocument') || '{}');
   }
 
   public getCurrentUserEmail() {
@@ -73,8 +77,9 @@ export class AuthService {
 
         if (!querySnapshot.empty) {
           const doc = querySnapshot.docs[0];
-          const userData = doc.data();
+          const userData = this.normalizeUserData(doc.data());
           localStorage.setItem('userDocument', JSON.stringify(userData));
+          localStorage.setItem('userData', JSON.stringify(userData));
           this.userData = userData;
           return;
         }
@@ -164,6 +169,35 @@ export class AuthService {
 
   getUserId(): string | undefined {
     return this.userData ? this.userData.id : undefined;
+  }
+
+  private normalizeUserData(userData: any): any {
+    if (!userData) {
+      return userData;
+    }
+
+    const normalized = { ...userData };
+    const bucket = 'profiles';
+
+    if (Array.isArray(normalized.profileImages)) {
+      normalized.profileImages = normalized.profileImages.map((imageUrl: string) =>
+        this.supabaseService.resolveStorageUrl(bucket, imageUrl)
+      );
+    }
+
+    if (normalized.profileImage) {
+      normalized.profileImage = this.supabaseService.resolveStorageUrl(bucket, normalized.profileImage);
+    }
+
+    if (normalized.profileImage1) {
+      normalized.profileImage1 = this.supabaseService.resolveStorageUrl(bucket, normalized.profileImage1);
+    }
+
+    if (normalized.profileImage2) {
+      normalized.profileImage2 = this.supabaseService.resolveStorageUrl(bucket, normalized.profileImage2);
+    }
+
+    return normalized;
   }
 
 }

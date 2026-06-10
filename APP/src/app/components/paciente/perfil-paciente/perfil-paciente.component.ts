@@ -83,8 +83,8 @@ export class PerfilPacienteComponent implements OnInit {
     private appointmentsService: AppointmentsService
   ) {}
 
-  ngOnInit(): void {
-    this.authService.getUser()
+  async ngOnInit(): Promise<void> {
+    await this.authService.getUser();
     this.userData = this.authService.getUserData();
     this.language = this.authService.getLanguage();
   }

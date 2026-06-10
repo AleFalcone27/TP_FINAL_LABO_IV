@@ -9,6 +9,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { slideFromBelowAnimation } from '../../animations/animations';
 import { ZoomInImagesDirective } from '../../directives/zoom-in-images/zoom-in-images.directive';
+import { SupabaseService } from '../../services/supabase/supabase.service';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,8 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private supabaseService: SupabaseService
   ) {
     this.selectedLanguage = this.getStoredLanguage();
     this.loginForm = new FormGroup({
@@ -86,8 +88,10 @@ export class LoginComponent {
     if (!userDoc) {
       throw new Error('Usuario no encontrado');
     }
-  
-    if (userDoc.role === 'especialista' && !(userDoc as any).approved) {
+
+    const normalizedUserDoc = this.normalizeUserData(userDoc);
+
+    if (normalizedUserDoc.role === 'especialista' && !(normalizedUserDoc as any).approved) {
       Swal.fire({
         icon: 'question',
         title: 'Hubo un error',
@@ -95,15 +99,15 @@ export class LoginComponent {
       });
       throw new Error('Aprobación pendiente');
     }
-  
+
     Swal.fire({
       icon: 'success',
       title: '¡Bienvenido!',
-      text: `Has iniciado sesión como ${userDoc.role}`,
+      text: `Has iniciado sesión como ${normalizedUserDoc.role}`,
     });
-  
-    localStorage.setItem('userRole', userDoc.role);
-    localStorage.setItem('userData', JSON.stringify(userDoc));
+
+    localStorage.setItem('userRole', normalizedUserDoc.role);
+    localStorage.setItem('userData', JSON.stringify(normalizedUserDoc));
   }
 
   private async registerLoginLog(userDoc: any): Promise<void> {
@@ -209,5 +213,34 @@ export class LoginComponent {
   private getStoredLanguage(): 'es' | 'en' | 'pt' {
     const storedLanguage = localStorage.getItem('appLanguage');
     return storedLanguage === 'en' || storedLanguage === 'pt' ? storedLanguage : 'es';
+  }
+
+  private normalizeUserData(userDoc: any): any {
+    if (!userDoc) {
+      return userDoc;
+    }
+
+    const normalized = { ...userDoc };
+    const bucket = 'profiles';
+
+    if (Array.isArray(normalized.profileImages)) {
+      normalized.profileImages = normalized.profileImages.map((imageUrl: string) =>
+        this.supabaseService.resolveStorageUrl(bucket, imageUrl)
+      );
+    }
+
+    if (normalized.profileImage) {
+      normalized.profileImage = this.supabaseService.resolveStorageUrl(bucket, normalized.profileImage);
+    }
+
+    if (normalized.profileImage1) {
+      normalized.profileImage1 = this.supabaseService.resolveStorageUrl(bucket, normalized.profileImage1);
+    }
+
+    if (normalized.profileImage2) {
+      normalized.profileImage2 = this.supabaseService.resolveStorageUrl(bucket, normalized.profileImage2);
+    }
+
+    return normalized;
   }
 }

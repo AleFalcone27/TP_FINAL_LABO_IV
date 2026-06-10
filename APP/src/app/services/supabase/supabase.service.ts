@@ -35,5 +35,22 @@ export class SupabaseService {
   deleteFile(bucket: string, paths: string[]) {
     return this.supabase.storage.from(bucket).remove(paths);
   }
-}
 
+  resolveStorageUrl(bucket: string, storedValue: string): string {
+    if (!storedValue) {
+      return '';
+    }
+
+    if (storedValue.includes('/storage/v1/object/public/')) {
+      return storedValue;
+    }
+
+    const firebaseMatch = storedValue.match(/firebasestorage\.googleapis\.com\/v0\/b\/[^/]+\/o\/([^?]+)/);
+    if (!firebaseMatch?.[1]) {
+      return storedValue;
+    }
+
+    const storagePath = decodeURIComponent(firebaseMatch[1]);
+    return `${environment.supabaseUrl}/storage/v1/object/public/${bucket}/${storagePath}`;
+  }
+}

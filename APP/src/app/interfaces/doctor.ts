@@ -5,6 +5,7 @@ export interface Doctor {
     email: string;
     firstName: string;
     lastName: string;
+    profileImage?: string;
     role: string;
     profileImage1: string;
     specialty: string;

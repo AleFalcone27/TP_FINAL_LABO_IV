@@ -5,6 +5,7 @@ export interface Admin {
     email: string;
     firstName: string;
     lastName: string;
+    profileImage?: string;
     role: string;
     uid: string;
   }

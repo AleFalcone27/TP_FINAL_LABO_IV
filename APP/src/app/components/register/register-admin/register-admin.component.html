@@ -126,7 +126,7 @@
 
             <hr class="my-4">
 
-            <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="registerForm.invalid">
+            <button class="w-100 btn btn-primary btn-lg" type="submit" [disabled]="registerForm.invalid || isLoading">
                 Registrarme como Administrador
             </button>
         </form>

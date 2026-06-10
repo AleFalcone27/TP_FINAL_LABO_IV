@@ -27,7 +27,7 @@ export class PerfilEspecialistaComponent implements OnInit {
   constructor(private authService: AuthService, private appointmentsService: AppointmentsService) { }
 
   async ngOnInit(): Promise<void> {
-    this.authService.getUser ();
+    await this.authService.getUser();
     this.userData = this.authService.getUserData();
 
     if (this.userData && this.userData.Specialties) {

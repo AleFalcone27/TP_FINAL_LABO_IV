@@ -16,8 +16,8 @@ export class PerfilAdminComponent implements OnInit{
 
   constructor(private authService: AuthService) {}
 
-  ngOnInit(): void {
-    this.authService.getUser()
+  async ngOnInit(): Promise<void> {
+    await this.authService.getUser();
     this.userData = this.authService.getUserData();
     console.log(this.userData)
   }

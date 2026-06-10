@@ -6,6 +6,7 @@ export interface User {
     email: string;
     firstName: string;
     lastName: string;
+    profileImages?: string[];
     role: string;
     socialInsurance: string;
     uid: string;
