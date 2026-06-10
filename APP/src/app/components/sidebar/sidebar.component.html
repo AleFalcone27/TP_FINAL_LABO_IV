@@ -23,6 +23,11 @@
         Turnos
       </a>
     </li>
+    <li *ngIf="userRole === 'admin'" class="nav-item">
+      <a (click)="navigateToAdminMakeAppointment()" class="nav-link" aria-current="page">
+        Reservar turno
+      </a>
+    </li>
 
     <li *ngIf="userRole === 'admin'" class="nav-item">
       <a (click)="navigateToInformes()" class="nav-link" aria-current="page">

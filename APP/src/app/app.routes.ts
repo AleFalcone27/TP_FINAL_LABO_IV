@@ -40,6 +40,7 @@ export const routes: Routes = [
     { path: 'admin', component:AdminDashboardComponent, data: { animation: 'adminHome' } },
     { path: 'admin/perfil', component:PerfilAdminComponent, data: { animation: 'adminProfile' } },
     { path: 'admin/turnos', component:AdminTurnosComponent, data: { animation: 'adminAppointments' } },
+    { path: 'admin/reservarTurno', component:MakeAppointmentComponent, data: { animation: 'adminBooking' } },
     { path: 'admin/informes', component:InformesComponent, data: { animation: 'adminReports' }
     },
    

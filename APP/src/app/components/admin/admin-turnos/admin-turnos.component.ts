@@ -11,6 +11,7 @@ import { FormatAppointmentStatusPipe } from '../../../pipes/format-appointment-s
 import { AppointmentStatusColorDirective } from '../../../directives/appointment-status-color/appointment-status-color.directive';
 import { slideFromBelowAnimation } from '../../../animations/animations';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-turnos',
@@ -54,7 +55,8 @@ export class AdminTurnosComponent {
       successText: 'Tu turno ha sido cancelado.',
       errorTitle: 'Error!',
       errorText: 'No se pudo cancelar el turno. Intenta de nuevo.',
-      emptyState: 'No se encontraron turnos que coincidan con la búsqueda.'
+      emptyState: 'No se encontraron turnos que coincidan con la búsqueda.',
+      newAppointment: 'Reservar turno'
     },
     en: {
       title: 'Appointments',
@@ -78,7 +80,8 @@ export class AdminTurnosComponent {
       successText: 'The appointment has been canceled.',
       errorTitle: 'Error!',
       errorText: 'The appointment could not be canceled. Please try again.',
-      emptyState: 'No appointments were found that match the search.'
+      emptyState: 'No appointments were found that match the search.',
+      newAppointment: 'Book appointment'
     },
     pt: {
       title: 'Consultas',
@@ -102,11 +105,12 @@ export class AdminTurnosComponent {
       successText: 'A consulta foi cancelada.',
       errorTitle: 'Erro!',
       errorText: 'Não foi possível cancelar a consulta. Tente novamente.',
-      emptyState: 'Nenhuma consulta foi encontrada para a busca.'
+      emptyState: 'Nenhuma consulta foi encontrada para a busca.',
+      newAppointment: 'Reservar consulta'
     }
   } as const;
 
-  constructor(private authService: AuthService, public appointmentService: AppointmentsService) { }
+  constructor(private authService: AuthService, public appointmentService: AppointmentsService, private router: Router) { }
 
 
   async ngOnInit() {
@@ -133,7 +137,7 @@ export class AdminTurnosComponent {
     if (this.searchTerm) {
       const searchLower = this.searchTerm.toLowerCase();
       filtered = filtered.filter(appointment => {
-        const specialtiesLower = appointment.doctorSpecialties.map(specialty => specialty.toLowerCase());
+        const specialtiesLower = (appointment.doctorSpecialties || []).map(specialty => specialty.toLowerCase());
         return specialtiesLower.includes(searchLower) ||
           appointment.doctorFirstName.toLowerCase().includes(searchLower) ||
           appointment.doctorLastName.toLowerCase().includes(searchLower) ||
@@ -149,6 +153,10 @@ export class AdminTurnosComponent {
   onSearch(event: Event) {
     this.searchTerm = (event.target as HTMLInputElement).value;
     this.applyFilters();
+  }
+
+  navigateToNewAppointment(): void {
+    this.router.navigate(['/admin/reservarTurno']);
   }
 
   formatDate(date: Timestamp): string {

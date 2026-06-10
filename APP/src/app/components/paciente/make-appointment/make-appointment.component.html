@@ -9,14 +9,19 @@
                 <p class="booking-copy">Elegí una especialidad, luego un profesional y finalmente el horario disponible.</p>
             </div>
             <div class="booking-steps">
-                <div class="step-pill" [class.active]="!hasSpecialtySelection()">1. Especialidad</div>
+                <div class="step-pill" *ngIf="isAdminBooking" [class.active]="!hasPatientSelection()">0. Paciente</div>
+                <div class="step-pill" [class.active]="hasPatientSelection() && !hasSpecialtySelection()">1. Especialidad</div>
                 <div class="step-pill" [class.active]="hasSpecialtySelection() && !hasDoctorSelection()">2. Profesional</div>
                 <div class="step-pill" [class.active]="hasDoctorSelection() && !hasSlots()">3. Horario</div>
                 <div class="step-pill" [class.active]="hasSlots()">4. Confirmar</div>
             </div>
         </section>
 
-        <section class="booking-summary" *ngIf="hasSpecialtySelection() || hasDoctorSelection()">
+        <section class="booking-summary" *ngIf="isAdminBooking || hasSpecialtySelection() || hasDoctorSelection()">
+            <div class="summary-item" *ngIf="isAdminBooking">
+                <span class="summary-label">Paciente</span>
+                <span class="summary-value">{{ selectedPatientLabel || 'Sin seleccionar' }}</span>
+            </div>
             <div class="summary-item">
                 <span class="summary-label">Especialidad</span>
                 <span class="summary-value">{{ selectedSpecialtyLabel || 'Sin seleccionar' }}</span>
@@ -27,7 +32,20 @@
             </div>
         </section>
 
-        <section class="booking-section">
+        <section class="booking-section" *ngIf="isAdminBooking">
+            <div class="section-header">
+                <h3>0. Seleccioná el paciente</h3>
+                <p>El turno se va a crear a nombre del paciente elegido.</p>
+            </div>
+            <select class="form-control patient-select" [ngModel]="selectedPatientUid" (ngModelChange)="onPatientChange($event)">
+                <option value="">Elegí un paciente</option>
+                <option *ngFor="let patient of patients" [value]="patient.uid">
+                    {{ patient.firstName }} {{ patient.lastName }} - {{ patient.email }}
+                </option>
+            </select>
+        </section>
+
+        <section class="booking-section" *ngIf="hasPatientSelection()">
             <div class="section-header">
                 <h3>1. Seleccioná una especialidad</h3>
                 <p>Tocá una tarjeta para ver los especialistas disponibles.</p>

@@ -11,6 +11,9 @@
                     (input)="onSearch($event)" [(ngModel)]="searchTerm">
             </div>
             <div class="table-toolbar-right">
+                <button class="btn-action primary" type="button" (click)="navigateToNewAppointment()">
+                    {{ t.newAppointment }}
+                </button>
                 <span class="table-count" *ngIf="!isLoading">
                     {{ filteredAppointments.length }} {{ filteredAppointments.length !== 1 ? t.results : t.result }}
                 </span>

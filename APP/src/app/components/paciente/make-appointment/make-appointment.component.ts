@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import { SpinnerComponent } from '../../spinner/spinner.component';
 import { Firestore, collection, addDoc, doc, query, where, getDocs } from '@angular/fire/firestore';
@@ -12,11 +13,13 @@ import Swal from 'sweetalert2';
 import { Specialties } from '../../../interfaces/appointment';
 import { SpecialtyDetails } from '../../../interfaces/appointment';
 import { Schedule } from '../../../interfaces/appointment';
+import { UserService } from '../../../services/users/users.service';
+import { User } from '../../../interfaces/user';
 
 @Component({
   selector: 'app-make-appointment',
   standalone: true,
-  imports: [CommonModule, SpinnerComponent, FormatDatePipe, FormatHourPipe],
+  imports: [CommonModule, FormsModule, SpinnerComponent, FormatDatePipe, FormatHourPipe],
   templateUrl: './make-appointment.component.html',
   styleUrls: ['./make-appointment.component.css']
 })
@@ -34,6 +37,11 @@ export class MakeAppointmentComponent implements OnInit {
   reservedSlots: Date[] = [];
   selectedSpecialtyLabel = '';
   selectedDoctorLabel = '';
+  patients: User[] = [];
+  selectedPatientUid = '';
+  selectedPatient: User | null = null;
+  selectedPatientLabel = '';
+  isAdminBooking = false;
 
   loadingMessage = '';
   isLoading = false;
@@ -41,12 +49,33 @@ export class MakeAppointmentComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private appointmentsService: AppointmentsService,
+    private userService: UserService,
     private firestore: Firestore,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-    this.loadSpecialties();
+  async ngOnInit(): Promise<void> {
+    this.isAdminBooking = this.authService.getRole() === 'admin';
+
+    if (this.isAdminBooking) {
+      await this.loadPatients();
+    }
+
+    await this.loadSpecialties();
+  }
+
+  async loadPatients(): Promise<void> {
+    try {
+      this.loadingMessage = 'Cargando pacientes...';
+      this.isLoading = true;
+      this.patients = (await this.userService.getUsers())
+        .sort((a, b) => this.getPatientFullName(a).localeCompare(this.getPatientFullName(b)));
+    } catch (error) {
+      console.error('Error al cargar los pacientes:', error);
+    } finally {
+      this.loadingMessage = 'cargando...';
+      this.isLoading = false;
+    }
   }
 
   async loadSpecialties(): Promise<void> {
@@ -252,10 +281,19 @@ export class MakeAppointmentComponent implements OnInit {
   async bookAppointment(slot: Date): Promise<void> {
     console.log(slot);
 
+    const patient = this.getAppointmentPatient();
+    if (!patient) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Seleccioná un paciente',
+        text: 'Para reservar un turno como administrador primero tenés que elegir el paciente.',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
     this.isLoading = true;
     this.loadingMessage = 'Reservando turno';
-
-    let user = this.authService.getUserData();
 
     const appointmentData = {
       cancellationComment: '',
@@ -269,9 +307,10 @@ export class MakeAppointmentComponent implements OnInit {
       uidDoctor: this.selectedDoctor.uid,
       doctorFirstName: this.selectedDoctor.firstName,
       doctorLastName: this.selectedDoctor.lastName,
-      patientFirstName: user['firstName'],
-      patientLastName: user['lastName'],
-      uidPatient: user['uid'],
+      doctorSpecialties: this.selectedDoctor.specialties || Object.keys(this.selectedDoctor.Specialties || {}),
+      patientFirstName: patient.firstName,
+      patientLastName: patient.lastName,
+      uidPatient: patient.uid,
       date: Timestamp.fromDate(slot),
       status: 0,
     };
@@ -290,11 +329,11 @@ export class MakeAppointmentComponent implements OnInit {
       await Swal.fire({
         icon: 'success',
         title: '¡Turno reservado!',
-        text: 'Tu turno ha sido reservado con éxito.',
+        text: this.isAdminBooking ? 'El turno ha sido reservado con éxito.' : 'Tu turno ha sido reservado con éxito.',
         confirmButtonText: 'Aceptar'
       });
 
-      await this.router.navigate(['/paciente/misTurnos']);
+      await this.router.navigate([this.isAdminBooking ? '/admin/turnos' : '/paciente/misTurnos']);
     } catch (error) {
       console.error('Error al reservar el turno:', error);
       this.isLoading = false;
@@ -316,11 +355,49 @@ export class MakeAppointmentComponent implements OnInit {
     return !!this.selectedSpecialty;
   }
 
+  hasPatientSelection(): boolean {
+    return !this.isAdminBooking || !!this.selectedPatient;
+  }
+
   hasDoctorSelection(): boolean {
     return !!this.selectedDoctor;
   }
 
   hasSlots(): boolean {
     return this.groupedSlots.length > 0;
+  }
+
+  onPatientChange(patientUid: string): void {
+    this.selectedPatientUid = patientUid;
+    this.selectedPatient = this.patients.find(patient => patient.uid === this.selectedPatientUid) || null;
+    this.selectedPatientLabel = this.selectedPatient ? this.getPatientFullName(this.selectedPatient) : '';
+    this.clearBookingSelection();
+  }
+
+  private getAppointmentPatient(): Pick<User, 'firstName' | 'lastName' | 'uid'> | null {
+    if (this.isAdminBooking) {
+      return this.selectedPatient;
+    }
+
+    const user = this.authService.getUserData();
+    return {
+      firstName: user['firstName'],
+      lastName: user['lastName'],
+      uid: user['uid']
+    };
+  }
+
+  private clearBookingSelection(): void {
+    this.selectedSpecialty = '';
+    this.selectedSpecialtyLabel = '';
+    this.selectedDoctor = null;
+    this.selectedDoctorLabel = '';
+    this.availableSlots = [];
+    this.groupedSlots = [];
+    this.isOpen = {};
+  }
+
+  private getPatientFullName(patient: User): string {
+    return `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || patient.email;
   }
 }
