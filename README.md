@@ -24,31 +24,31 @@ El sistema contempla tres perfiles principales: **Administrador**, **Paciente** 
 
 Pantalla de bienvenida con acceso al inicio de sesion y registro.
 
-![Home](docs/screenshots/home.png)
+![Home](APP/docs/screenshots/home.png)
 
 ### Mis turnos - Paciente
 
 Seguimiento de turnos del paciente, cancelaciones, resenas y encuestas de atencion.
 
-![Turnos paciente](docs/screenshots/patient-mis-turnos.png)
+![Turnos paciente](APP/docs/screenshots/patient-mis-turnos.png)
 
 ### Reservar turno - Paciente
 
 Flujo paso a paso para elegir especialidad, profesional, horario y confirmar la reserva.
 
-![Reservar turno paciente](docs/screenshots/patient-reservar-turno.png)
+![Reservar turno paciente](APP/docs/screenshots/patient-reservar-turno.png)
 
 ### Mi perfil - Especialista
 
 Perfil profesional del especialista con datos personales, especialidades, duracion de turnos y disponibilidad semanal.
 
-![Perfil especialista](docs/screenshots/doctor-mi-perfil.png)
+![Perfil especialista](APP/docs/screenshots/doctor-mi-perfil.png)
 
 ### Informes - Administrador
 
 Panel de metricas con filtros por fecha, graficos y exportacion en PDF/Excel.
 
-![Informes administrador](docs/screenshots/admin-informes.png)
+![Informes administrador](APP/docs/screenshots/admin-informes.png)
 
 ## Features principales
 
