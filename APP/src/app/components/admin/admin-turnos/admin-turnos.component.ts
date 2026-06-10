@@ -39,6 +39,7 @@ export class AdminTurnosComponent {
       result: 'resultado',
       results: 'resultados',
       date: 'Fecha',
+      time: 'Hora',
       specialist: 'Especialista',
       patient: 'Paciente',
       specialty: 'Especialidad',
@@ -64,6 +65,7 @@ export class AdminTurnosComponent {
       result: 'result',
       results: 'results',
       date: 'Date',
+      time: 'Time',
       specialist: 'Specialist',
       patient: 'Patient',
       specialty: 'Specialty',
@@ -89,6 +91,7 @@ export class AdminTurnosComponent {
       result: 'resultado',
       results: 'resultados',
       date: 'Data',
+      time: 'Hora',
       specialist: 'Especialista',
       patient: 'Paciente',
       specialty: 'Especialidade',
@@ -162,6 +165,11 @@ export class AdminTurnosComponent {
   formatDate(date: Timestamp): string {
     const dateObj = date.toDate();
     return dateObj.toLocaleDateString();
+  }
+
+  formatTime(date: Timestamp): string {
+    const dateObj = date.toDate();
+    return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   async cancelAppointment(appointment: Appointment) {

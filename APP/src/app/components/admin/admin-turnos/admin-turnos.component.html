@@ -25,6 +25,7 @@
                 <thead>
                     <tr>
                         <th>{{ t.date }}</th>
+                        <th>{{ t.time }}</th>
                         <th class="text-left">{{ t.specialist }}</th>
                         <th class="text-left">{{ t.patient }}</th>
                         <th class="text-left">{{ t.specialty }}</th>
@@ -35,6 +36,7 @@
                 <tbody>
                     <tr *ngFor="let appointment of paginatedAppointments">
                         <td>{{ formatDate(appointment.date) }}</td>
+                        <td>{{ formatTime(appointment.date) }}</td>
                         <td class="text-left">{{ appointment.doctorFirstName }} {{ appointment.doctorLastName }}</td>
                         <td class="text-left">{{ appointment.patientFirstName }} {{ appointment.patientLastName }}</td>
                         <td class="text-left">{{ appointment.specialty }}</td>
