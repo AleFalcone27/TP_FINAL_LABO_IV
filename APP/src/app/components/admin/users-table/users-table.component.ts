@@ -129,7 +129,6 @@ export class UsersTableComponent implements OnInit {
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();
     
     const data = this.filteredUsers.map(user => ({
-      'UID': user.uid,
       'Nombre': user.firstName,
       'Apellido': user.lastName,
       'Email': user.email,
