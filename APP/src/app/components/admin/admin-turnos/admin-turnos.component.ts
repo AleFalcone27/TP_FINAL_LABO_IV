@@ -28,6 +28,8 @@ export class AdminTurnosComponent {
   isLoading: boolean = true;
   loadingMessage = '';
   language: 'es' | 'en' | 'pt' = 'es';
+  currentPage = 1;
+  pageSize = 10;
 
   readonly translations = {
     es: {
@@ -141,6 +143,7 @@ export class AdminTurnosComponent {
     }
 
     this.filteredAppointments = filtered;
+    this.currentPage = 1;
   }
 
   onSearch(event: Event) {
@@ -183,6 +186,75 @@ export class AdminTurnosComponent {
 
   get t() {
     return this.translations[this.language];
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredAppointments.length / this.pageSize));
+  }
+
+  get paginatedAppointments(): Appointment[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredAppointments.slice(start, start + this.pageSize);
+  }
+
+  get pageStart(): number {
+    return this.filteredAppointments.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get pageEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredAppointments.length);
+  }
+
+  get visiblePages(): Array<number | '...'> {
+    const total = this.totalPages;
+
+    if (total <= 5) {
+      return Array.from({ length: total }, (_, index) => index + 1);
+    }
+
+    const candidatePages = new Set<number>([
+      1,
+      2,
+      total - 1,
+      total,
+      this.currentPage - 1,
+      this.currentPage,
+      this.currentPage + 1
+    ]);
+
+    const pages = Array.from(candidatePages)
+      .filter(page => page >= 1 && page <= total)
+      .sort((a, b) => a - b);
+
+    const visible: Array<number | '...'> = [];
+    let previousPage = 0;
+
+    for (const page of pages) {
+      if (previousPage && page - previousPage > 1) {
+        visible.push('...');
+      }
+
+      visible.push(page);
+      previousPage = page;
+    }
+
+    return visible;
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage + 1);
   }
 
 

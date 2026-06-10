@@ -40,7 +40,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of filteredUsers">
+          <tr *ngFor="let user of paginatedUsers">
             <td>
               <span class="user-avatar" [ngClass]="getRoleClass(user.role)">{{ user.firstName | slice:0:1 | uppercase }}</span>
             </td>
@@ -77,6 +77,15 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="pagination-bar" *ngIf="!isLoading && filteredUsers.length > pageSize">
+      <button class="pagination-btn" type="button" (click)="previousPage()" [disabled]="currentPage === 1">
+        Anterior
+      </button>
+      <button class="pagination-btn" type="button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        Siguiente
+      </button>
     </div>
 
     <div class="empty-state" *ngIf="!isLoading && filteredUsers.length === 0">

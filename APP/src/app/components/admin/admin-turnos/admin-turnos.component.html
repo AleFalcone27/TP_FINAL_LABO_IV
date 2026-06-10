@@ -30,7 +30,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let appointment of filteredAppointments">
+                    <tr *ngFor="let appointment of paginatedAppointments">
                         <td>{{ formatDate(appointment.date) }}</td>
                         <td class="text-left">{{ appointment.doctorFirstName }} {{ appointment.doctorLastName }}</td>
                         <td class="text-left">{{ appointment.patientFirstName }} {{ appointment.patientLastName }}</td>
@@ -51,6 +51,15 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="pagination-bar" *ngIf="!isLoading && filteredAppointments.length > pageSize">
+            <button class="pagination-btn" type="button" (click)="previousPage()" [disabled]="currentPage === 1">
+                Anterior
+            </button>
+            <button class="pagination-btn" type="button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                Siguiente
+            </button>
         </div>
 
         <div class="empty-state" *ngIf="!isLoading && filteredAppointments.length === 0">
