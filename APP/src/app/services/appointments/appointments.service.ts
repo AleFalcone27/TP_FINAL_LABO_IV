@@ -394,7 +394,7 @@ export class AppointmentsService {
     return new Date(date.seconds * 1000).toLocaleDateString();
   }
 
-  private formatDynamicData(dynamicData: { key: string; value: number }[] = []): string {
+  private formatDynamicData(dynamicData: { key: string; value: string }[] = []): string {
     return dynamicData.length
       ? dynamicData.map((item) => `${item.key}: ${item.value}`).join(' | ')
       : '';

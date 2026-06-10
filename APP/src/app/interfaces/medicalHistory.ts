@@ -1,6 +1,6 @@
 export interface DynamicData {
     key: string;
-    value: number;
+    value: string;
 }
 
 export interface MedicalHistory {

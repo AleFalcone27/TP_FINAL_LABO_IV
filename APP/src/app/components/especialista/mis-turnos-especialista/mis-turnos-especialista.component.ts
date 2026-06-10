@@ -314,7 +314,7 @@ export class MisTurnosEspecialistaComponent {
                   </div>
                   <div class="swal-field">
                     <label for="dynamicValue1" class="swal-field-label">Valor 1</label>
-                    <input id="dynamicValue1" class="swal-input" type="number" placeholder="Ej. 4" />
+                    <input id="dynamicValue1" class="swal-input" type="text" placeholder="Ej. leve" />
                   </div>
                   <div class="swal-field">
                     <label for="dynamicKey2" class="swal-field-label">Dato 2</label>
@@ -322,7 +322,7 @@ export class MisTurnosEspecialistaComponent {
                   </div>
                   <div class="swal-field">
                     <label for="dynamicValue2" class="swal-field-label">Valor 2</label>
-                    <input id="dynamicValue2" class="swal-input" type="number" placeholder="Ej. 2" />
+                    <input id="dynamicValue2" class="swal-input" type="text" placeholder="Ej. penicilina" />
                   </div>
                   <div class="swal-field">
                     <label for="dynamicKey3" class="swal-field-label">Dato 3</label>
@@ -330,7 +330,7 @@ export class MisTurnosEspecialistaComponent {
                   </div>
                   <div class="swal-field">
                     <label for="dynamicValue3" class="swal-field-label">Valor 3</label>
-                    <input id="dynamicValue3" class="swal-input" type="number" placeholder="Ej. 5" />
+                    <input id="dynamicValue3" class="swal-input" type="text" placeholder="Ej. frecuente" />
                   </div>
                 </div>
               </div>
@@ -359,9 +359,9 @@ export class MisTurnosEspecialistaComponent {
         // Obtener datos dinámicos
         const dynamicData = [];
         for (let i = 1; i <= 3; i++) {
-          const key = (document.getElementById(`dynamicKey${i}`) as HTMLInputElement).value;
-          const value = parseInt((document.getElementById(`dynamicValue${i}`) as HTMLInputElement).value);
-          if (key && !isNaN(value)) {
+          const key = (document.getElementById(`dynamicKey${i}`) as HTMLInputElement).value.trim();
+          const value = (document.getElementById(`dynamicValue${i}`) as HTMLInputElement).value.trim();
+          if (key && value) {
             dynamicData.push({ key, value });
           }
         }
