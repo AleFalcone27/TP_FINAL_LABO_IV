@@ -181,9 +181,9 @@ export class OwnCaptchaDirective implements AfterViewInit, OnChanges, OnDestroy 
       case 1:
         return '61760';
       case 2:
-        return 'YKQET';
-      case 3:
         return 'sciarna';
+      case 3:
+        return 'YKQET';
       default:
         return '';
     }
@@ -195,7 +195,7 @@ export class OwnCaptchaDirective implements AfterViewInit, OnChanges, OnDestroy 
       return;
     }
 
-    if (this.userInput === this.validString) {
+    if (this.normalizeCaptchaValue(this.userInput) === this.normalizeCaptchaValue(this.validString)) {
       this.captchaValidated.emit(true);
       this.showSuccessPopup();
       this.isCaptchaVisible = false;
@@ -206,6 +206,10 @@ export class OwnCaptchaDirective implements AfterViewInit, OnChanges, OnDestroy 
       this.showErrorPopup();
       this.captchaValidated.emit(false);
     }
+  }
+
+  private normalizeCaptchaValue(value: string): string {
+    return value.trim().toLowerCase();
   }
 
   private showSuccessPopup(): void {

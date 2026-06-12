@@ -108,7 +108,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   navigateToProfile(){
     let role = this.authService.getRole() 
-    this.router.navigate([`${role}/perfil`]);
+    if (role) {
+      this.router.navigate([`${role}/perfil`]);
+    }
   }
 
 }

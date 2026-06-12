@@ -21,6 +21,14 @@ export class PerfilEspecialistaComponent implements OnInit {
   userData: any;
   appointmentDurations: string[] = [];
   schedules: any[] = [];
+  weekDays = [
+    { key: 'lunes', label: 'Lunes' },
+    { key: 'martes', label: 'Martes' },
+    { key: 'miércoles', label: 'Miércoles', legacyKey: 'miercoles' },
+    { key: 'jueves', label: 'Jueves' },
+    { key: 'viernes', label: 'Viernes' },
+    { key: 'sábado', label: 'Sábado', legacyKey: 'sabado' }
+  ];
   isLoading = false;
   loadingMessage = '';
 
@@ -30,37 +38,25 @@ export class PerfilEspecialistaComponent implements OnInit {
     await this.authService.getUser();
     this.userData = this.authService.getUserData();
 
-    if (this.userData && this.userData.Specialties) {
+    if (this.userData?.specialties?.length) {
         this.userData.specialties.forEach((specialty: string, index: number) => {
 
             console.log(this.userData);
 
-            const appointmentDuration = this.userData.Specialties[specialty]?.AppointmentDuration || '';
+            const appointmentDuration = this.userData.Specialties?.[specialty]?.AppointmentDuration || '';
 
             this.appointmentDurations[index] = appointmentDuration; 
-            this.schedules[index] = {
-                lunes: { start: '', end: '' },
-                martes: { start: '', end: '' },
-                miercoles: { start: '', end: '' },
-                jueves: { start: '', end: '' },
-                viernes: { start: '', end: '' },
-                sabado: { start: '', end: '' }
-            };
+            this.schedules[index] = this.createEmptySchedule();
         });
 
         const data = await this.authService.getDoctorSchedule();
-        if (data) {
+        if (data?.Specialties) {
             this.userData.specialties.forEach((specialty: string, index: number) => {
-                const specialtySchedule = data['Specialties'][specialty];
+                const specialtySchedule = data['Specialties'][specialty]?.['Schedule'];
 
-                this.schedules[index] = {
-                    lunes: { start: specialtySchedule['Schedule']['lunes']['start'] || '', end: specialtySchedule['Schedule']['lunes']['end'] || '' },
-                    martes: { start: specialtySchedule['Schedule']['martes']['start'] || '', end: specialtySchedule['Schedule']['martes']['end'] || '' },
-                    miercoles: { start: specialtySchedule['Schedule']['miercoles']['start'] || '', end: specialtySchedule['Schedule']['miercoles']['end'] || '' },
-                    jueves: { start: specialtySchedule['Schedule']['jueves']['start'] || '', end: specialtySchedule['Schedule']['jueves']['end'] || '' },
-                    viernes: { start: specialtySchedule['Schedule']['viernes']['start'] || '', end: specialtySchedule['Schedule']['viernes']['end'] || '' },
-                    sabado: { start: specialtySchedule['Schedule']['sabado']['start'] || '', end: specialtySchedule['Schedule']['sabado']['end'] || '' }
-                };
+                this.schedules[index] = specialtySchedule
+                  ? this.createScheduleFromStoredData(specialtySchedule)
+                  : this.createEmptySchedule();
             });
         }
     }
@@ -114,7 +110,7 @@ export class PerfilEspecialistaComponent implements OnInit {
         continue;
       }
 
-      if (day === 'sabado') {
+      if (day === 'sábado') {
         if (!this.isTimeInRange(start, saturdayRange) || !this.isTimeInRange(end, saturdayRange)) {
           return { isValid: false, message: `Los horarios del sábado deben estar entre ${saturdayRange.start} y ${saturdayRange.end}.` };
         }
@@ -133,17 +129,28 @@ export class PerfilEspecialistaComponent implements OnInit {
     this.appointmentDurations = this.appointmentDurations.map(() => '');
     
     // Resetear los horarios de cada especialidad
-    this.schedules = this.schedules.map(() => ({
-      lunes: { start: '', end: '' },
-      martes: { start: '', end: '' },
-      miercoles: { start: '', end: '' },
-      jueves: { start: '', end: '' },
-      viernes: { start: '', end: '' },
-      sabado: { start: '', end: '' }
-    }));
+    this.schedules = this.schedules.map(() => this.createEmptySchedule());
   }
 
   private isTimeInRange(time: string, range: { start: string, end: string }): boolean {
     return time >= range.start && time <= range.end;
+  }
+
+  private createEmptySchedule(): any {
+    return this.weekDays.reduce((schedule, day) => {
+      schedule[day.key] = { start: '', end: '' };
+      return schedule;
+    }, {} as any);
+  }
+
+  private createScheduleFromStoredData(storedSchedule: any): any {
+    return this.weekDays.reduce((schedule, day) => {
+      const storedDay = storedSchedule[day.key] || (day.legacyKey ? storedSchedule[day.legacyKey] : null) || {};
+      schedule[day.key] = {
+        start: storedDay.start || '',
+        end: storedDay.end || ''
+      };
+      return schedule;
+    }, {} as any);
   }
 }

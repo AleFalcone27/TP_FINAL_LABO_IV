@@ -107,10 +107,6 @@ export class AuthService {
   }
 
   async updateAppointmentDurations(schedulesToUpdate: { specialty: string; appointmentDuration: string; schedule: any }[]): Promise<void> {
-
-
-    console.log(schedulesToUpdate)
-
     const user = this.getUserData();
     const collectionRef = collection(this.firestore, 'especialistas');
     const q = query(collectionRef, where('uid', '==', user['uid']));
@@ -122,20 +118,39 @@ export class AuthService {
 
     const docRef = querySnapshot.docs[0].ref;
 
-    // Prepare the data to update
-    const updatedSchedules: UpdatedSchedules = {}; // Specify the type here
+    const updatedSchedules: UpdatedSchedules = { ...(user.Specialties || {}) };
 
     schedulesToUpdate.forEach(({ specialty, appointmentDuration, schedule }) => {
       updatedSchedules[specialty] = {
         AppointmentDuration: appointmentDuration,
-        Schedule: schedule
+        Schedule: this.normalizeScheduleForStorage(schedule)
       };
     });
 
-    // Update the document with the new schedules
     await updateDoc(docRef, {
       Specialties: updatedSchedules
     });
+
+    const updatedUser = {
+      ...user,
+      Specialties: updatedSchedules
+    };
+
+    localStorage.setItem('userDocument', JSON.stringify(updatedUser));
+    localStorage.setItem('userData', JSON.stringify(updatedUser));
+    this.userData = updatedUser;
+  }
+
+  private normalizeScheduleForStorage(schedule: any): any {
+    const days = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+    return days.reduce((normalizedSchedule, day) => {
+      normalizedSchedule[day] = {
+        start: schedule?.[day]?.start || '',
+        end: schedule?.[day]?.end || ''
+      };
+      return normalizedSchedule;
+    }, {} as any);
   }
 
 

@@ -43,10 +43,10 @@ export class CaptchaComponent implements OnInit {
           this.validString = '61760';
           break;
         case 2:
-          this.validString = 'YKQET';
+          this.validString = 'sciarna';
           break;
         case 3:
-          this.validString = 'sciarna';
+          this.validString = 'YKQET';
           break;
       }
     } catch (error) {
@@ -61,7 +61,7 @@ export class CaptchaComponent implements OnInit {
   }
 
   validateCaptcha() {
-    if (this.userInput === this.validString) {
+    if (this.normalizeCaptchaValue(this.userInput) === this.normalizeCaptchaValue(this.validString)) {
       this.captchaValidated.emit(true); 
       this.showSuccessPopup(); 
       this.isCaptchaVisible = false; 
@@ -69,6 +69,10 @@ export class CaptchaComponent implements OnInit {
       this.showErrorPopup();
       this.captchaValidated.emit(false); 
     }
+  }
+
+  private normalizeCaptchaValue(value: string): string {
+    return value.trim().toLowerCase();
   }
 
   private showSuccessPopup() {

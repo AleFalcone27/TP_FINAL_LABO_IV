@@ -8,7 +8,7 @@
   <ul class="nav nav-pills flex-column mb-auto">
 
     <li  class="nav-item">
-      <a *ngIf="isLoggedIn" (click)="navigateToProfile()" class="nav-link">
+      <a *ngIf="isLoggedIn && userRole" (click)="navigateToProfile()" class="nav-link">
         Mi Perfil
       </a>
     </li>

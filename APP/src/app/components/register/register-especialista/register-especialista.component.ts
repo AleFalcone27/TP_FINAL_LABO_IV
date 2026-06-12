@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, deleteUser, sendEmailVerification, signOut } from "firebase/auth";
 import { AuthService } from '../../../services/auth/auth.service';
 import { addDoc, collection, Firestore, query } from '@angular/fire/firestore';
 import { SupabaseService } from '../../../services/supabase/supabase.service';
@@ -224,15 +224,25 @@ export class RegisterEspecialistaComponent implements OnInit {
     const password = this.registerForm.get('password')?.value;
 
     if (this.registerForm.valid) {
+      let createdUser: any = null;
+      let specialistSaved = false;
+
       createUserWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
           const user = userCredential.user;
+          createdUser = user;
 
           const file = this.registerForm.get('profileImage')?.value;
-          const path = `especialistas/${user.uid}/profileImage.jpg`;
-          await this.supabaseService.uploadFile('profiles', path, file);
+          const extension = this.getFileExtension(file.name);
+          const path = `users/${user.uid}/profileImage.${extension}`;
+          const { error: uploadError } = await this.supabaseService.uploadFile('profiles', path, file);
+
+          if (uploadError) {
+            throw uploadError;
+          }
+
           const { data: imageData } = this.supabaseService.getPublicUrl('profiles', path);
-          const profileImageUrl = imageData.publicUrl;
+
           await sendEmailVerification(user);
 
           const especialistaData = {
@@ -245,11 +255,12 @@ export class RegisterEspecialistaComponent implements OnInit {
             email: this.registerForm.get('email')?.value,
             approved: false, 
             role: 'especialista',
-            profileImage: profileImageUrl 
+            profileImage: imageData.publicUrl
           };
 
           const especialistasRef = collection(this.firestore, 'especialistas');
           await addDoc(especialistasRef, especialistaData);
+          specialistSaved = true;
 
           Swal.fire({
             title: 'Registro exitoso',
@@ -258,9 +269,24 @@ export class RegisterEspecialistaComponent implements OnInit {
             confirmButtonText: 'Ok'
           });
 
+          localStorage.removeItem('userDocument');
+          localStorage.removeItem('current-user');
+          localStorage.removeItem('userData');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('isAdmin');
+          await signOut(auth);
+
           this.router.navigate(['/home']);
         })
-        .catch((error) => {
+        .catch(async (error) => {
+          if (createdUser && !specialistSaved) {
+            try {
+              await deleteUser(createdUser);
+            } catch (deleteError) {
+              console.error('Error deleting incomplete Firebase user:', deleteError);
+            }
+          }
+
           let errorMessage = '';
           switch (error.code) {
             case 'auth/invalid-email':
@@ -276,7 +302,7 @@ export class RegisterEspecialistaComponent implements OnInit {
               errorMessage = 'La contraseña es demasiado débil';
               break;
             default:
-              errorMessage = 'Error desconocido';
+              errorMessage = error.message || 'Error desconocido';
           }
           Swal.fire({
             title: 'Error',

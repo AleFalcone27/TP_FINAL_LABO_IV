@@ -41,16 +41,20 @@ export class SupabaseService {
       return '';
     }
 
+    if (/^https?:\/\//.test(storedValue) && !storedValue.includes('/storage/v1/object/public/')) {
+      return storedValue;
+    }
+
     if (storedValue.includes('/storage/v1/object/public/')) {
       return storedValue;
     }
 
     const firebaseMatch = storedValue.match(/firebasestorage\.googleapis\.com\/v0\/b\/[^/]+\/o\/([^?]+)/);
-    if (!firebaseMatch?.[1]) {
-      return storedValue;
+    if (firebaseMatch?.[1]) {
+      const storagePath = decodeURIComponent(firebaseMatch[1]);
+      return `${environment.supabaseUrl}/storage/v1/object/public/${bucket}/${storagePath}`;
     }
 
-    const storagePath = decodeURIComponent(firebaseMatch[1]);
-    return `${environment.supabaseUrl}/storage/v1/object/public/${bucket}/${storagePath}`;
+    return `${environment.supabaseUrl}/storage/v1/object/public/${bucket}/${storedValue}`;
   }
 }

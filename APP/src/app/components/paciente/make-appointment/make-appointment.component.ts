@@ -15,6 +15,7 @@ import { SpecialtyDetails } from '../../../interfaces/appointment';
 import { Schedule } from '../../../interfaces/appointment';
 import { UserService } from '../../../services/users/users.service';
 import { User } from '../../../interfaces/user';
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 
 @Component({
   selector: 'app-make-appointment',
@@ -50,6 +51,7 @@ export class MakeAppointmentComponent implements OnInit {
     private authService: AuthService,
     private appointmentsService: AppointmentsService,
     private userService: UserService,
+    private supabaseService: SupabaseService,
     private firestore: Firestore,
     private router: Router
   ) { }
@@ -146,7 +148,10 @@ export class MakeAppointmentComponent implements OnInit {
       this.selectedDoctorLabel = '';
       this.availableSlots = [];
       this.groupedSlots = [];
-      this.doctors = await this.appointmentsService.getDoctorsBySpecialty(specialty);
+      this.doctors = (await this.appointmentsService.getDoctorsBySpecialty(specialty)).map(doctor => ({
+        ...doctor,
+        profileImage: this.supabaseService.resolveStorageUrl('profiles', doctor.profileImage)
+      }));
       console.log('Doctores encontrados:', this.doctors);
     } catch (error) {
       console.error('Error al cargar los doctores:', error);
@@ -182,11 +187,37 @@ export class MakeAppointmentComponent implements OnInit {
         this.loadingMessage = 'Obteniendo turnos disponibles...';
         this.isLoading = true;
 
-        // Aquí está la corrección: desestructuramos el objeto correctamente
         const { Specialties } = await this.appointmentsService.getDoctorDetails(doctorId);
-;
-        console.log(Specialties[this.selectedSpecialty]);
+        const specialtyDetails = Specialties[this.selectedSpecialty];
 
+        if (!specialtyDetails) {
+          this.availableSlots = [];
+          this.groupedSlots = [];
+          this.isLoading = false;
+          await Swal.fire({
+            icon: 'info',
+            title: 'Sin disponibilidad',
+            text: 'El especialista todavía no configuró horarios para esta especialidad.',
+            confirmButtonText: 'Aceptar'
+          });
+          return;
+        }
+
+        const schedule = this.normalizeSchedule(specialtyDetails['Schedule']);
+        const appointmentDurationInMinutes = this.timeToMinutes(specialtyDetails['AppointmentDuration']?.toString() || '');
+
+        if (!appointmentDurationInMinutes) {
+          this.availableSlots = [];
+          this.groupedSlots = [];
+          this.isLoading = false;
+          await Swal.fire({
+            icon: 'info',
+            title: 'Sin disponibilidad',
+            text: 'El especialista todavía no configuró la duración de los turnos para esta especialidad.',
+            confirmButtonText: 'Aceptar'
+          });
+          return;
+        }
 
         const today = new Date();
         const endDate = new Date();
@@ -194,7 +225,7 @@ export class MakeAppointmentComponent implements OnInit {
 
         const reservedSlots = await this.loadReservedSlots(doctorId, today, endDate);
 
-        this.availableSlots = this.calculateAvailableSlots(today, endDate, Specialties[this.selectedSpecialty]['AppointmentDuration'], Specialties[this.selectedSpecialty]['Schedule']);
+        this.availableSlots = this.calculateAvailableSlots(today, endDate, appointmentDurationInMinutes, schedule);
 
         this.availableSlots = this.availableSlots.filter(slot => 
             !reservedSlots.some(reservedSlot => reservedSlot.getTime() === slot.getTime())
@@ -229,37 +260,31 @@ export class MakeAppointmentComponent implements OnInit {
     return this.reservedSlots ? this.reservedSlots.some(reservedSlot => reservedSlot.getTime() === slot.getTime()) : false;
   }
 
-  calculateAvailableSlots(startDate: Date, endDate: Date, appointmentDuration: string, schedule: any): Date[] {
+  calculateAvailableSlots(startDate: Date, endDate: Date, appointmentDurationInMinutes: number, schedule: any): Date[] {
     const availableSlots: Date[] = [];
     const daysOfWeek = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 
-
-    const appointmentDurationInMinutes: number = this.timeToMinutes(appointmentDuration.toString());
+    if (!appointmentDurationInMinutes || appointmentDurationInMinutes <= 0) {
+      return availableSlots;
+    }
 
     for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
       const dayName = daysOfWeek[date.getDay()];
       const dailySchedule = schedule[dayName];
 
-      if (dailySchedule) {
+      if (dailySchedule?.start && dailySchedule?.end) {
         const startTime = this.parseTime(dailySchedule.start, date);
         const endTime = this.parseTime(dailySchedule.end, date);
 
-        const adjustedEndTime = new Date(endTime);
-        adjustedEndTime.setHours(14, 30, 0, 0);
-
-        for (let slotStart = new Date(startTime); slotStart < adjustedEndTime; slotStart.setMinutes(slotStart.getMinutes() + 30)) {
-          const slotEnd = new Date(slotStart.getTime());
-          slotEnd.setMinutes(slotEnd.getMinutes() + appointmentDurationInMinutes);
-          if (slotEnd <= adjustedEndTime) {
-            availableSlots.push(new Date(slotStart));
-          }
+        if (endTime <= startTime) {
+          continue;
         }
 
-        const lastSlotStart = new Date(adjustedEndTime);
-        lastSlotStart.setMinutes(lastSlotStart.getMinutes() - appointmentDurationInMinutes);
-        if (lastSlotStart >= startTime && lastSlotStart < adjustedEndTime) {
-          if (lastSlotStart.getHours() === 13 && lastSlotStart.getMinutes() === 30) {
-            availableSlots.push(lastSlotStart);
+        for (let slotStart = new Date(startTime); slotStart < endTime; slotStart.setMinutes(slotStart.getMinutes() + appointmentDurationInMinutes)) {
+          const slotEnd = new Date(slotStart.getTime());
+          slotEnd.setMinutes(slotEnd.getMinutes() + appointmentDurationInMinutes);
+          if (slotEnd <= endTime) {
+            availableSlots.push(new Date(slotStart));
           }
         }
       }
@@ -274,8 +299,37 @@ export class MakeAppointmentComponent implements OnInit {
   }
 
   timeToMinutes(duration: string): number {
+    if (!duration) {
+      return 0;
+    }
+
+    if (!duration.includes(':')) {
+      return Number(duration) || 0;
+    }
+
     const parts = duration.split(':').map(Number);
     return (parts[0] || 0) * 60 + (parts[1] || 0);
+  }
+
+  private normalizeSchedule(schedule: any): any {
+    const dayMappings = [
+      { key: 'domingo' },
+      { key: 'lunes' },
+      { key: 'martes' },
+      { key: 'miércoles', legacyKey: 'miercoles' },
+      { key: 'jueves' },
+      { key: 'viernes' },
+      { key: 'sábado', legacyKey: 'sabado' }
+    ];
+
+    return dayMappings.reduce((normalizedSchedule, day) => {
+      const storedDay = schedule?.[day.key] || (day.legacyKey ? schedule?.[day.legacyKey] : null) || {};
+      normalizedSchedule[day.key] = {
+        start: storedDay.start || '',
+        end: storedDay.end || ''
+      };
+      return normalizedSchedule;
+    }, {} as any);
   }
 
   async bookAppointment(slot: Date): Promise<void> {

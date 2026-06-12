@@ -70,11 +70,11 @@
                         </div>
 
                         <div class="days-grid">
-                            <div *ngFor="let day of ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']" class="day-card">
-                                <label>{{ day | titlecase }}</label>
+                            <div *ngFor="let day of weekDays" class="day-card">
+                                <label>{{ day.label }}</label>
                                 <div class="day-inputs">
-                                    <input [(ngModel)]="schedules[i][day].start" type="time" class="form-control" />
-                                    <input [(ngModel)]="schedules[i][day].end" type="time" class="form-control" />
+                                    <input [(ngModel)]="schedules[i][day.key].start" type="time" class="form-control" />
+                                    <input [(ngModel)]="schedules[i][day.key].end" type="time" class="form-control" />
                                 </div>
                             </div>
                         </div>
